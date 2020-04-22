@@ -15,4 +15,4 @@ server.post('/moves', (request, response) => {
     }
 })
 
-server.listen(8000)
+server.listen(8000, '0.0.0.0')
