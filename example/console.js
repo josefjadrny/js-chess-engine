@@ -1,7 +1,7 @@
-import { JsChess } from './lib/Game.js'
+import { Game } from '../lib/js-chess.js'
 import readline from 'readline'
 
-const game = new JsChess()
+const game = new Game()
 play()
 
 function play () {
@@ -10,12 +10,16 @@ function play () {
     let rl = getInput()
     rl.question('From? ', from => {
         rl.close()
-        console.log('Your options: ', game.moves(from))
-
+        const moves = game.moves(from)
+        console.log('Your options: ', moves)
         rl = getInput()
         rl.question('To? ', to => {
             rl.close()
-            game.move(from, to)
+            try {
+                game.move(from, to)
+            } catch (error) {
+                console.log(`Skipping: ${error}`)
+            }
             play()
         })
     })

@@ -2,9 +2,10 @@
   "name": "js-chess",
   "version": "0.1.0",
   "description": "Simple and fast Node.js chess engine without dependencies",
-  "main": "index.js",
+  "main": "example/index.js",
   "scripts": {
     "server:watch": "nodemon --experimental-modules example/server.js",
+    "console:watch": "nodemon --experimental-modules example/console.js",
     "test": "eslint lib/**"
   },
   "author": "bc.josefjadrny@gmail.com",
