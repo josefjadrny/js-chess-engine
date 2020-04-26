@@ -1,27 +1,25 @@
 import fastify from 'fastify'
 import * as cors from 'fastify-cors'
-import { getMoves, getStatus } from '../lib/js-chess.js'
+import { chessMoves, chessStatus, chessMove } from '../lib/js-chess.js'
 
+const ROUTE_MAP = {
+    '/moves': chessMoves,
+    '/status': chessStatus,
+    '/move': chessMove
+}
 const server = fastify({
     logger: true
 }).register(cors.default)
 
-server.post('/moves', (request, response) => {
-    try {
-        const result = getMoves(request.body)
-        response.send(result)
-    } catch (error) {
-        response.code(404).send(error)
-    }
-})
-
-server.post('/status', (request, response) => {
-    try {
-        const result = getStatus(request.body)
-        response.send(result)
-    } catch (error) {
-        response.code(404).send(error)
-    }
-})
+for (const route in ROUTE_MAP) {
+    server.post(route, (request, response) => {
+        try {
+            const result = ROUTE_MAP[route](request.body)
+            response.send(result)
+        } catch (error) {
+            response.code(404).send(error)
+        }
+    })
+}
 
 server.listen(8000, '0.0.0.0')
