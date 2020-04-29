@@ -40,7 +40,7 @@ API description
 
 ### Option 2 - Without in-memory
 Import functions you want to use. Every function need JSON configuration of your chessboard to work properly.
-Those functions return new JSON configuration of your board, so this JSON is represents state of your game.
+Those functions return new JSON configuration of your board, so this JSON represents state of your game.
 Your application should use returned state to generate an updated chessboard.
 This approach needs little more computing time on server to create and calculate everything from scratch on every call.
 
@@ -87,7 +87,7 @@ This object is used for creating a game and can be exported, if needed.
 
 **checkMate** - `true` when playing player is inc checkmate. Default `false`.
 
-**castling** - Indicators if castling is still possible. `true` means yes. Default `false`.
+**castling** - Indicators if castling is still possible. `true` means yes. Default `true`.
  - `whiteLong` - White king moves from E1 to C1.
  - `whiteShort` - White king moves from E1 to G1.
  - `blackLong` - Black king moves from E8 to C8.
