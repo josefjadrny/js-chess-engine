@@ -20,7 +20,11 @@ function play () {
             } catch (error) {
                 console.log(`Skipping: ${error}`)
             }
-            play()
+            if (game.board.isFinished) {
+                console.log('Game over')
+            } else {
+                play()
+            }
         })
     })
 }
