@@ -31,7 +31,7 @@ You can still export your game to JSON and you can use this JSON to continue you
 
 #### API description
 
-**Constructor**
+**constructor**
 
 `new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)`
 
