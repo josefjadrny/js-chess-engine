@@ -26,17 +26,35 @@ You can control your game with game object.
 In this mode, many things on the chessboard are cached (in-memory), so it is faster.
 You can still export your game to JSON and you can use this JSON to continue your game later.
 
-API description
+#### API description
 
-`new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)`
+##### Constructor
+`new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)`<br/>
+Create a new game, init players and in-game situation. 
 
-`game.move(from, to)`
+Params
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
+##### Move
+`game.move(from, to)`<br/>
+Perform move on a chessboard and recalculates in-game situation.
+
+Params
+ - `from` String (_mandatory_) - Location on a chessboard when moves start (like A1,B3,...)
+ - `to` String (_mandatory_) - Location on a chessboard when moves end (like A1,B3,...)
+
+##### Moves
 `game.moves(from = null)`
+Return possible moves for playing player.
+
+Params
+ - `from` String (_optional_) - Location on a chessboard (like A1,B3,...). When not provided, returns all possible moves.
 
 `game.printToConsole()`
+Print a chessboard to console standard output.
 
 `game.exportJson()`
+Return in-game situation represented by JSON [configuration](#board-configuration).
 
 ### Option 2 - Without in-memory
 Import functions you want to use. Every function need JSON configuration of your chessboard to work properly.
@@ -47,7 +65,7 @@ This approach needs little more computing time on server to create and calculate
 ```js
 import { chessMoves, chessStatus, chessMove } from 'js-chess'
 ```
-API description
+#### API description
 
 `chessMoves({boardConfiguration})`
 
@@ -85,7 +103,7 @@ This object is used for creating a game and can be exported, if needed.
 
 **isFinished** - `true` when playing player cannot move (checkmate or draw). Default `false`.
 
-**checkMate** - `true` when playing player is inc checkmate. Default `false`.
+**checkMate** - `true` when playing player has checkmate. Default `false`.
 
 **castling** - Indicators if castling is still possible. `true` means yes. Default `true`.
  - `whiteLong` - White king moves from E1 to C1.
@@ -112,3 +130,14 @@ Means A7 can move to A6 and A5. B7 can move to B6 and B5.
 | Rook |R|r|
 | Queen |Q|q|
 | King |K|k|
+
+## TODO
+- Computer player logic
+- Forsyth–Edwards Notation (FEN) game initialization
+- "En passant" special pawn move
+
+## In conclusion - why another chees engine?
+I am not a chess pro. My father is.
+When I was ten, I had an Atari (with Turbo Basic), and I was hoping for new PC.
+My father told me, make me a computer program, which beat me in chess, and I buy you a new PC.
+Obviously, it was a trap. It comes to my mind after twenty years, and I would like to finish what I started before.
