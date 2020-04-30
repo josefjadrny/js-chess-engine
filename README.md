@@ -31,7 +31,8 @@ You can still export your game to JSON and you can use this JSON to continue you
 
 #### API description
 
-##### Constructor
+**Constructor**
+
 `new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)`
 
 Create a new game, init players and in-game situation. 
@@ -39,7 +40,8 @@ Create a new game, init players and in-game situation.
 Params
  - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
-##### Move
+**move**
+
 `game.move(from, to)`
 
 Perform a move on a chessboard and recalculates in-game situation.
@@ -48,7 +50,8 @@ Params
  - `from` String (_mandatory_) - Location on a chessboard when moves start (like A1,B3,...)
  - `to` String (_mandatory_) - Location on a chessboard when moves end (like A1,B3,...)
 
-##### Moves
+**moves**
+
 `game.moves(from = null)`
 
 Return possible moves for playing player.
@@ -56,9 +59,13 @@ Return possible moves for playing player.
 Params
  - `from` String (_optional_) - Location on a chessboard (like A1,B3,...). When not provided, returns all possible moves.
 
+**printToConsole**
+
 `game.printToConsole()`
 
 Print a chessboard to console standard output.
+
+**exportJson**
 
 `game.exportJson()`
 
