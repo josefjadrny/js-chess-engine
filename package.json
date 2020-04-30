@@ -9,6 +9,7 @@
     "test": "eslint lib/**"
   },
   "author": "bc.josefjadrny@gmail.com",
+  "repository": "github:josefjadrny/js-chess",
   "license": "MIT",
   "type": "module",
   "devDependencies": {
