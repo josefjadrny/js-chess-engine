@@ -33,18 +33,14 @@ You can still export your game to JSON and you can use this JSON to continue you
 
 **constructor**
 
-`new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)`
-
-Create a new game, init players and in-game situation. 
+`new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
 
 Params
  - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **move**
 
-`game.move(from, to)`
-
-Perform a move on a chessboard and recalculates in-game situation.
+`game.move(from, to)` - Perform a move on a chessboard and recalculates in-game situation.
 
 Params
  - `from` String (_mandatory_) - Location on a chessboard when moves start (like A1,B3,...)
@@ -52,24 +48,18 @@ Params
 
 **moves**
 
-`game.moves(from = null)`
-
-Return possible moves for playing player.
+`game.moves(from = null)` - Return possible moves for playing player.
 
 Params
  - `from` String (_optional_) - Location on a chessboard (like A1,B3,...). When not provided, returns all possible moves.
 
 **printToConsole**
 
-`game.printToConsole()`
-
-Print a chessboard to console standard output.
+`game.printToConsole()` - Print a chessboard to console standard output.
 
 **exportJson**
 
-`game.exportJson()`
-
-Return in-game situation represented by JSON [configuration](#board-configuration).
+`game.exportJson()` - Return in-game situation represented by JSON [configuration](#board-configuration).
 
 ### Option 2 - Without in-memory
 Import functions you want to use. Every function need JSON configuration of your chessboard to work properly.
