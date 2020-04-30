@@ -13,7 +13,7 @@ React application example without persistent storage - [js-chess-app GitHub](htt
 In this documentation I am using ECMAScript Modules instead of `require`, but you can use both. Read more about [ESM](https://nodejs.org/api/esm.html).
 
 **Basically, you have two options how to use this engine.**
-[With in-memory](#option1-within-memory)
+[With in-memory](#option-1-with-in-memory)
 [Without in-memory (on-the-fly)](#option2-withoutin-memory)
 
 ### Option 1 - With in-memory
