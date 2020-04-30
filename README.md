@@ -12,9 +12,9 @@ React application example without persistent storage - [js-chess-app GitHub](htt
 ## Documentation
 In this documentation I am using ECMAScript Modules instead of `require`, but you can use both. Read more about [ESM](https://nodejs.org/api/esm.html).
 
-**Basically, you have two options how to use this engine.**
-[With in-memory](#option-1-with-in-memory)
-[Without in-memory (on-the-fly)](#option2-withoutin-memory)
+**Basically, you have two options how to use this engine.** <BR/>
+- [With in-memory](#option-1---with-in-memory)
+- [Without in-memory (on-the-fly)](#option-2---without-in-memory)
 
 ### Option 1 - With in-memory
 Import the Game class and create a new game.
