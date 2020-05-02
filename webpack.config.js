@@ -1,7 +1,7 @@
 
 module.exports = {
     mode: 'production',
-    entry: './lib/js-chess.js',
+    entry: './lib/js-chess.mjs',
     output: {
         filename: 'js-chess.js'
     }
