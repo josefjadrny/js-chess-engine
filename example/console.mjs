@@ -1,4 +1,4 @@
-import { Game } from '../lib/js-chess.mjs'
+import { Game } from '../lib/js-chess-engine.mjs'
 import readline from 'readline'
 
 const game = new Game()

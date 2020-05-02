@@ -20,7 +20,7 @@ In this documentation I am using ECMAScript Modules instead of `require`, but yo
 Import the Game class and create a new game.
 
 ```js
-import { Game } from 'js-chess'
+import { Game } from 'js-chess-engine'
 
 const game = new Game()
 ```
@@ -68,7 +68,7 @@ Your application should use returned state to generate an updated chessboard.
 This approach needs little more computing time on server to create and calculate everything from scratch on every call.
 
 ```js
-import { chessMoves, chessStatus, chessMove } from 'js-chess'
+import { chessMoves, chessStatus, chessMove } from 'js-chess-engine'
 ```
 #### API description
 

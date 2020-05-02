@@ -1,8 +1,10 @@
 
 module.exports = {
     mode: 'production',
-    entry: './lib/js-chess.mjs',
+    entry: './lib/js-chess-engine.mjs',
     output: {
-        filename: 'js-chess.js'
+        library: 'js-chess-engine',
+        libraryTarget: 'umd',
+        filename: 'js-chess-engine.js'
     }
 }
