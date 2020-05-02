@@ -3,7 +3,7 @@ Simple JavaScript chess engine without dependencies written in NodeJs.
 It can be used on both, server or client (web browser) and do not need persistent storage - handy for serverless solutions like AWS Lambda.
 
 ## Example
-React application example without persistent storage - [js-chess-app GitHub](https://github.com/josefjadrny/js-chess-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
+React application example without persistent storage - js-chess-engine [React example GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
 
 **More examples**<BR/>
 [Simple Fastify server](example/server.js) <BR/>

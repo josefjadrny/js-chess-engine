@@ -12,7 +12,7 @@
     "preversion": "npm run build && git add -A dist"
   },
   "author": "bc.josefjadrny@gmail.com",
-  "repository": "github:josefjadrny/js-chess",
+  "repository": "github:josefjadrny/js-chess-engine",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.8.0",
