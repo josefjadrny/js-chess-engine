@@ -1,7 +1,8 @@
 {
-  "name": "js-chess",
+  "name": "js-chess-engine",
   "version": "0.1.0",
   "description": "Simple and fast Node.js chess engine without dependencies",
+  "keywords": "chess game",
   "main": "example/index.js",
   "scripts": {
     "server:watch": "nodemon --experimental-modules example/server.js",

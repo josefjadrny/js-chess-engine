@@ -1,4 +1,4 @@
-# JS-CHESS
+# JS-CHESS-ENGINE
 Simple JavaScript chess engine without dependencies written in NodeJs.
 It can be used on both, server or client (web browser) and do not need persistent storage - handy for serverless solutions like AWS Lambda.
 
