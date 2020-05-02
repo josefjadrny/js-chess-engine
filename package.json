@@ -5,16 +5,15 @@
   "keywords": "chess game",
   "main": "dist/js-chess.js",
   "scripts": {
-    "server:watch": "nodemon --experimental-modules example/server.js",
-    "console:watch": "nodemon --experimental-modules example/console.js",
+    "server:watch": "nodemon --experimental-modules example/server.mjs",
+    "console:watch": "nodemon --experimental-modules example/console.mjs",
     "test": "eslint lib/**",
-    "build": "webpack --config webpack.config.cjs",
+    "build": "webpack --config webpack.config.js",
     "preversion": "npm run build && git add -A dist"
   },
   "author": "bc.josefjadrny@gmail.com",
   "repository": "github:josefjadrny/js-chess",
   "license": "MIT",
-  "type": "module",
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
