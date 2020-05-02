@@ -3,11 +3,13 @@
   "version": "0.1.1",
   "description": "Simple and fast Node.js chess engine without dependencies",
   "keywords": "chess game",
-  "main": "lib/js-chess.js",
+  "main": "dist/js-chess.js",
   "scripts": {
     "server:watch": "nodemon --experimental-modules example/server.js",
     "console:watch": "nodemon --experimental-modules example/console.js",
-    "test": "eslint lib/**"
+    "test": "eslint lib/**",
+    "build": "webpack --config webpack.config.cjs",
+    "preversion": "npm run build && git add -A dist"
   },
   "author": "bc.josefjadrny@gmail.com",
   "repository": "github:josefjadrny/js-chess",
@@ -22,6 +24,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "fastify": "^2.13.1",
     "fastify-cors": "^3.0.3",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
