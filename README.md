@@ -2,7 +2,23 @@
 Simple JavaScript chess engine without dependencies written in NodeJs.
 It can be used on both, server or client (web browser) and do not need persistent storage - handy for serverless solutions like AWS Lambda.
 
-## Example
+## Install
+Install with npm
+
+```npm i js-chess-engine --save```
+
+or install with yarn
+
+```yarn add js-chess-engine```
+
+Example
+```js
+const jsChess = require('js-chess-engine')
+const game = new jsChess.Game()
+game.printToConsole()
+```
+
+## Examples
 **js-chess-engine-app** - React application example without persistent storage - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
 
 **More examples**<BR/>
