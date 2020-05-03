@@ -176,7 +176,7 @@ It indicates possible moves for playing player (turn).
 ```
 Means A7 can move to A6 and A5. B7 can move to B6 and B5.
 
-**move** - Tells the engine information about next move. It is recommended to call `moves()` first to retrieve possible moves.
+**move** - Instructions for a next move. It is recommended to call `moves()` first to retrieve possible moves.
 This field is required only for `move()` calls.
 ```json
 {
