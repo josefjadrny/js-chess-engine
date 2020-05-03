@@ -121,7 +121,7 @@ Perform a move on a chessboard and recalculates in-game situation.
 Return computed move. Use `move({boardConfiguration})` to play this move.
 
 `aiMove({boardConfiguration})`
-
+<BR/><BR/>
 ### Board Configuration
 On-game situation is described by JSON object.
 This object is used for creating a game and can be exported, if needed.
@@ -195,13 +195,13 @@ Player which is on `turn` is moving from E8 to E7.
 | Rook |R|r|
 | Queen |Q|q|
 | King |K|k|
-
+<BR/><BR/>
 ## TODO
 - Smarter computer player logic (AI)
 - Forsyth–Edwards Notation (FEN) game initialization
 - "En passant" a special pawn move
 - Situation when a pawn reaches an end of a chessboard
-
+<BR/><BR/>
 ## In conclusion - why another chees engine?
 I am not a chess pro. My father is.
 When I was ten, I had an Atari (with Turbo Basic), and I was hoping for new PC.
