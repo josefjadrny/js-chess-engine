@@ -206,4 +206,4 @@ Player which is on `turn` is moving from E8 to E7.
 I am not a chess pro. My father is.
 When I was ten, I had an Atari (with Turbo Basic), and I was hoping for new PC.
 My father told me, make me a computer program, which beat me in chess, and I buy you a new PC.
-Obviously, it was a trap. It comes to my mind after twenty years, and I would like to finish what I started before.
+Obviously, it was a trap and I failed. It comes to my mind after twenty years, and I would like to finish what I started before.
