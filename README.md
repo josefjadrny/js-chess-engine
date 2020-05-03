@@ -59,8 +59,8 @@ Params
 `game.move(from, to)` - Perform a move on a chessboard and recalculates in-game situation.
 
 Params
- - `from` String (_mandatory_) - Location on a chessboard when moves start (like A1,B3,...)
- - `to` String (_mandatory_) - Location on a chessboard when moves end (like A1,B3,...)
+ - `from` String (_mandatory_) - Location on a chessboard where move starts (like A1,B3,...)
+ - `to` String (_mandatory_) - Location on a chessboard where move ends (like A1,B3,...)
 
 **moves**
 
