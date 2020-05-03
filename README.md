@@ -31,7 +31,7 @@ In this documentation I am using ECMAScript Modules instead of `require`, but yo
 **Basically, you have two options how to use this engine.** <BR/>
 - [With in-memory](#option-1---with-in-memory)
 - [Without in-memory (on-the-fly)](#option-2---without-in-memory)
-
+<BR/><BR/>
 ### Option 1 - With in-memory
 Import the Game class and create a new game.
 
