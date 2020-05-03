@@ -19,7 +19,7 @@ game.printToConsole()
 ```
 
 ## Examples
-**js-chess-engine-app** - React application example without persistent storage - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
+**js-chess-engine-app** - React application example with HTTP Rest API (without persistent storage) - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
 
 **More examples**<BR/>
 [Simple Fastify server](example/server.js) <BR/>
@@ -69,6 +69,15 @@ Params
 Params
  - `from` String (_optional_) - Location on a chessboard (like A1,B3,...). When not provided, returns all possible moves.
 
+**aiMove**
+
+`game.aiMove(level = 0)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
+
+Params
+ - `level` Integer (_optional_) - Computer player skill from 0 to 5, when 0 is a random move.
+
+_This feature is under construction - only level 0 works._
+
 **printToConsole**
 
 `game.printToConsole()` - Print a chessboard to console standard output.
@@ -85,15 +94,33 @@ This approach needs little more computing time on server to create and calculate
 
 ```js
 import jsChessEngine from 'js-chess-engine'
-const { chessMove, chessStatus, chessMoves } = jsChessEngine    
+const { move, status, moves, aiMove } = jsChessEngine    
 ```
 #### API description
 
-`chessMoves({boardConfiguration})`
+**moves**
 
-`chessStatus({boardConfiguration})`
+Return possible moves for playing player.
 
-`chessMove({boardConfiguration})`
+`moves({boardConfiguration})`
+
+**status**
+
+Return calculated JSON board [configuration](#board-configuration).
+
+`status({boardConfiguration})`
+
+**move**
+
+Perform a move on a chessboard and recalculates in-game situation.
+
+`move({boardConfiguration})`
+
+**aiMove**
+
+Return computed move. Use `move({boardConfiguration})` to play this move.
+
+`aiMove({boardConfiguration})`
 
 ### Board Configuration
 On-game situation is described by JSON object.
@@ -103,13 +130,19 @@ This object is used for creating a game and can be exported, if needed.
 
 ```json
 {
-    "turn": "white",
+    "turn": "black",
     "pieces": {
         "E1": "K",
         "C1": "B",
         "E8": "k"
     },
-    "moves": {},
+    "moves": {
+      "E8": ["E7", "F8", "F7", "D8", "D7"]
+    },
+    "move": {
+      "from": "E8",
+      "to": "E7"
+    },
     "isFinished": false,
     "checkMate": false,
     "castling": {
@@ -143,6 +176,16 @@ It indicates possible moves for playing player (turn).
 ```
 Means A7 can move to A6 and A5. B7 can move to B6 and B5.
 
+**move** - Tells the engine information about next move. It is recommended to call `moves()` first to retrieve possible moves.
+This field is required only for `move()` calls.
+```json
+{
+    "from": "E8",
+    "to": "E7"
+}
+```
+Player which is on `turn` is moving from E8 to E7.
+
 **pieces** - Pieces on your chessboard.<BR/>
 | Piece|White|Black|
 | :-: | :-:| :-:|
@@ -154,9 +197,10 @@ Means A7 can move to A6 and A5. B7 can move to B6 and B5.
 | King |K|k|
 
 ## TODO
-- Computer player logic
+- Smarter computer player logic (AI)
 - Forsyth–Edwards Notation (FEN) game initialization
-- "En passant" special pawn move
+- "En passant" a special pawn move
+- Situation when a pawn reaches an end of a chessboard
 
 ## In conclusion - why another chees engine?
 I am not a chess pro. My father is.
