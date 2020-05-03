@@ -19,7 +19,7 @@ game.printToConsole()
 ```
 
 ## Examples
-**js-chess-engine-app** - React application example with HTTP Rest API (without persistent storage) - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
+**js-chess-engine-app** - React application example with js-chess-engine REST API backend (without persistent storage) - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
 
 **More examples**<BR/>
 [Simple Fastify server](example/server.js) <BR/>
