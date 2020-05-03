@@ -85,7 +85,7 @@ _This feature is under construction - only level 0 works._
 **exportJson**
 
 `game.exportJson()` - Return in-game situation represented by JSON [configuration](#board-configuration).
-
+<BR/><BR/>
 ### Option 2 - Without in-memory
 Import functions you want to use. Every function need JSON configuration of your chessboard to work properly.
 Those functions return new JSON configuration of your board, so this JSON represents state of your game.
