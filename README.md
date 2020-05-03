@@ -31,7 +31,9 @@ In this documentation I am using ECMAScript Modules instead of `require`, but yo
 **Basically, you have two options how to use this engine.** <BR/>
 - [With in-memory](#option-1---with-in-memory)
 - [Without in-memory (on-the-fly)](#option-2---without-in-memory)
-<BR/><BR/>
+
+<BR/>
+
 ### Option 1 - With in-memory
 Import the Game class and create a new game.
 
@@ -84,8 +86,10 @@ _This feature is under construction - only level 0 works._
 
 **exportJson**
 
-`game.exportJson()` - Return in-game situation represented by JSON [configuration](#board-configuration).
-<BR/><BR/>
+`game.exportJson()` - Return in-game situation represented by JSON [configurtion](#board-configuration).
+
+<BR/>
+
 ### Option 2 - Without in-memory
 Import functions you want to use. Every function need JSON configuration of your chessboard to work properly.
 Those functions return new JSON configuration of your board, so this JSON represents state of your game.
@@ -121,7 +125,9 @@ Perform a move on a chessboard and recalculates in-game situation.
 Return computed move. Use `move({boardConfiguration})` to play this move.
 
 `aiMove({boardConfiguration})`
-<BR/><BR/>
+
+<BR/>
+
 ### Board Configuration
 On-game situation is described by JSON object.
 This object is used for creating a game and can be exported, if needed.
@@ -195,13 +201,17 @@ Player which is on `turn` is moving from E8 to E7.
 | Rook |R|r|
 | Queen |Q|q|
 | King |K|k|
-<BR/><BR/>
+
+<BR/>
+
 ## TODO
 - Smarter computer player logic (AI)
 - Forsyth–Edwards Notation (FEN) game initialization
 - "En passant" a special pawn move
 - Situation when a pawn reaches an end of a chessboard
-<BR/><BR/>
+
+<BR/>
+
 ## In conclusion - why another chees engine?
 I am not a chess pro. My father is.
 When I was ten, I had an Atari (with Turbo Basic), and I was hoping for new PC.
