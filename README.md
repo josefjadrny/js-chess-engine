@@ -73,12 +73,12 @@ Params
 
 **aiMove**
 
-`game.aiMove(level = 0)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
+`game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
 
 Params
  - `level` Integer (_optional_) - Computer player skill from 0 to 5, when 0 is a random move.
 
-_This feature is under construction - only level 0 works._
+_This feature is under construction - only level 0-2 works. Level 2 is very slow._
 
 **printToConsole**
 
@@ -205,10 +205,9 @@ Player which is on `turn` is moving from E8 to E7.
 <BR/>
 
 ## TODO
-- Smarter computer player logic (AI)
+- Smarter and faster computer player logic (AI)
 - Forsyth–Edwards Notation (FEN) game initialization
 - "En passant" a special pawn move
-- Situation when a pawn reaches an end of a chessboard
 
 <BR/>
 
