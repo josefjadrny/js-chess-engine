@@ -104,27 +104,19 @@ const { move, status, moves, aiMove } = jsChessEngine
 
 **moves**
 
-Return possible moves for playing player.
-
-`moves({boardConfiguration})`
+`moves({boardConfiguration})` - Return possible moves for playing player.
 
 **status**
 
-Return calculated JSON board [configuration](#board-configuration).
-
-`status({boardConfiguration})`
+`status({boardConfiguration})` - Return calculated JSON board [configuration](#board-configuration).
 
 **move**
 
-Perform a move on a chessboard and recalculates in-game situation.
-
-`move({boardConfiguration})`
+`move({boardConfiguration})` - Perform a move on a chessboard and recalculates in-game situation.
 
 **aiMove**
 
-Return computed move. Use `move({boardConfiguration})` to play this move.
-
-`aiMove({boardConfiguration})`
+`aiMove({boardConfiguration})` - Return computed move. Use `move({boardConfiguration})` to play this move.
 
 <BR/>
 
