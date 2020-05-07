@@ -22,8 +22,8 @@ game.printToConsole()
 **js-chess-engine-app** - React application example with js-chess-engine REST API backend (without persistent storage) - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
 
 **More examples**<BR/>
-[Simple Fastify server](example/server.js) <BR/>
-[Console](example/console.js) <BR/>
+[Simple Fastify server](example/server.mjs) <BR/>
+[Console](example/console.mjs) <BR/>
 
 ## Documentation
 In this documentation I am using ECMAScript Modules instead of `require`, but you can use both. Read more about [ESM](https://nodejs.org/api/esm.html).
