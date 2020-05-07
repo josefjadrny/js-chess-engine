@@ -76,7 +76,7 @@ Params
 `game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
 
 Params
- - `level` Integer (_optional_) - Computer player skill from 0 to 5, when 0 is a random move.
+ - `level` Integer (_optional_) - Computer player skill from 0 to 4, when 0 is a random move.
 
 _This feature is under construction - only level 0-2 works._
 
