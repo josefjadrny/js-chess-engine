@@ -106,18 +106,32 @@ const { move, status, moves, aiMove } = jsChessEngine
 
 `moves({boardConfiguration})` - Return possible moves for playing player.
 
+Params
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+
 **status**
 
 `status({boardConfiguration})` - Return calculated JSON board [configuration](#board-configuration).
+
+Params
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **move**
 
 `move({boardConfiguration})` - Perform a move on a chessboard and recalculates in-game situation.
 
+Params
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+
 **aiMove**
 
-`aiMove({boardConfiguration})` - Return computed move. Use `move({boardConfiguration})` to play this move.
+`aiMove({boardConfiguration}, level = 2)` - Return computed move. Use `move({boardConfiguration})` to play this move.
 
+Params
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `level` Integer (_optional_) - Computer player skill from 0 to 4, when 0 is a random move.
+
+_This feature is under construction - only level 0-2 works._
 <BR/>
 
 ### Board Configuration
