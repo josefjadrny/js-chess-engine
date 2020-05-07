@@ -4,15 +4,16 @@ It can be used on both, server or client (web browser) and do not need persisten
 This engine includes configurable AI computer logic.
 
 ## Install
-Install with npm
+**Install with npm**
 
 ```npm i js-chess-engine --save```
 
-or install with yarn
+**or install with yarn**
 
 ```yarn add js-chess-engine```
 
-Example
+**Example**
+
 ```js
 const jsChess = require('js-chess-engine')
 const game = new jsChess.Game()
