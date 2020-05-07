@@ -16,7 +16,7 @@ const server = fastify({
 for (const route in ROUTE_MAP) {
     server.post(route, (request, response) => {
         try {
-            const result = ROUTE_MAP[route](request.body)
+            const result = ROUTE_MAP[route](request.body, ...Object.values(request.query))
             response.send(result)
         } catch (error) {
             response.code(404).send(error)
