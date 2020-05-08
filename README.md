@@ -5,7 +5,7 @@
 
 Simple JavaScript chess engine without dependencies written in NodeJs.
 It can be used on both, server or client (web browser) and do not need persistent storage - handy for serverless solutions like AWS Lambda.
-This engine includes configurable AI computer logic.
+This engine also includes configurable [AI computer logic](#computer-ai).
 
 ## Install
 **Install with npm**
@@ -82,9 +82,7 @@ Params
 `game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
 
 Params
- - `level` Integer (_optional_) - Computer player skill from 0 to 4, when 0 is a "well-trained monkey" move.
-
-_This feature is under construction - only level 0-2 works._
+ - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
 
 **printToConsole**
 
@@ -135,9 +133,8 @@ Params
 
 Params
  - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
- - `level` Integer (_optional_) - Computer player skill from 0 to 4, when 0 is a "well-trained monkey" move.
+ - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
 
-_This feature is under construction - only level 0-2 works._
 <BR/>
 
 ### Board Configuration
@@ -213,6 +210,22 @@ Player which is on `turn` is moving from E8 to E7.
 | Rook |R|r|
 | Queen |Q|q|
 | King |K|k|
+
+### Computer AI
+
+This engine includes configurable AI computer logic. There are five possible levels.
+Only level 1,2,3 are now fully working. This feature is under development.
+
+|Level|Alias|Moves to the future|HW requirements|Approx. time to move (s)*|
+| :-: | :-:| :-:| :-:| :-:|
+| 0 |Well-trained monkey| 1 | None | <0.1 |
+| 1 |Beginner| 2 | Very low | 0.14 |
+| 2 |Advanced| 3 | Low | 3.23 |
+| 3 |Professional| 4 | Average | ? |
+| 4 |God| ? | High | ? |
+
+***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during one chess game on t3.nano AWS instance.
+T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please note, amount of time needed for calculations heavily depends on in-game situation (number of chess pieces still on a chessboard).
 
 <BR/>
 
