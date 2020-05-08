@@ -216,6 +216,8 @@ Player which is on `turn` is moving from E8 to E7.
 - When a pawn reaches an end of a chessboard, he is automatically convert and calculated as a Queen.
 If you like, player can pick a new chess piece in your app, and you can send an updated chessboard.
 
+<BR/>
+
 ## TODO
 - Smarter and faster computer player logic (AI)
 - Forsyth–Edwards Notation (FEN) game initialization
