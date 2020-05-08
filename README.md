@@ -216,7 +216,7 @@ Player which is on `turn` is moving from E8 to E7.
 ### Computer AI
 
 This engine includes configurable AI computer logic. There are five possible levels.
-Only level 1,2,3 are now fully working. This feature is under development.
+Only level 0-2 are now fully working. This feature is under development.
 
 |Level|Alias|Moves to the future|HW requirements|Approx. time to move (s)*|
 | :-: | :-:| :-:| :-:| :-:|
