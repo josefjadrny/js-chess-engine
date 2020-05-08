@@ -2,7 +2,7 @@
   "name": "js-chess-engine",
   "version": "0.1.23",
   "description": "Simple and fast Node.js chess engine without dependencies",
-  "keywords": "chess game",
+  "keywords": "chess game chess-engine",
   "main": "dist/js-chess-engine.js",
   "scripts": {
     "server:watch": "nodemon --experimental-modules example/server.mjs",
