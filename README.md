@@ -232,6 +232,7 @@ T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please
 <BR/>
 
 ## HINTS
+
 - When a pawn reaches an end of a chessboard, he is automatically convert and calculated as a Queen.
 If you like, player can pick a new chess piece in your app, and you can send an updated chessboard.
 - Castling can be played by a King. You can receive this special move with `moves` call.
