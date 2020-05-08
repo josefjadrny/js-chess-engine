@@ -5,8 +5,8 @@
   "keywords": "chess game chess-engine",
   "main": "dist/js-chess-engine.js",
   "scripts": {
-    "server:watch": "nodemon example/server.js",
-    "console:watch": "nodemon example/console.ms",
+    "server:watch": "nodemon --experimental-modules example/server.mjs",
+    "console:watch": "nodemon --experimental-modules example/console.mjs",
     "test": "npm run test:eslint && npm run test:unit-badge",
     "test:eslint": "eslint --ext mjs,js lib test",
     "test:unit": "mocha --experimental-modules",
