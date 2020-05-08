@@ -211,6 +211,8 @@ Player which is on `turn` is moving from E8 to E7.
 | Queen |Q|q|
 | King |K|k|
 
+<BR/>
+
 ### Computer AI
 
 This engine includes configurable AI computer logic. There are five possible levels.
