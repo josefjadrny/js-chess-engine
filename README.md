@@ -226,7 +226,7 @@ Only level 0-2 are now fully working. This feature is under development.
 | 3 |Professional| 4 | Average | ? |
 | 4 |God| ? | High | ? |
 
-***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during one chess game on t3.nano AWS instance.
+***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during a chess game on t3.nano AWS instance.
 T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please note, amount of time needed for calculations heavily depends on in-game situation (number of chess pieces still on a chessboard).
 
 <BR/>
