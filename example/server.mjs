@@ -7,10 +7,10 @@ const ROUTE_MAP = {
     '/moves': moves,
     '/status': status,
     '/move': move,
-    '/aimove': aiMove
+    '/aimove': aiMove,
 }
 const server = fastify({
-    logger: true
+    logger: true,
 }).register(cors.default)
 
 for (const route in ROUTE_MAP) {
