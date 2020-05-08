@@ -4,7 +4,7 @@ import { Game } from '../lib/js-chess-engine.mjs'
 const expect = chai.expect
 
 describe('Should properly calculate possible moves', function () {
-    it('for new game', function () {
+    it('New game when white is on move', function () {
         const game = new Game()
         const expectedMoves = {
             B1: ['A3', 'C3'],
@@ -18,6 +18,82 @@ describe('Should properly calculate possible moves', function () {
             G2: ['G3', 'G4'],
             H2: ['H3', 'H4'],
         }
+        expect(game.moves()).to.deep.equal(expectedMoves)
+    })
+
+    it('White can do a long castling', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A1: 'R',
+                E8: 'k',
+            },
+        })
+
+        const expectedMoves = {
+            E1: ['E2', 'D1', 'F1', 'F2', 'D2', 'C1'],
+            A1: ['A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'B1', 'C1', 'D1'],
+        }
+
+        expect(game.moves()).to.deep.equal(expectedMoves)
+    })
+
+    it('White can do a short castling', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                H1: 'R',
+                E8: 'k',
+            },
+        })
+
+        const expectedMoves = {
+            E1: ['E2', 'D1', 'F1', 'F2', 'D2', 'G1'],
+            H1: ['H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'G1', 'F1'],
+        }
+
+        expect(game.moves()).to.deep.equal(expectedMoves)
+    })
+
+    it('White can`t do a long castling when his King was moved', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A1: 'R',
+                E8: 'k',
+            },
+        })
+
+        const expectedMoves = {
+            E1: ['E2', 'D1', 'F1', 'F2', 'D2'],
+            A1: ['A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'B1', 'C1', 'D1'],
+        }
+        game.move('E1', 'D1')
+        game.move('E8', 'E7')
+        game.move('D1', 'E1')
+        game.move('E7', 'E6')
+
+        expect(game.moves()).to.deep.equal(expectedMoves)
+    })
+
+    it('White can`t do a short castling when his King was moved', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                H1: 'R',
+                E8: 'k',
+            },
+        })
+
+        const expectedMoves = {
+            E1: ['E2', 'D1', 'F1', 'F2', 'D2'],
+            H1: ['H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'G1', 'F1'],
+        }
+        game.move('E1', 'D1')
+        game.move('E8', 'E7')
+        game.move('D1', 'E1')
+        game.move('E7', 'E6')
+
         expect(game.moves()).to.deep.equal(expectedMoves)
     })
 })
