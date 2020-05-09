@@ -9,8 +9,8 @@
     "console:watch": "nodemon --experimental-modules example/console.mjs",
     "test": "npm run test:eslint && npm run test:unit-badge",
     "test:eslint": "eslint --ext mjs,js lib test",
-    "test:unit": "mocha --experimental-modules",
-    "test:unit-badge": "mocha --reporter mocha-badge-generator --experimental-modules && git add test/badge.svg",
+    "test:unit": "mocha --experimental-modules --timeout 5000",
+    "test:unit-badge": "mocha --reporter mocha-badge-generator --timeout 5000 --experimental-modules && git add test/badge.svg",
     "build": "webpack --config webpack.config.js",
     "preversion": "npm run test && npm run build && git add -A dist"
   },
