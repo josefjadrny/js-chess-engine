@@ -245,6 +245,7 @@ When a move is recognized as a castling - played with a king across two chess fi
 - Smarter and faster computer player logic (AI)
 - Forsyth–Edwards Notation (FEN) game initialization
 - "En passant" a special pawn move
+- Calculation and result caching
 
 <BR/>
 
