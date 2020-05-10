@@ -222,7 +222,7 @@ Only level 0-2 are now fully working. This feature is under development.
 |Level|Alias|Moves to the future|HW requirements|Approx. time to move (s)*|
 | :-: | :-:| :-:| :-:| :-:|
 | 0 |Well-trained monkey| 2 | None | <0.1 |
-| 1 |Beginner| 2 | Very low | 0.14 |
+| 1 |Beginner| 3 | Very low | 0.14 |
 | 2 |Advanced| 4 | Low | 3.23 |
 | 3 |Professional| ? | Average | ? |
 
