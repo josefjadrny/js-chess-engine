@@ -6,7 +6,7 @@
 
 Simple JavaScript chess engine without dependencies written in NodeJs.
 It can be used on both, server or client (web browser) and do not need persistent storage - handy for serverless solutions like AWS Lambda.
-This engine also includes configurable [AI computer logic](#computer-ai).
+This engine also includes configurable basic [AI computer logic](#computer-ai).
 
 ## Install
 **Install with npm**
@@ -241,10 +241,11 @@ When a move is recognized as a castling - played with a king across two chess fi
 <BR/>
 
 ## TODO
-- Smarter and faster computer player logic (AI)
-- Forsyth–Edwards Notation (FEN) game initialization
 - "En passant" a special pawn move
+- BitBoard instead of objects
+- MinMax for best move calculations
 - Calculation and result caching
+- Forsyth–Edwards Notation (FEN) game initialization
 
 <BR/>
 
