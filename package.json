@@ -1,6 +1,6 @@
 {
   "name": "js-chess-engine",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "description": "Simple and fast Node.js chess engine without dependencies",
   "keywords": "chess game chess-engine",
   "main": "dist/js-chess-engine.js",
