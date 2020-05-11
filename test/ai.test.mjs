@@ -19,4 +19,17 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
         game.printToConsole()
         expect(game.board.calculateAiMove(this.aiLevel)).to.deep.include({ from: 'E7', to: 'E5' })
     })
+
+    it('Should do checkmate', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A7: 'R',
+                B6: 'R',
+                E8: 'k',
+            },
+        })
+        game.printToConsole()
+        expect(game.board.calculateAiMove(this.aiLevel)).to.deep.include({ from: 'B6', to: 'B8' })
+    })
 })
