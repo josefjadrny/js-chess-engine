@@ -30,8 +30,8 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
             },
         })
         game.printToConsole()
-        const nextMove = game.board.calculateAiMove(this.aiLevel)
-        expect(nextMove).to.deep.include({ from: 'B6' })
+        game.aiMove(this.aiLevel)
+        expect(game.board.checkMate).to.be.equal(true)
     })
 
     it('Should do checkmate in tree moves', function () {
@@ -44,8 +44,9 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
             },
         })
         game.printToConsole()
-        const nextMove = game.board.calculateAiMove(this.aiLevel)
-        expect(game.board.calculateAiMove(this.aiLevel)).to.deep.include({ from: 'A6' })
-        expect(nextMove.to).to.be.oneOf(['B6', 'C6', 'D6', 'F6', 'G6', 'H6'])
+        game.aiMove(this.aiLevel)
+        game.aiMove(0)
+        game.aiMove(this.aiLevel)
+        expect(game.board.checkMate).to.be.equal(true)
     })
 })
