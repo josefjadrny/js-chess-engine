@@ -10,7 +10,7 @@ const expect = chai.expect
 
 describe('Should properly calculate BEST AI move for 4 future moves', function () {
     before(function () {
-        this.aiLevel = 3
+        this.aiLevel = 2
     })
 
     it.skip('Black should move with pawn E7 to E5', function () {
@@ -22,6 +22,7 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
 
     it('Should do checkmate in one move', function () {
         const game = new Game({
+            turn: 'white',
             pieces: {
                 E1: 'K',
                 A7: 'R',

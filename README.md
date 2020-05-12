@@ -216,14 +216,14 @@ Player which is on `turn` is moving from E8 to E7.
 
 ### Computer AI
 
-This engine includes configurable AI computer logic. There are four possible levels at this time.
+This engine includes configurable AI computer logic based on Minimax algorithm. There are four possible levels at this time.
 Only level 0-2 are now fully working. This feature is under development.
 
 |Level|Alias|Moves to the future|HW requirements|Approx. time to move (s)*|
 | :-: | :-:| :-:| :-:| :-:|
-| 0 |Well-trained monkey| 2 | None | <0.1 |
-| 1 |Beginner| 3 | Very low | 0.11 |
-| 2 |Advanced| 4 | Low | 2.91 |
+| 0 |Well-trained monkey| 1-2 | None | <0.1 |
+| 1 |Beginner| 2-3 | Very low | 0.11 |
+| 2 |Advanced| 3-4 | Low | 2.91 |
 | 3 |Professional| ? | Average | ? |
 
 ***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during a chess game on t3.nano AWS instance.
