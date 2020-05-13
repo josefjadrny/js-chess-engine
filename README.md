@@ -223,7 +223,7 @@ Only level 0-2 are now fully working. This feature is under development.
 | :-: | :-:| :-:| :-:| :-:|
 | 0 |Well-trained monkey| 1-2 | None | <0.1 |
 | 1 |Beginner| 2-3 | Very low | 0.11 |
-| 2 |Advanced| 3-4 | Low | 2.91 |
+| 2 |Advanced| 3-4 | Low | 3.34 |
 | 3 |Professional| ? | Average | ? |
 
 ***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during a chess game on t3.nano AWS instance.
