@@ -97,3 +97,40 @@ describe('Should properly calculate possible moves', function () {
         expect(game.moves()).to.deep.equal(expectedMoves)
     })
 })
+
+describe('Should properly calculate score', function () {
+    it('Black player score is -130', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K', // 10
+                D5: 'Q', // 9
+                H1: 'R', // 5
+                B1: 'N', // 3
+                E8: 'k', // 10
+                E7: 'p', // 1
+                E6: 'b', // 3
+            },
+        })
+        game.printToConsole()
+
+        expect(game.board.calculateScore()).to.be.equal(-130)
+    })
+    it('Whilte player score is +130', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K', // 10
+                D5: 'Q', // 9
+                H1: 'R', // 5
+                B1: 'N', // 3
+                E8: 'k', // 10
+                E7: 'p', // 1
+                E6: 'b', // 3
+            },
+        })
+        game.printToConsole()
+
+        expect(game.board.calculateScore()).to.be.equal(130)
+    })
+})
