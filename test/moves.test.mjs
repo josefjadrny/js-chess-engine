@@ -99,7 +99,7 @@ describe('Should properly calculate possible moves', function () {
 })
 
 describe('Should properly calculate score', function () {
-    it('Black player score is +129', function () {
+    it('Black player score is -128', function () {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -108,15 +108,15 @@ describe('Should properly calculate score', function () {
                 H1: 'R', // 5
                 B1: 'N', // 3
                 E8: 'k', // 10
-                E7: 'p', // 1
+                E5: 'p', // 1
                 D5: 'b', // 3
             },
         })
         game.printToConsole()
 
-        expect(game.board.calculateScore()).to.be.equal(-129)
+        expect(game.board.calculateScore()).to.be.equal(-128)
     })
-    it('Whilte player score is +129', function () {
+    it('White player score is +129', function () {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -125,7 +125,7 @@ describe('Should properly calculate score', function () {
                 H1: 'R', // 5
                 B1: 'N', // 3
                 E8: 'k', // 10
-                E7: 'p', // 1
+                E5: 'p', // 1
                 D5: 'b', // 3
             },
         })
