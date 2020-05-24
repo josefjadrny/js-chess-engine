@@ -177,7 +177,11 @@ This object is used for creating a game and can be exported, if needed.
         "whiteShort": true,
         "blackLong": true,
         "blackShort": true    
-    } 
+    },
+    "counters": {
+        "halfMove": 0,
+        "fullMove": 1
+    }  
 }
 ```
 
@@ -192,6 +196,10 @@ This object is used for creating a game and can be exported, if needed.
  - `whiteShort` - White king moves from E1 to G1.
  - `blackLong` - Black king moves from E8 to C8.
  - `blackShort` - Black king moves from E8 to C8.
+
+**counters** - It is recommended to pass this values also if you need to properly handle FEN exports/imports.
+ - `halfMove` - This is the number of halfmoves since the last capture or pawn advance. This is used to determine if a draw can be claimed under the fifty-move rule. Default `0`.
+ - `fullMove` - The number of the full move. It starts at 1, and is incremented after Black's move. Default `1`.
  
 **moves** - Is added to server response when `moves()` or `move()` was called.
 It indicates possible moves for playing player (turn).
@@ -248,6 +256,7 @@ T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please
 If you like, player can pick a new chess piece in your app, and you can send an updated chessboard.
 - Castling can be played by a King. You can receive this special move with `moves` call.
 When a move is recognized as a castling - played with a king across two chess fields, rook moves automatically with a king.
+- Halfmoves are calculated on the server, but the [fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule) is not handled by a server. You can handle this situation in your app if you need to.
 
 <BR/>
 
