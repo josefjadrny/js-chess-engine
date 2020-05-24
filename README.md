@@ -91,7 +91,7 @@ Params
 
 **exportJson**
 
-`game.exportJson()` - Return in-game situation represented by JSON [configurtion](#board-configuration).
+`game.exportJson()` - Return in-game situation represented by JSON [configuration](#board-configuration).
 
 **exportFEN**
 
