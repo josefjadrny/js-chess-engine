@@ -93,6 +93,10 @@ Params
 
 `game.exportJson()` - Return in-game situation represented by JSON [configurtion](#board-configuration).
 
+**exportFEN**
+
+`game.exportFEN()` - Return in-game situation represented by [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation).
+
 <BR/>
 
 ### Option 2 - Without in-memory
@@ -103,7 +107,7 @@ This approach needs little more computing time on server to create and calculate
 
 ```js
 import jsChessEngine from 'js-chess-engine'
-const { move, status, moves, aiMove } = jsChessEngine    
+const { move, status, moves, aiMove, getFen } = jsChessEngine    
 ```
 #### API description
 
@@ -117,6 +121,13 @@ Params
 **status**
 
 `status({boardConfiguration})` - Return calculated JSON board [configuration](#board-configuration).
+
+Params
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+
+**getFEN**
+
+`getFEN({boardConfiguration})` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) representation of your chessboard.
 
 Params
  - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
@@ -202,7 +213,7 @@ This field is required only for `move()` calls.
 ```
 Player which is on `turn` is moving from E8 to E7.
 
-**pieces** - Pieces on your chessboard.<BR/>
+**pieces** - Pieces on your chessboard. Syntax is same as FEN notation.<BR/>
 | Piece|White|Black|
 | :-: | :-:| :-:|
 | Pawn |P|p|
