@@ -12,13 +12,15 @@
     "test:unit": "mocha --experimental-modules --timeout 10000",
     "test:unit-badge": "mocha --reporter mocha-badge-generator --timeout 10000 --experimental-modules && git add test/badge.svg",
     "build": "webpack --config webpack.config.js",
-    "preversion": "npm run test && npm run build && git add -A dist"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
+    "preversion": "npm run test && npm run build && git add -A dist && npm run changelog"
   },
   "author": "bc.josefjadrny@gmail.com",
   "repository": "github:josefjadrny/js-chess-engine",
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.2.0",
+    "conventional-changelog-cli": "^2.0.34",
     "es6-template-strings": "^2.0.1",
     "eslint": "^7.0.0",
     "eslint-config-standard": "^14.1.1",
