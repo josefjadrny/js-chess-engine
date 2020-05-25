@@ -268,6 +268,11 @@ When a move is recognized as a castling - played with a king across two chess fi
 
 <BR/>
 
+## CHANGELOG
+Changelog can be found [HERE](CHANGELOG.md) .
+
+<BR/>
+
 ## In conclusion - why another chees engine?
 I am not a chess pro. My father is.
 When I was ten, I had an Atari (with Turbo Basic), and I was hoping for new PC.
