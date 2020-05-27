@@ -1,3 +1,13 @@
+## [0.2.7](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.6...v0.2.7) (2020-05-27)
+
+
+### Features
+
+* Add En passant move to FEN export ([0d67c5f](https://github.com/josefjadrny/js-chess-engine/commit/0d67c5f25f0d52f473d7425ff7ba3a43eaa57e5a))
+* Add En passant move to JSON import/export. ([0f7a5cd](https://github.com/josefjadrny/js-chess-engine/commit/0f7a5cde548833004d40e5e02dd656b5a72d7997))
+
+
+
 ## [0.2.6](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.5...v0.2.6) (2020-05-24)
 
 
