@@ -178,6 +178,7 @@ This object is used for creating a game and can be exported, if needed.
         "blackLong": true,
         "blackShort": true    
     },
+    "enPassant": "E6",
     "counters": {
         "halfMove": 0,
         "fullMove": 1
@@ -192,10 +193,13 @@ This object is used for creating a game and can be exported, if needed.
 **checkMate** - `true` when playing player has checkmate. Default `false`.
 
 **castling** - Indicators if castling is still possible. `true` means yes. Default `true`.
- - `whiteLong` - White king moves from E1 to C1.
- - `whiteShort` - White king moves from E1 to G1.
- - `blackLong` - Black king moves from E8 to C8.
- - `blackShort` - Black king moves from E8 to C8.
+ - `whiteLong` (_queenside_) - White king moves from E1 to C1.
+ - `whiteShort`(_kingside_) - White king moves from E1 to G1.
+ - `blackLong` (_queenside_) - Black king moves from E8 to C8.
+ - `blackShort` (_kingside_) - Black king moves from E8 to C8.
+ 
+**enPassant** - If a pawn has just made a two-square move, this is the position "behind" the pawn.
+This is an indicator for [enPassant](https://en.wikipedia.org/wiki/En_passant) special pawn move. Default `null`.
 
 **counters** - It is recommended to pass this values also if you need to properly handle FEN exports/imports.
  - `halfMove` - This is the number of halfmoves since the last capture or pawn advance. This is used to determine if a draw can be claimed under the fifty-move rule. Default `0`.
