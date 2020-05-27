@@ -10,13 +10,13 @@ describe('Should properly export FEN', function () {
         expect(game.exportFEN()).to.be.deep.equal(expectedFen)
     })
     it('For new board after E2 to E4', function () {
-        const expectedFen = 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1'
+        const expectedFen = 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1'
         const game = new Game()
         game.move('E2', 'E4')
         expect(game.exportFEN()).to.be.deep.equal(expectedFen)
     })
     it('For new board after E2 to E4 and C7 to C5', function () {
-        const expectedFen = 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2'
+        const expectedFen = 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2'
         const game = new Game()
         game.move('E2', 'E4')
         game.move('C7', 'C5')
