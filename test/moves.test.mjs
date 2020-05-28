@@ -96,6 +96,45 @@ describe('Should properly calculate possible moves', function () {
 
         expect(game.moves()).to.deep.equal(expectedMoves)
     })
+
+    it('White can do a en Passant', function () {
+        const expecetedMoves = ['C6', 'B6']
+
+        const game = new Game()
+        game.move('C2', 'C4')
+        game.move('A7', 'A5')
+        game.move('C4', 'C5')
+        game.move('B7', 'B5')
+
+        expect(game.moves('C5')).to.deep.equal(expecetedMoves)
+    })
+
+    it('White cannot do a en Passant later', function () {
+        const expecetedMoves = ['C6']
+
+        const game = new Game()
+        game.move('C2', 'C4')
+        game.move('A7', 'A5')
+        game.move('C4', 'C5')
+        game.move('B7', 'B5')
+        game.move('A2', 'A4')
+        game.move('H7', 'H6')
+
+        expect(game.moves('C5')).to.deep.equal(expecetedMoves)
+    })
+
+    it('Black can do a en Passant', function () {
+        const expecetedMoves = ['A3', 'B3']
+
+        const game = new Game()
+        game.move('C2', 'C3')
+        game.move('A7', 'A5')
+        game.move('C3', 'C4')
+        game.move('A5', 'A4')
+        game.move('B2', 'B4')
+
+        expect(game.moves('A4')).to.deep.equal(expecetedMoves)
+    })
 })
 
 describe('Should properly calculate score', function () {
