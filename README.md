@@ -265,7 +265,6 @@ When a move is recognized as a castling - played with a king across two chess fi
 <BR/>
 
 ## TODO
-- "En passant" a special pawn move
 - BitBoard instead of objects
 - Calculation and result caching
 - Forsyth–Edwards Notation (FEN) game initialization

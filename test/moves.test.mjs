@@ -107,6 +107,10 @@ describe('Should properly calculate possible moves', function () {
         game.move('B7', 'B5')
 
         expect(game.moves('C5')).to.deep.equal(expecetedMoves)
+
+        game.move('C5', 'B6')
+
+        expect(game.board.getChessman('B5')).to.be.a('null')
     })
 
     it('White cannot do a en Passant later', function () {
@@ -134,6 +138,10 @@ describe('Should properly calculate possible moves', function () {
         game.move('B2', 'B4')
 
         expect(game.moves('A4')).to.deep.equal(expecetedMoves)
+
+        game.move('A4', 'B3')
+
+        expect(game.board.getChessman('B4')).to.be.a('null')
     })
 })
 
