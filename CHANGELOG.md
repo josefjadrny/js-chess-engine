@@ -1,3 +1,13 @@
+## [0.2.8](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.7...v0.2.8) (2020-05-28)
+
+
+### Features
+
+* En passant a special pawn move rules added to pawn moves calculations ([b3516c2](https://github.com/josefjadrny/js-chess-engine/commit/b3516c2666a1e28a026511e6ef072987d98d3c43))
+* En passant can be played now ([297c54b](https://github.com/josefjadrny/js-chess-engine/commit/297c54ba641045c94f73890d512fc7e7b64198ec))
+
+
+
 ## [0.2.7](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.6...v0.2.7) (2020-05-27)
 
 
