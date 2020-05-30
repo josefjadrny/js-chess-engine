@@ -10,7 +10,12 @@ const expect = chai.expect
 
 describe('Should properly calculate BEST AI move for 4 future moves', function () {
     before(function () {
-        this.aiLevel = 2
+        this.aiLevel = 3
+        console.time('UI test calculated in')
+    })
+
+    after(function () {
+        console.timeEnd('UI test calculated in')
     })
 
     it.skip('Black should move with pawn E7 to E5', function () {
