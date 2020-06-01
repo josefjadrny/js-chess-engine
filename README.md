@@ -113,38 +113,38 @@ const { move, status, moves, aiMove, getFen } = jsChessEngine
 
 **moves**
 
-`moves(boardConfiguration)` - Return possible moves for playing player.
+`moves({boardConfiguration})` - Return possible moves for playing player.
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **status**
 
-`status(boardConfiguration)` - Return calculated JSON board [configuration](#board-configuration).
+`status(boardConfiguration)` - Return calculated JSON board [configuration](#board-configuration). You can use this function to convert your FEN.
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Object should be a chess board [configuration](#board-configuration). You can also use valid FEN string. Default value is a configuration for new game.
 
 **getFEN**
 
-`getFEN(boardConfiguration)` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) representation of your chessboard.
+`getFEN({boardConfiguration})` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) representation of your chessboard.
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **move**
 
-`move(boardConfiguration)` - Perform a move on a chessboard and recalculates in-game situation.
+`move({boardConfiguration})` - Perform a move on a chessboard and recalculates in-game situation.
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **aiMove**
 
-`aiMove(boardConfiguration, level = 2)` - Return computed move. Use `move({boardConfiguration})` to play this move.
+`aiMove({boardConfiguration}, level = 2)` - Return computed move. Use `move({boardConfiguration})` to play this move.
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
  - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
 
 <BR/>
@@ -153,7 +153,7 @@ Params
 On-game situation is described by JSON object.
 This object is used for creating a game and can be exported, if needed.
 
-*Note: Forsyth–Edwards Notation ([FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)) can be also used instead of JSON.*
+*Note: Forsyth–Edwards Notation ([FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)) is also supported.*
 
 ```json
 {
