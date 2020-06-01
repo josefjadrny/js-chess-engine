@@ -58,10 +58,10 @@ You can still export your game to JSON and you can use this JSON to continue you
 
 **constructor**
 
-`new Game({boardConfiguration} = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
+`new Game(boardConfiguration = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Object should be a chess board [configuration](#board-configuration). You can also use valid FEN string. Default value is a configuration for new game.
 
 **move**
 
@@ -113,38 +113,38 @@ const { move, status, moves, aiMove, getFen } = jsChessEngine
 
 **moves**
 
-`moves({boardConfiguration})` - Return possible moves for playing player.
+`moves(boardConfiguration)` - Return possible moves for playing player.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
 
 **status**
 
-`status({boardConfiguration})` - Return calculated JSON board [configuration](#board-configuration).
+`status(boardConfiguration)` - Return calculated JSON board [configuration](#board-configuration).
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
 
 **getFEN**
 
-`getFEN({boardConfiguration})` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) representation of your chessboard.
+`getFEN(boardConfiguration)` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) representation of your chessboard.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
 
 **move**
 
-`move({boardConfiguration})` - Perform a move on a chessboard and recalculates in-game situation.
+`move(boardConfiguration)` - Perform a move on a chessboard and recalculates in-game situation.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
 
 **aiMove**
 
-`aiMove({boardConfiguration}, level = 2)` - Return computed move. Use `move({boardConfiguration})` to play this move.
+`aiMove(boardConfiguration, level = 2)` - Return computed move. Use `move({boardConfiguration})` to play this move.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration) or a FEN string. Default value is a configuration for new game.
  - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
 
 <BR/>
@@ -153,7 +153,7 @@ Params
 On-game situation is described by JSON object.
 This object is used for creating a game and can be exported, if needed.
 
-*Forsyth–Edwards Notation (FEN) coming soon.*
+*Note: Forsyth–Edwards Notation ([FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)) can be also used instead of JSON.*
 
 ```json
 {
@@ -267,7 +267,7 @@ When a move is recognized as a castling - played with a king across two chess fi
 ## TODO
 - BitBoard instead of objects
 - Calculation and result caching
-- Forsyth–Edwards Notation (FEN) game initialization
+- Forsyth–Edwards Notation (FEN) validation
 
 <BR/>
 
