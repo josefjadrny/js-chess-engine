@@ -52,7 +52,7 @@ const game = new jsChessEngine.Game()
 
 You can control your game with game object.
 In this mode, many things on the chessboard are cached (in-memory), so it is faster.
-You can still export your game to JSON and you can use this JSON to continue your game later.
+You can still export your game to JSON or FEN and you can use this JSON or FEN to continue your game later.
 
 #### API description
 
