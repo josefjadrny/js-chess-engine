@@ -1,3 +1,12 @@
+## [0.2.9](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.8...v0.2.9) (2020-06-01)
+
+
+### Features
+
+* New game could be initialized from FEN ([2b02d34](https://github.com/josefjadrny/js-chess-engine/commit/2b02d34f460478767b6ce85eead39fd4aed4e6cc))
+
+
+
 ## [0.2.8](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.7...v0.2.8) (2020-05-28)
 
 
