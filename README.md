@@ -61,7 +61,7 @@ You can still export your game to JSON or FEN and you can use this JSON or FEN t
 `new Game(boardConfiguration = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Object should be a chess board [configuration](#board-configuration). You can also use valid FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **move**
 
@@ -100,10 +100,8 @@ Params
 <BR/>
 
 ### Option 2 - Without in-memory
-Import functions you want to use. Every function need JSON configuration of your chessboard to work properly.
-Those functions return new JSON configuration of your board, so this JSON represents state of your game.
-Your application should use returned state to generate an updated chessboard.
-This approach needs little more computing time on server to create and calculate everything from scratch on every call.
+Import functions you want to use. Every function needs configuration of your chessboard to work properly.
+This approach needs little more computing time on the server to create and calculate everything from scratch on every call.
 
 ```js
 import jsChessEngine from 'js-chess-engine'
@@ -113,47 +111,51 @@ const { move, status, moves, aiMove, getFen } = jsChessEngine
 
 **moves**
 
-`moves({boardConfiguration})` - Return possible moves for playing player.
+`moves(boardConfiguration)` - Returns an Object with possible moves for playing player `{"B1":["A3","C3"],"G1":["F3","H3"]}`.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_mandatory_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **status**
 
-`status(boardConfiguration)` - Return calculated JSON board [configuration](#board-configuration). You can use this function to convert your FEN.
+`status(boardConfiguration)` - Return calculated JSON board [configuration](#board-configuration). You can use this function to convert your FEN to JSON.
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Object should be a chess board [configuration](#board-configuration). You can also use valid FEN string. Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_mandatory_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **getFEN**
 
-`getFEN({boardConfiguration})` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) representation of your chessboard.
+`getFEN(boardConfiguration)` - Return [FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) string, representation of your chessboard.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_mandatory_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **move**
 
-`move({boardConfiguration})` - Perform a move on a chessboard and recalculates in-game situation.
+`move(boardConfiguration, from, to)` - Perform a move on a chessboard and recalculates in-game situation. New configuration of your chessboard is returned.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `boardConfiguration` Object or String (_mandatory_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `from` String (_mandatory_) - Location on a chessboard where move starts (like A1,B3,...)
+ - `to` String (_mandatory_) - Location on a chessboard where move ends (like A1,B3,...)
 
 **aiMove**
 
-`aiMove({boardConfiguration}, level = 2)` - Return computed move. Use `move({boardConfiguration})` to play this move.
+`aiMove(boardConfiguration, level = 2)` - Return computed move as an object like `{"H7":"H5"}`. Use `move(yourBoardConfiguration, from, to)` to play this move.
 
 Params
- - `boardConfiguration` Object (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
- - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
+ - `boardConfiguration` Object or String (_mandatory_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `level` Integer (_optional_) - Computer player skill from 0 to 3. Read more about [computer AI](#computer-ai). Default 2.
 
 <BR/>
 
 ### Board Configuration
-On-game situation is described by JSON object.
-This object is used for creating a game and can be exported, if needed.
+Board configuration could be described by JSON Object or FEN.
 
-*Note: Forsyth–Edwards Notation ([FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)) is also supported.*
+#### JSON
+This could be handy for modern application, where is a state represented by an Object (like in React, Redux,...).
+You can easily merge returned state with your app state and get a new updated chessboard.
+
 
 ```json
 {
@@ -165,10 +167,6 @@ This object is used for creating a game and can be exported, if needed.
     },
     "moves": {
       "E8": ["E7", "F8", "F7", "D8", "D7"]
-    },
-    "move": {
-      "from": "E8",
-      "to": "E7"
     },
     "isFinished": false,
     "checkMate": false,
@@ -215,16 +213,6 @@ It indicates possible moves for playing player (turn).
 ```
 Means A7 can move to A6 and A5. B7 can move to B6 and B5.
 
-**move** - Instructions for a next move. It is recommended to call `moves()` first to retrieve possible moves.
-This field is required only for `move()` calls.
-```json
-{
-    "from": "E8",
-    "to": "E7"
-}
-```
-Player which is on `turn` is moving from E8 to E7.
-
 **pieces** - Pieces on your chessboard. Syntax is same as FEN notation.<BR/>
 | Piece|White|Black|
 | :-: | :-:| :-:|
@@ -234,6 +222,18 @@ Player which is on `turn` is moving from E8 to E7.
 | Rook |R|r|
 | Queen |Q|q|
 | King |K|k|
+
+
+#### FEN
+You can also use the Forsyth–Edwards Notation ([FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)).
+
+```js
+import jsChessEngine from 'js-chess-engine'
+const { move } = jsChessEngine    
+const newFen = move('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', 'H7', 'H5')
+console.log(newFen)
+// rnbqkbnr/ppppppp1/8/7p/4P3/8/PPPP1PPP/RNBQKBNR w KQkq h6 0 2
+```
 
 <BR/>
 
