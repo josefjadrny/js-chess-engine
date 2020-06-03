@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.9...v0.3.0) (2020-06-03)
+
+
+### Features
+
+* FEN can be now used everywhere instead of JSON. move(config) call has been changed to move(config, from, to). ([c306492](https://github.com/josefjadrny/js-chess-engine/commit/c306492ef62050f026197c231fd0f090c16bbe90))
+
+
+
 ## [0.2.9](https://github.com/josefjadrny/js-chess-engine/compare/v0.2.8...v0.2.9) (2020-06-01)
 
 
