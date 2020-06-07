@@ -1,7 +1,7 @@
-import jsChessEngine from '../dist/js-chess-engine.js'
+import { Game } from '../lib/js-chess-engine.mjs'
 import readline from 'readline'
 
-const game = new jsChessEngine.Game()
+const game = new Game()
 play()
 
 function play () {
