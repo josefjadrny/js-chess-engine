@@ -1,7 +1,6 @@
 import fastify from 'fastify'
 import * as cors from 'fastify-cors'
-import jsChessEngine from '../dist/js-chess-engine.js'
-const { move, status, moves, aiMove } = jsChessEngine
+import { move, status, moves, aiMove } from '../lib/js-chess-engine.mjs'
 
 const ROUTE_MAP = {
     '/moves': moves,
@@ -17,6 +16,7 @@ for (const route in ROUTE_MAP) {
     server.post(route, (request, response) => {
         try {
             const result = ROUTE_MAP[route](request.body, ...Object.values(request.query))
+            console.log(result)
             response.send(result)
         } catch (error) {
             response.code(404).send(error)
