@@ -177,10 +177,8 @@ You can easily merge returned state with your app state and get a new updated ch
         "blackShort": true    
     },
     "enPassant": "E6",
-    "counters": {
-        "halfMove": 0,
-        "fullMove": 1
-    }  
+    "halfMove": 0,
+    "fullMove": 1
 }
 ```
 
@@ -199,9 +197,9 @@ You can easily merge returned state with your app state and get a new updated ch
 **enPassant** - If a pawn has just made a two-square move, this is the position "behind" the pawn.
 This is an indicator for [enPassant](https://en.wikipedia.org/wiki/En_passant) special pawn move. Default `null`.
 
-**counters** - It is recommended to pass this values also if you need to properly handle FEN exports/imports.
- - `halfMove` - This is the number of halfmoves since the last capture or pawn advance. This is used to determine if a draw can be claimed under the fifty-move rule. Default `0`.
- - `fullMove` - The number of the full move. It starts at 1, and is incremented after Black's move. Default `1`.
+**halfMove** - This is the number of halfmoves since the last capture or pawn advance. This is used to determine if a draw can be claimed under the fifty-move rule. Default `0`.
+
+**fullMove** - The number of the full move. It starts at 1, and is incremented after Black's move. Default `1`.
  
 **moves** - Is added to server response when `moves()` or `move()` was called.
 It indicates possible moves for playing player (turn).

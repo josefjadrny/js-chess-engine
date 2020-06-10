@@ -4,6 +4,19 @@ import { Game } from '../lib/js-chess-engine.mjs'
 const expect = chai.expect
 
 describe('Should properly calculate possible moves', function () {
+    it('For rook', function () {
+        const game = new Game({
+            pieces: {
+                B8: 'R',
+                E8: 'k',
+            },
+        })
+        const expectedMoves = {
+            B8: ['B7', 'B6', 'B5', 'B4', 'B3', 'B2', 'B1', 'C8', 'D8', 'E8', 'A8'],
+        }
+        expect(game.moves()).to.deep.equal(expectedMoves)
+    })
+
     it('New game when white is on move', function () {
         const game = new Game()
         const expectedMoves = {
