@@ -1,3 +1,12 @@
+## [0.4.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.3.0...v0.4.1) (2020-06-11)
+
+
+### Features
+
+* Engine has been refactored and optimized ([#1](https://github.com/josefjadrny/js-chess-engine/issues/1)) ([2a2c3c1](https://github.com/josefjadrny/js-chess-engine/commit/2a2c3c15110a40ecce1d81df15bb432061d20fb6))
+
+
+
 # [0.4.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.3.0...v0.4.0) (2020-06-11)
 
 
