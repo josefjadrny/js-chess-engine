@@ -21,7 +21,6 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
     it.skip('Black should move with pawn E7 to E5', function () {
         const boardConfiguration = JSON.parse(fs.readFileSync(path.resolve(__dirname, './boards/pawn_e7e5.json')))
         const game = new Game(boardConfiguration)
-        game.printToConsole()
         expect(game.board.calculateAiMove(this.aiLevel)).to.deep.include({ from: 'E7', to: 'E5' })
     })
 
@@ -37,7 +36,7 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
         })
         game.printToConsole()
         game.aiMove(this.aiLevel)
-        expect(game.board.checkMate).to.be.equal(true)
+        expect(game.exportJson().checkMate).to.be.equal(true)
     })
 
     it('Should do checkmate in tree moves', function () {
@@ -53,6 +52,6 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
         game.aiMove(this.aiLevel)
         game.aiMove(0)
         game.aiMove(this.aiLevel)
-        expect(game.board.checkMate).to.be.equal(true)
+        expect(game.exportJson().checkMate).to.be.equal(true)
     })
 })

@@ -32,6 +32,6 @@ function play () {
 function getInput () {
     return readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
     })
 }
