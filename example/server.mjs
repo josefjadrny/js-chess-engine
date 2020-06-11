@@ -1,6 +1,7 @@
 import fastify from 'fastify'
 import * as cors from 'fastify-cors'
-import { move, status, moves, aiMove } from '../lib/js-chess-engine.mjs'
+import jsChessEngine from '../dist/js-chess-engine.js'
+const { move, status, moves, aiMove } = jsChessEngine
 
 const ROUTE_MAP = {
     '/moves': moves,
