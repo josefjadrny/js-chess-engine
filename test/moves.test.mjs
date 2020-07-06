@@ -195,3 +195,163 @@ describe('Should properly calculate score', function () {
         expect(game.board.calculateScore()).to.be.equal(130)
     })
 })
+
+describe('Should properly calculate check', function () {
+    it('when Rook is attacking from left', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                C8: 'R',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Rook is attacking from right', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                H8: 'R',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Queen is attacking from bottom', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                E4: 'Q',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Bishop is attacking from left down', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                C6: 'B',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Queen is attacking from right down', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                G6: 'Q',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Bishop is blocked by pawn', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                C6: 'B',
+                D7: 'p',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.false
+    })
+    it('when Pawn is attacking from left', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                D7: 'P',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Pawn is attacking from right', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K',
+                F2: 'p',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Knight is attacking from left', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K',
+                C2: 'n',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Knight is attacking from left up', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K',
+                D3: 'n',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Knight is attacking from right up', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K',
+                F3: 'n',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+    it('when Knight is attacking from right', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K',
+                G2: 'n',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing()).to.be.true
+    })
+})
