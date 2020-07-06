@@ -1,3 +1,12 @@
+## [0.4.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.1...v0.4.2) (2020-07-06)
+
+
+### Features
+
+* Check is now calculated from King moves with is faster ([3fe35af](https://github.com/josefjadrny/js-chess-engine/commit/3fe35af00831e2456601bb17170882c78a18eeae))
+
+
+
 ## [0.4.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.3.0...v0.4.1) (2020-06-11)
 
 
