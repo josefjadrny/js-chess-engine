@@ -194,6 +194,11 @@ describe('Should properly calculate score', function () {
 
         expect(game.board.calculateScore()).to.be.equal(130)
     })
+    it('Only piece values for new game', function () {
+        const game = new Game()
+
+        expect(game.board.getIngamePiecesValue()).to.be.equal(98)
+    })
 })
 
 describe('Should properly calculate check', function () {

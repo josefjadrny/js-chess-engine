@@ -55,3 +55,57 @@ describe('Should properly calculate BEST AI move for 4 future moves', function (
         expect(game.exportJson().checkMate).to.be.equal(true)
     })
 })
+
+describe('Should properly calculate and increase maximum AI depth', function () {
+    it('For new game', function () {
+        const game = new Game()
+        expect(game.board.getAIMaxDepth(1)).to.be.equal(1)
+    })
+    it('For game with few but valuable pieces', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A7: 'Q',
+                A6: 'q',
+                E8: 'k',
+            },
+        })
+        expect(game.board.getAIMaxDepth(1)).to.be.equal(1)
+    })
+    it('For game with few pieces', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A7: 'Q',
+                A6: 'r',
+                E8: 'k',
+            },
+        })
+        expect(game.board.getAIMaxDepth(1)).to.be.equal(2)
+    })
+    it('For game with many but useless valuable pieces', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A2: 'P',
+                B2: 'P',
+                C2: 'P',
+                D2: 'P',
+                E2: 'P',
+                F2: 'P',
+                G2: 'P',
+                H2: 'P',
+                E8: 'k',
+                A7: 'p',
+                B7: 'p',
+                C7: 'p',
+                D7: 'p',
+                E7: 'p',
+                F7: 'p',
+                G7: 'p',
+                H7: 'p',
+            },
+        })
+        expect(game.board.getAIMaxDepth(1)).to.be.equal(2)
+    })
+})
