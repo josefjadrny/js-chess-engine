@@ -1,3 +1,12 @@
+## [0.4.3](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.2...v0.4.3) (2020-07-06)
+
+
+### Features
+
+* AI level is increased with only few pieces left to prevent useless moves ([50e2eb3](https://github.com/josefjadrny/js-chess-engine/commit/50e2eb326f7b2c37386444553f2421b237516bf6))
+
+
+
 ## [0.4.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.1...v0.4.2) (2020-07-06)
 
 
