@@ -1,3 +1,12 @@
+## [0.4.5](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.4...v0.4.5) (2020-07-08)
+
+
+### Features
+
+* AI calculation stopped when max Value is reached ([4f0b070](https://github.com/josefjadrny/js-chess-engine/commit/4f0b070db61760bc1c5c3d3721c49b8eedfa09b3))
+
+
+
 ## [0.4.4](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.3...v0.4.4) (2020-07-08)
 
 
