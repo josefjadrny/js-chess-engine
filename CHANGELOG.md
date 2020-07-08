@@ -1,3 +1,12 @@
+## [0.4.4](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.3...v0.4.4) (2020-07-08)
+
+
+### Bug Fixes
+
+* Castling is not possible in check ([7d985aa](https://github.com/josefjadrny/js-chess-engine/commit/7d985aa92af1f4d0ab82ae8d96d0f07f143948e6))
+
+
+
 ## [0.4.3](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.2...v0.4.3) (2020-07-06)
 
 
