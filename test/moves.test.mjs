@@ -110,6 +110,21 @@ describe('Should properly calculate possible moves', function () {
         expect(game.moves()).to.deep.equal(expectedMoves)
     })
 
+    it('White can`t do castling when is in check', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                E2: 'P',
+                H1: 'R',
+                H4: 'b',
+                E8: 'k',
+            },
+        })
+
+        const expectedMoves = ['F1', 'D1', 'D2']
+        expect(game.moves('E1')).to.deep.equal(expectedMoves)
+    })
+
     it('White can do a en Passant', function () {
         const expecetedMoves = ['C6', 'B6']
 
