@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 
 const expect = chai.expect
 
-describe('Should properly calculate BEST AI move for 4 future moves', function () {
+describe('Should properly calculate BEST AI move', function () {
     before(function () {
         this.aiLevel = 3
         console.time('UI test calculated in')
