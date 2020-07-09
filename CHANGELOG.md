@@ -1,3 +1,12 @@
+## [0.4.7](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.6...v0.4.7) (2020-07-09)
+
+
+### Features
+
+* AI move calculation speed up (~10%) ([ace2820](https://github.com/josefjadrny/js-chess-engine/commit/ace2820a36d71c137d4e7be628fcb38dd4f062f4))
+
+
+
 ## [0.4.6](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.5...v0.4.6) (2020-07-09)
 
 
