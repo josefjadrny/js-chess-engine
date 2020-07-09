@@ -180,16 +180,16 @@ describe('Should properly calculate score', function () {
             pieces: {
                 // There is a piece value multiplier = 10
                 E1: 'K', // 10
-                C6: 'Q', // 9
+                C6: 'R', // 9
                 H1: 'R', // 5
                 B1: 'N', // 3
                 E8: 'k', // 10
-                E5: 'p', // 1 (+ 1 bonus because pawn has moved)
+                E5: 'p', // 1
                 D5: 'b', // 3
             },
         })
 
-        expect(game.board.calculateScore()).to.be.equal(-129)
+        expect(game.board.calculateScore()).to.be.equal(-90)
     })
     it('White player score is +129', function () {
         const game = new Game({
