@@ -1,3 +1,12 @@
+## [0.4.6](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.5...v0.4.6) (2020-07-09)
+
+
+### Features
+
+* AI logic improved - score increased for moves with pawn and castling, score decreased for useless king moves ([935f21f](https://github.com/josefjadrny/js-chess-engine/commit/935f21f473c5efaaddd01fdaa25b5d1795b5132f))
+
+
+
 ## [0.4.5](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.4...v0.4.5) (2020-07-08)
 
 
