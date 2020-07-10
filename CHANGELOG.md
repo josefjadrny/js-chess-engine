@@ -1,3 +1,12 @@
+## [0.4.8](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.7...v0.4.8) (2020-07-10)
+
+
+### Features
+
+* AI speed increased (~5-10), score is now passed from previous move ([10bdf28](https://github.com/josefjadrny/js-chess-engine/commit/10bdf28a94f8aff523351736cb5e9f5a2d07d96f))
+
+
+
 ## [0.4.7](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.6...v0.4.7) (2020-07-09)
 
 
