@@ -54,6 +54,36 @@ describe('Should properly calculate BEST AI move', function () {
         game.aiMove(this.aiLevel)
         expect(game.exportJson().checkMate).to.be.equal(true)
     })
+
+    it.skip('Should move with knight', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                D3: 'R',
+                A3: 'B',
+                H1: 'B',
+                C7: 'N',
+                G1: 'N',
+                A2: 'P',
+                B4: 'P',
+                D2: 'P',
+                F2: 'P',
+                F3: 'P',
+                H2: 'P',
+                F7: 'k',
+                H8: 'r',
+                F8: 'b',
+                G8: 'n',
+                B8: 'n',
+                A7: 'p',
+                G4: 'p',
+                H6: 'p',
+            },
+            turn: 'black',
+        })
+        game.printToConsole()
+        expect(game.board.calculateAiMove(3)).to.include({ from: 'G8', to: 'F6' })
+    })
 })
 
 describe('Should properly calculate and increase maximum AI depth', function () {
