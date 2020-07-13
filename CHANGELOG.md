@@ -1,3 +1,13 @@
+# [0.5.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.8...v0.5.0) (2020-07-13)
+
+
+### Features
+
+* Add piece location scores to improve AI logic ([7d7db38](https://github.com/josefjadrny/js-chess-engine/commit/7d7db3884ef334d3d731f3f0a07ce66f85463811))
+* AI levels updated. Depth is now calculated from situation on the chessboard. ([9d32b7c](https://github.com/josefjadrny/js-chess-engine/commit/9d32b7ce341743b36d428e5f4803ca6763d76eb2))
+
+
+
 ## [0.4.8](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.7...v0.4.8) (2020-07-10)
 
 
