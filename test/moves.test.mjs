@@ -216,6 +216,23 @@ describe('Should properly calculate score', function () {
     })
 })
 
+describe('Should properly calculate by pieces location', function () {
+    it('for pawns', function () {
+        const game = new Game({
+            pieces: {
+                A2: 'P', // 0.5
+                C7: 'P', // 5
+                H3: 'P', // 0.5
+                D2: 'P', // -2
+                A6: 'p', // -0.5
+                E3: 'p', // -3
+            },
+        })
+
+        expect(game.board.calculateScoreByPiecesLocation()).to.be.equal(0.5)
+    })
+})
+
 describe('Should properly calculate check', function () {
     it('when Rook is attacking from left', function () {
         const game = new Game({
