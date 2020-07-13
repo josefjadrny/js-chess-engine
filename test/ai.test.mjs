@@ -55,7 +55,7 @@ describe('Should properly calculate BEST AI move', function () {
         expect(game.exportJson().checkMate).to.be.equal(true)
     })
 
-    it.skip('Should move with knight', function () {
+    it('Should move with knight', function () {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -82,7 +82,9 @@ describe('Should properly calculate BEST AI move', function () {
             turn: 'black',
         })
         game.printToConsole()
-        expect(game.board.calculateAiMove(3)).to.include({ from: 'G8', to: 'F6' })
+        const result = game.board.calculateAiMove(this.aiLevel)
+        expect(['B8', 'G8'].includes(result.from)).to.be.equal(true)
+        expect(['C6', 'F6'].includes(result.to)).to.be.equal(true)
     })
 })
 

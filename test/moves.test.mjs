@@ -216,7 +216,11 @@ describe('Should properly calculate score', function () {
     })
 })
 
-describe('Should properly calculate by pieces location', function () {
+describe('Should properly calculate score by pieces locations', function () {
+    before(function () {
+        this.multiplier = 0.5
+    })
+
     it('for pawns', function () {
         const game = new Game({
             pieces: {
@@ -229,7 +233,7 @@ describe('Should properly calculate by pieces location', function () {
             },
         })
 
-        expect(game.board.calculateScoreByPiecesLocation()).to.be.equal(0.5)
+        expect(game.board.calculateScoreByPiecesLocation()).to.be.equal(0.5 * this.multiplier)
     })
 })
 
