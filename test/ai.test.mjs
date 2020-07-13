@@ -91,7 +91,7 @@ describe('Should properly calculate BEST AI move', function () {
 describe('Should properly calculate and increase maximum AI depth', function () {
     it('For new game', function () {
         const game = new Game()
-        expect(game.board.getAIMaxDepth(1)).to.be.equal(1)
+        expect(game.board.getAIMaxDepth(0)).to.be.equal(1)
     })
     it('For game with few but valuable pieces', function () {
         const game = new Game({
@@ -102,7 +102,7 @@ describe('Should properly calculate and increase maximum AI depth', function () 
                 E8: 'k',
             },
         })
-        expect(game.board.getAIMaxDepth(1)).to.be.equal(1)
+        expect(game.board.getAIMaxDepth(0)).to.be.equal(1)
     })
     it('For game with few pieces', function () {
         const game = new Game({
@@ -113,7 +113,29 @@ describe('Should properly calculate and increase maximum AI depth', function () 
                 E8: 'k',
             },
         })
-        expect(game.board.getAIMaxDepth(1)).to.be.equal(2)
+        expect(game.board.getAIMaxDepth(0)).to.be.equal(2)
+    })
+    it('For move when piece will be removed but AI level is low', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A7: 'Q',
+                A6: 'r',
+                E8: 'k',
+            },
+        })
+        expect(game.board.getAIMaxDepth(0, 'A7', 'A6')).to.be.equal(2)
+    })
+    it('For move when piece will be removed but AI level is high', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                A7: 'Q',
+                A6: 'r',
+                E8: 'k',
+            },
+        })
+        expect(game.board.getAIMaxDepth(3, 'A7', 'A6')).to.be.equal(5)
     })
     it('For game with many but useless valuable pieces', function () {
         const game = new Game({
@@ -138,6 +160,6 @@ describe('Should properly calculate and increase maximum AI depth', function () 
                 H7: 'p',
             },
         })
-        expect(game.board.getAIMaxDepth(1)).to.be.equal(2)
+        expect(game.board.getAIMaxDepth(0)).to.be.equal(2)
     })
 })
