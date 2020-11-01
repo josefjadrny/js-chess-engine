@@ -1,3 +1,12 @@
+## [0.5.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.5.0...v0.5.1) (2020-11-01)
+
+
+### Bug Fixes
+
+* small calc fix ([f3d722b](https://github.com/josefjadrny/js-chess-engine/commit/f3d722b4c5e36a6e704cafec9280e84323bb5a18))
+
+
+
 # [0.5.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.4.8...v0.5.0) (2020-07-13)
 
 
