@@ -17,6 +17,20 @@ describe('Should properly calculate possible moves', function () {
         expect(game.moves()).to.deep.equal(expectedMoves)
     })
 
+    it('For rook in corner', function () {
+        const game = new Game({
+            pieces: {
+                H8: 'R',
+                F7: 'k',
+                H7: 'p',
+            },
+        })
+        const expectedMoves = {
+            H8: ['H7', 'G8', 'F8', 'E8', 'D8', 'C8', 'B8', 'A8'],
+        }
+        expect(game.moves()).to.deep.equal(expectedMoves)
+    })
+
     it('New game when white is on move', function () {
         const game = new Game()
         const expectedMoves = {
@@ -122,6 +136,20 @@ describe('Should properly calculate possible moves', function () {
         })
 
         const expectedMoves = ['F1', 'D1', 'D2']
+        expect(game.moves('E1')).to.deep.equal(expectedMoves)
+    })
+
+    it('White can`t do castling when jumped field is under attack', function () {
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                E2: 'P',
+                H1: 'R',
+                F4: 'r',
+                E8: 'k',
+            },
+        })
+        const expectedMoves = ['D1', 'D2']
         expect(game.moves('E1')).to.deep.equal(expectedMoves)
     })
 
