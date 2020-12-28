@@ -21,6 +21,7 @@
   },
   "author": "bc.josefjadrny@gmail.com",
   "repository": "github:josefjadrny/js-chess-engine",
+  "homepage": "https://github.com/josefjadrny/js-chess-engine#readme",
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.2.0",
