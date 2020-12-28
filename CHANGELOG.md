@@ -1,3 +1,12 @@
+## [0.5.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.5.1...v0.5.2) (2020-12-28)
+
+
+### Bug Fixes
+
+* Keywords should be an array ([8ced735](https://github.com/josefjadrny/js-chess-engine/commit/8ced7355984e803ad209f560a3afcd2460c3f808))
+
+
+
 ## [0.5.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.5.0...v0.5.1) (2020-11-01)
 
 
