@@ -1,3 +1,12 @@
+# [0.6.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.5.2...v0.6.0) (2020-12-30)
+
+
+### Features
+
+* Add check indicator to response object ([d6d4fb9](https://github.com/josefjadrny/js-chess-engine/commit/d6d4fb91d3098bd4067284fcd96f5c3b0b4de360))
+
+
+
 ## [0.5.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.5.1...v0.5.2) (2020-12-28)
 
 
