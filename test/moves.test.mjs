@@ -1,5 +1,6 @@
 import chai from 'chai'
 import { Game } from '../lib/js-chess-engine.mjs'
+import { COLORS } from '../lib/const/board.mjs'
 
 const expect = chai.expect
 
@@ -268,7 +269,7 @@ describe('Should properly calculate score by pieces locations', function () {
 describe('Should properly calculate check', function () {
     it('when Rook is attacking from left', function () {
         const game = new Game({
-            turn: 'white',
+            turn: 'black',
             pieces: {
                 E1: 'K',
                 C8: 'R',
@@ -277,11 +278,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
     })
     it('when Rook is attacking from right', function () {
         const game = new Game({
-            turn: 'white',
+            turn: 'black',
             pieces: {
                 E1: 'K',
                 H8: 'R',
@@ -290,11 +291,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
     })
     it('when Queen is attacking from bottom', function () {
         const game = new Game({
-            turn: 'white',
+            turn: 'black',
             pieces: {
                 E1: 'K',
                 E4: 'Q',
@@ -303,11 +304,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
     })
     it('when Bishop is attacking from left down', function () {
         const game = new Game({
-            turn: 'white',
+            turn: 'black',
             pieces: {
                 E1: 'K',
                 C6: 'B',
@@ -316,9 +317,22 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
     })
     it('when Queen is attacking from right down', function () {
+        const game = new Game({
+            turn: 'black',
+            pieces: {
+                E1: 'K',
+                G6: 'Q',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.exportJson().check).to.be.true
+    })
+    it('when and opponent is in check', function () {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -329,11 +343,13 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
+        expect(game.exportJson().check).to.be.false
+        // eslint-disable-next-line no-unused-expressions
         expect(game.board.isAttackingKing()).to.be.true
     })
     it('when Bishop is blocked by pawn', function () {
         const game = new Game({
-            turn: 'white',
+            turn: 'black',
             pieces: {
                 E1: 'K',
                 C6: 'B',
@@ -343,11 +359,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.false
+        expect(game.exportJson().check).to.be.false
     })
     it('when Pawn is attacking from left', function () {
         const game = new Game({
-            turn: 'white',
+            turn: 'black',
             pieces: {
                 E1: 'K',
                 D7: 'P',
@@ -356,11 +372,13 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.false
     })
     it('when Pawn is attacking from right', function () {
         const game = new Game({
-            turn: 'black',
+            turn: 'white',
             pieces: {
                 E1: 'K',
                 F2: 'p',
@@ -369,11 +387,13 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
     })
     it('when Knight is attacking from left', function () {
         const game = new Game({
-            turn: 'black',
+            turn: 'white',
             pieces: {
                 E1: 'K',
                 C2: 'n',
@@ -382,11 +402,35 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+    })
+    it('when Knight was attacking from left', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                C2: 'n',
+                E8: 'k',
+            },
+        })
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+
+        game.move('e1', 'e2')
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.exportJson().check).to.be.false
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.false
     })
     it('when Knight is attacking from left up', function () {
         const game = new Game({
-            turn: 'black',
+            turn: 'white',
             pieces: {
                 E1: 'K',
                 D3: 'n',
@@ -395,11 +439,13 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
     })
     it('when Knight is attacking from right up', function () {
         const game = new Game({
-            turn: 'black',
+            turn: 'white',
             pieces: {
                 E1: 'K',
                 F3: 'n',
@@ -408,11 +454,13 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
     })
     it('when Knight is attacking from right', function () {
         const game = new Game({
-            turn: 'black',
+            turn: 'white',
             pieces: {
                 E1: 'K',
                 G2: 'n',
@@ -421,6 +469,8 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.exportJson().check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
     })
 })

@@ -169,6 +169,7 @@ You can easily merge returned state with your app state and get a new updated ch
       "E8": ["E7", "F8", "F7", "D8", "D7"]
     },
     "isFinished": false,
+    "check": false,
     "checkMate": false,
     "castling": {
         "whiteLong": true,
@@ -185,6 +186,8 @@ You can easily merge returned state with your app state and get a new updated ch
 **turn** - Player which plays next. Values `white` (default) or `black`.
 
 **isFinished** - `true` when playing player cannot move (checkmate or draw). Default `false`.
+
+**check** - `true` when playing player is in check. Default `false`.
 
 **checkMate** - `true` when playing player has checkmate. Default `false`.
 
