@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.6.0...v0.6.1) (2021-02-08)
+
+
+### Bug Fixes
+
+* Castling for black player (closes [#9](https://github.com/josefjadrny/js-chess-engine/issues/9)) ([e7d3bf3](https://github.com/josefjadrny/js-chess-engine/commit/e7d3bf39b25d94dce57d47e11a4594426449a442))
+
+
+
 # [0.6.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.5.2...v0.6.0) (2020-12-30)
 
 
