@@ -58,12 +58,11 @@ describe('Should properly calculate possible moves', function () {
             },
         })
 
-        const expectedMoves = {
-            E1: ['E2', 'F1', 'D1', 'D2', 'F2', 'C1'],
-            A1: ['A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'B1', 'C1', 'D1'],
-        }
+        const expectedMovesCastle = ['A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'B1', 'C1', 'D1']
+        const expectedMovesKing = ['E2', 'F1', 'D1', 'D2', 'F2', 'C1']
 
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves('E1')).to.have.members(expectedMovesKing)
+        expect(game.moves('A1')).to.have.members(expectedMovesCastle)
     })
 
     it('White can do a short castling', function () {
@@ -137,7 +136,7 @@ describe('Should properly calculate possible moves', function () {
         })
 
         const expectedMoves = ['F1', 'D1', 'D2']
-        expect(game.moves('E1')).to.deep.equal(expectedMoves)
+        expect(game.moves('E1')).to.have.members(expectedMoves)
     })
 
     it('White can`t do castling when jumped field is under attack', function () {
@@ -151,11 +150,54 @@ describe('Should properly calculate possible moves', function () {
             },
         })
         const expectedMoves = ['D1', 'D2']
-        expect(game.moves('E1')).to.deep.equal(expectedMoves)
+        expect(game.moves('E1')).to.have.members(expectedMoves)
+    })
+
+    it('black can do castling after white castling (https://github.com/josefjadrny/js-chess-engine/issues/9)', function () {
+        const expectedMoves = ['E7', 'D7', 'G8', 'F8']
+
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                H1: 'R',
+                H2: 'P',
+                G2: 'P',
+                F2: 'P',
+                H7: 'p',
+                G7: 'p',
+                F7: 'p',
+                E8: 'k',
+                D8: 'q',
+                H8: 'r',
+            },
+        })
+        game.printToConsole()
+        game.move('E1', 'G1')
+        game.printToConsole()
+        expect(game.moves('E8')).to.have.members(expectedMoves)
+    })
+
+    it('black can not do castling over attacked fields', function () {
+        const expectedMoves = ['E7', 'D7', 'D8']
+
+        const game = new Game({
+            pieces: {
+                E1: 'K',
+                H1: 'R',
+                H2: 'P',
+                H7: 'p',
+                E8: 'k',
+                H8: 'r',
+            },
+        })
+        game.printToConsole()
+        game.move('E1', 'G1')
+        game.printToConsole()
+        expect(game.moves('E8')).to.have.members(expectedMoves)
     })
 
     it('White can do a en Passant', function () {
-        const expecetedMoves = ['C6', 'B6']
+        const expectedMoves = ['C6', 'B6']
 
         const game = new Game()
         game.move('C2', 'C4')
@@ -163,7 +205,7 @@ describe('Should properly calculate possible moves', function () {
         game.move('C4', 'C5')
         game.move('B7', 'B5')
 
-        expect(game.moves('C5')).to.deep.equal(expecetedMoves)
+        expect(game.moves('C5')).to.deep.equal(expectedMoves)
 
         game.move('C5', 'B6')
 
@@ -171,7 +213,7 @@ describe('Should properly calculate possible moves', function () {
     })
 
     it('White cannot do a en Passant later', function () {
-        const expecetedMoves = ['C6']
+        const expectedMoves = ['C6']
 
         const game = new Game()
         game.move('C2', 'C4')
@@ -181,11 +223,11 @@ describe('Should properly calculate possible moves', function () {
         game.move('A2', 'A4')
         game.move('H7', 'H6')
 
-        expect(game.moves('C5')).to.deep.equal(expecetedMoves)
+        expect(game.moves('C5')).to.deep.equal(expectedMoves)
     })
 
     it('Black can do a en Passant', function () {
-        const expecetedMoves = ['A3', 'B3']
+        const expectedMoves = ['A3', 'B3']
 
         const game = new Game()
         game.move('C2', 'C3')
@@ -194,7 +236,7 @@ describe('Should properly calculate possible moves', function () {
         game.move('A5', 'A4')
         game.move('B2', 'B4')
 
-        expect(game.moves('A4')).to.deep.equal(expecetedMoves)
+        expect(game.moves('A4')).to.deep.equal(expectedMoves)
 
         game.move('A4', 'B3')
 
