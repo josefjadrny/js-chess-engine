@@ -83,7 +83,7 @@ describe('Should properly import FEN', function () {
         expectedConfiguration.turn = 'black'
         expectedConfiguration.pieces.E4 = 'P'
         delete expectedConfiguration.pieces.E2
-        expectedConfiguration.enPassant = 'e3'
+        expectedConfiguration.enPassant = 'E3'
 
         expect(game.board.configuration).to.be.deep.equal(expectedConfiguration)
     })
