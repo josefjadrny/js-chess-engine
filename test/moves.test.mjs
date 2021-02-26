@@ -212,6 +212,13 @@ describe('Should properly calculate possible moves', function () {
         expect(game.board.getPiece('B5')).to.be.a('undefined')
     })
 
+    it('White can do a en Passant from FEN (#11)', function () {
+        const expectedMoves = ['D6']
+        const game = new Game('rn1qk2r/pbp1nppp/1p2p3/3pP3/1bBP4/2N2N2/PPP2PPP/R1BQK2R w KQkq d6 0 7')
+
+        expect(game.moves('E5')).to.deep.equal(expectedMoves)
+    })
+
     it('White cannot do a en Passant later', function () {
         const expectedMoves = ['C6']
 
