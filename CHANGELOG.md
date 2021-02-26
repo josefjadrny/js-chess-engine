@@ -1,3 +1,12 @@
+## [0.6.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.6.1...v0.6.2) (2021-02-26)
+
+
+### Bug Fixes
+
+* en passant move recognition when using FEN ([#12](https://github.com/josefjadrny/js-chess-engine/issues/12)) ([c41b2d7](https://github.com/josefjadrny/js-chess-engine/commit/c41b2d7c776ede419d3a8e3d9106580c53683dba))
+
+
+
 ## [0.6.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.6.0...v0.6.1) (2021-02-08)
 
 
