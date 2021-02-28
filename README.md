@@ -85,6 +85,13 @@ Params
 Params
  - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
 
+**getHistory**
+
+`game.getHistory(reversed = false)` - Returns all played moves in array like `[{from:'A2',to:'A3'},{from:'A7',to:'A6'}]`.
+
+Params
+- `reversed` Boolean (_optional_) - When false, last move is the last element in returned array. When true, last move is first. Default false.
+
 **printToConsole**
 
 `game.printToConsole()` - Print a chessboard to console standard output.

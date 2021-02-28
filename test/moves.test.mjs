@@ -523,3 +523,18 @@ describe('Should properly calculate check', function () {
         expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
     })
 })
+
+describe('Should properly get history', function () {
+    it('reversed and not reversed', function () {
+        const game = new Game()
+
+        game.move('a2', 'a3')
+
+        expect(game.getHistory()).to.be.deep.equal([{ from: 'A2', to: 'A3' }])
+
+        game.move('a7', 'a6')
+
+        expect(game.getHistory()).to.be.deep.equal([{ from: 'A2', to: 'A3' }, { from: 'A7', to: 'A6' }])
+        expect(game.getHistory(true)).to.be.deep.equal([{ from: 'A7', to: 'A6' }, { from: 'A2', to: 'A3' }])
+    })
+})
