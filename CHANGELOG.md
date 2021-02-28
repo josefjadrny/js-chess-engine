@@ -1,3 +1,12 @@
+# [0.7.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.6.2...v0.7.0) (2021-02-28)
+
+
+### Features
+
+* Add getHistory which returns played moves ([#13](https://github.com/josefjadrny/js-chess-engine/issues/13)) ([f6ff267](https://github.com/josefjadrny/js-chess-engine/commit/f6ff26710f74d7256ecd4273261454217e324fcb))
+
+
+
 ## [0.6.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.6.1...v0.6.2) (2021-02-26)
 
 
