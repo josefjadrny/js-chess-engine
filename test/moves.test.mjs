@@ -538,3 +538,140 @@ describe('Should properly get history', function () {
         expect(game.getHistory(true)).to.be.deep.equal([{ from: 'A7', to: 'A6' }, { from: 'A2', to: 'A3' }])
     })
 })
+
+describe('Set new piece should', function () {
+    it('succeed for valid data', function () {
+        const expectedConfiguration = {
+            castling: {
+                blackLong: true,
+                blackShort: true,
+                whiteLong: true,
+                whiteShort: true,
+            },
+            check: false,
+            checkMate: false,
+            enPassant: null,
+            fullMove: 1,
+            halfMove: 0,
+            isFinished: false,
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+                A3: 'Q',
+                B3: 'R',
+                C3: 'B',
+                D3: 'N',
+                E3: 'P',
+                A4: 'q',
+                B4: 'r',
+                C4: 'b',
+                D4: 'n',
+                E4: 'p',
+
+            },
+            turn: 'white',
+        }
+
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+            },
+        })
+
+        game.setPiece('A3', 'Q')
+        game.setPiece('B3', 'R')
+        game.setPiece('C3', 'B')
+        game.setPiece('D3', 'N')
+        game.setPiece('E3', 'P')
+
+        game.setPiece('A4', 'q')
+        game.setPiece('B4', 'r')
+        game.setPiece('C4', 'b')
+        game.setPiece('D4', 'n')
+        game.setPiece('E4', 'p')
+
+        expect(game.board.configuration).to.be.deep.equal(expectedConfiguration)
+    })
+
+    it('fail for invalid location', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+            },
+        })
+
+        expect(() => {
+            game.setPiece('A9', 'Q')
+        }).to.throw(/Invalid location/)
+    })
+
+    it('fail for invalid piece', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+            },
+        })
+
+        expect(() => {
+            game.setPiece('A8', 'F')
+        }).to.throw(/Invalid piece/)
+    })
+})
+
+describe('Delete piece should', function () {
+    it('succeed for valid data', function () {
+        const expectedConfiguration = {
+            castling: {
+                blackLong: true,
+                blackShort: true,
+                whiteLong: true,
+                whiteShort: true,
+            },
+            check: false,
+            checkMate: false,
+            enPassant: null,
+            fullMove: 1,
+            halfMove: 0,
+            isFinished: false,
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+            },
+            turn: 'white',
+        }
+
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+                D7: 'q',
+            },
+        })
+
+        game.removePiece('D7')
+
+        expect(game.board.configuration).to.be.deep.equal(expectedConfiguration)
+    })
+
+    it('fail for invalid location', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                E8: 'k',
+                D7: 'q',
+            },
+        })
+
+        expect(() => {
+            game.removePiece('A9')
+        }).to.throw(/Invalid location/)
+    })
+})

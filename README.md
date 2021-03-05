@@ -79,6 +79,21 @@ Params
 Params
  - `from` String (_optional_) - Location on a chessboard (like A1,B3,...). When not provided, returns all possible moves.
 
+**setPiece**
+
+`game.setPiece(location, piece)` - New chess piece is added to provided location. Piece on provided location is replaced.
+
+Params
+- `location` String (_mandatory_) - Location on a chessboard (like A1,B3,...)
+- `piece` String (_mandatory_) - A chess piece you need add [pieces](#pieces).
+
+**removePiece**
+
+`game.removePiece(location)` - Remove piece on provided location.
+
+Params
+- `location` String (_mandatory_) - Location on a chessboard (like A1,B3,...)
+
 **aiMove**
 
 `game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
