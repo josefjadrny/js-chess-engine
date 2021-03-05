@@ -1,3 +1,12 @@
+# [0.8.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.7.0...v0.8.0) (2021-03-05)
+
+
+### Features
+
+* Add setPiece and removePiece ([5c02db2](https://github.com/josefjadrny/js-chess-engine/commit/5c02db2ba57c4238cefebe2852b724c38939caf5))
+
+
+
 # [0.7.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.6.2...v0.7.0) (2021-02-28)
 
 
