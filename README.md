@@ -84,15 +84,15 @@ Params
 `game.setPiece(location, piece)` - New chess piece is added to provided location. Piece on provided location is replaced.
 
 Params
-- `location` String (_mandatory_) - Location on a chessboard (like A1,B3,...)
-- `piece` String (_mandatory_) - A chess piece you need add [pieces](#pieces).
+- `location` String (_mandatory_) - Location on a chessboard (like A1,B3,...).
+- `piece` String (_mandatory_) - A chess piece you need add (pieces syntax is same as FEN notation).
 
 **removePiece**
 
 `game.removePiece(location)` - Remove piece on provided location.
 
 Params
-- `location` String (_mandatory_) - Location on a chessboard (like A1,B3,...)
+- `location` String (_mandatory_) - Location on a chessboard (like A1,B3,...).
 
 **aiMove**
 
