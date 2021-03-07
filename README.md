@@ -104,6 +104,7 @@ Params
 **getHistory**
 
 `game.getHistory(reversed = false)` - Returns all played moves in array with chess board configuration like `[{from:'A2',to:'A3',configuration:{...}},{from:'A7',to:'A6',configuration:{...}}]`.
+
 `configuration` object is a previous chess board [configuration](#board-configuration) (before that move was played) and can be used to start new game with `new Game(configuration)`.
 
 Params
