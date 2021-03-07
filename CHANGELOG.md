@@ -1,3 +1,12 @@
+# [0.9.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.8.0...v0.9.0) (2021-03-07)
+
+
+### Features
+
+* Add chess board configuration to getHistory to retrieve previous in-game configurations ([afc86a8](https://github.com/josefjadrny/js-chess-engine/commit/afc86a8132fc94c0d513b0bb1c675a552f520c3e))
+
+
+
 # [0.8.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.7.0...v0.8.0) (2021-03-05)
 
 
