@@ -526,16 +526,116 @@ describe('Should properly calculate check', function () {
 
 describe('Should properly get history', function () {
     it('reversed and not reversed', function () {
-        const game = new Game()
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                G2: 'n',
+                E8: 'k',
+            },
+        })
 
-        game.move('a2', 'a3')
+        const expectedHistory1 = {
+            from: 'E1',
+            to: 'E2',
+            configuration: {
+                castling: {
+                    blackLong: true,
+                    blackShort: true,
+                    whiteLong: true,
+                    whiteShort: true,
+                },
+                check: false,
+                checkMate: false,
+                enPassant: null,
+                fullMove: 1,
+                halfMove: 0,
+                isFinished: false,
+                pieces: {
+                    E1: 'K',
+                    E8: 'k',
+                    G2: 'n',
+                },
+                turn: 'white',
+            },
+        }
 
-        expect(game.getHistory()).to.be.deep.equal([{ from: 'A2', to: 'A3' }])
+        const expectedHistory2 = {
+            from: 'E8',
+            to: 'E7',
+            configuration: {
+                castling: {
+                    blackLong: true,
+                    blackShort: true,
+                    whiteLong: false,
+                    whiteShort: false,
+                },
+                check: false,
+                checkMate: false,
+                enPassant: null,
+                fullMove: 1,
+                halfMove: 1,
+                isFinished: false,
+                pieces: {
+                    E2: 'K',
+                    E8: 'k',
+                    G2: 'n',
+                },
+                turn: 'black',
+            },
+        }
 
-        game.move('a7', 'a6')
+        game.move('e1', 'e2')
 
-        expect(game.getHistory()).to.be.deep.equal([{ from: 'A2', to: 'A3' }, { from: 'A7', to: 'A6' }])
-        expect(game.getHistory(true)).to.be.deep.equal([{ from: 'A7', to: 'A6' }, { from: 'A2', to: 'A3' }])
+        expect(game.getHistory()).to.be.deep.equal([expectedHistory1])
+        expect(game.getHistory(true)).to.be.deep.equal([expectedHistory1])
+
+        game.move('e8', 'e7')
+
+        expect(game.getHistory()).to.be.deep.equal([expectedHistory1, expectedHistory2])
+        expect(game.getHistory(true)).to.be.deep.equal([expectedHistory2, expectedHistory1])
+    })
+
+    it('when set and remove pieces were used', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                G2: 'n',
+                E8: 'k',
+            },
+        })
+
+        const expectedHistory1 = {
+            from: 'E1',
+            to: 'E2',
+            configuration: {
+                castling: {
+                    blackLong: true,
+                    blackShort: true,
+                    whiteLong: true,
+                    whiteShort: true,
+                },
+                check: false,
+                checkMate: false,
+                enPassant: null,
+                fullMove: 1,
+                halfMove: 0,
+                isFinished: false,
+                pieces: {
+                    E1: 'K',
+                    E8: 'k',
+                    F2: 'P',
+                },
+                turn: 'white',
+            },
+        }
+
+        game.setPiece('f2', 'P')
+        game.removePiece('g2')
+        game.move('e1', 'e2')
+
+        expect(game.getHistory()).to.be.deep.equal([expectedHistory1])
     })
 })
 
@@ -584,11 +684,11 @@ describe('Set new piece should', function () {
         game.setPiece('B3', 'R')
         game.setPiece('C3', 'B')
         game.setPiece('D3', 'N')
-        game.setPiece('E3', 'P')
+        game.setPiece('e3', 'P')
 
         game.setPiece('A4', 'q')
         game.setPiece('B4', 'r')
-        game.setPiece('C4', 'b')
+        game.setPiece('c4', 'b')
         game.setPiece('D4', 'n')
         game.setPiece('E4', 'p')
 
@@ -652,10 +752,12 @@ describe('Delete piece should', function () {
                 E1: 'K',
                 E8: 'k',
                 D7: 'q',
+                D6: 'p',
             },
         })
 
         game.removePiece('D7')
+        game.removePiece('d6')
 
         expect(game.board.configuration).to.be.deep.equal(expectedConfiguration)
     })

@@ -59,10 +59,10 @@ You can still export your game to JSON or FEN and you can use this JSON or FEN t
 
 **constructor**
 
-`new Game(boardConfiguration = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
+`new Game(configuration = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
 
 Params
- - `boardConfiguration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
+ - `configuration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
 
 **move**
 
@@ -103,7 +103,8 @@ Params
 
 **getHistory**
 
-`game.getHistory(reversed = false)` - Returns all played moves in array like `[{from:'A2',to:'A3'},{from:'A7',to:'A6'}]`.
+`game.getHistory(reversed = false)` - Returns all played moves in array with chess board configuration like `[{from:'A2',to:'A3',configuration:{...}},{from:'A7',to:'A6',configuration:{...}}]`.
+`configuration` object is a previous chess board [configuration](#board-configuration) (before that move was played) and can be used to start new game with `new Game(configuration)`.
 
 Params
 - `reversed` Boolean (_optional_) - When false, last move is the last element in returned array. When true, last move is first. Default false.
@@ -279,8 +280,9 @@ T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please
 
 ## HINTS
 
-- When a pawn reaches an end of a chessboard, he is automatically convert and calculated as a Queen.
+- When a pawn reaches an end of a chessboard, he is automatically converted and calculated as a Queen.
 If you like, player can pick a new chess piece in your app, and you can send an updated chessboard.
+For in-memory approach please check **setPiece** function.
 - Castling can be played by a King. You can receive this special move with `moves` call.
 When a move is recognized as a castling - played with a king across two chess fields, rook moves automatically with a king.
 - Halfmoves are calculated on the server, but the [fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule) is not handled by a server. You can handle this situation in your app if you need to.
@@ -299,7 +301,7 @@ Changelog can be found [HERE](CHANGELOG.md) .
 
 <BR/>
 
-## In conclusion - why another chees engine?
+## In conclusion - why another chess engine?
 I am not a chess pro. My father is.
 When I was ten, I had an Atari (with Turbo Basic), and I was hoping for new PC.
 My father told me, make me a computer program, which beat me in chess, and I buy you a new PC.
