@@ -46,9 +46,15 @@ In this documentation I am using ECMAScript Modules instead of `require`, but yo
 Import the Game class and create a new game.
 
 ```js
+// Node.js
 import jsChessEngine from 'js-chess-engine'
-
 const game = new jsChessEngine.Game()
+```
+
+```js
+// React
+import { Game } from 'js-chess-engine';
+const game = new Game()
 ```
 
 You can control your game with game object.
@@ -129,8 +135,14 @@ Import functions you want to use. Every function needs configuration of your che
 This approach needs little more computing time on the server to create and calculate everything from scratch on every call.
 
 ```js
+// Node.js
 import jsChessEngine from 'js-chess-engine'
 const { move, status, moves, aiMove, getFen } = jsChessEngine    
+```
+
+```js
+// React
+import { move, status, moves, aiMove, getFen } from 'js-chess-engine'; 
 ```
 #### API description
 
