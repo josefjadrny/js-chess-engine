@@ -1,3 +1,12 @@
+## [0.9.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.9.0...v0.9.1) (2021-03-11)
+
+
+### Bug Fixes
+
+* Add doc for React app ([bfe53cc](https://github.com/josefjadrny/js-chess-engine/commit/bfe53cc8fd5f3f2d14da80926cd012fbdd2962bf))
+
+
+
 # [0.9.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.8.0...v0.9.0) (2021-03-07)
 
 
