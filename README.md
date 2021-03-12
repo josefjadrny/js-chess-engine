@@ -21,11 +21,11 @@ This engine also includes configurable basic [AI computer logic](#computer-ai).
 **Example**
 
 ```js
-const jsChess = require('js-chess-engine')
-const game = new jsChess.Game()
+const jsChessEngine = require('js-chess-engine')
+const game = new jsChessEngine.Game()
 game.printToConsole()
 ```
-
+more about [importing](#import) this library.
 ## Examples
 **js-chess-engine-app** - React application example with js-chess-engine REST API backend (without persistent storage) - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.nadsenyvyvojar.cz/)
 
@@ -34,7 +34,28 @@ game.printToConsole()
 [Console](example/console.mjs) <BR/>
 
 ## Documentation
-In this documentation I am using ECMAScript Modules instead of `require`, but you can use both. Read more about [ESM](https://nodejs.org/api/esm.html).
+### Import
+In this documentation I am using CommonJS require known from Node.js, but there are several ways how to import this library.
+
+**Node.js (ESM)**
+```js
+import jsChessEngine from 'js-chess-engine'
+const game = new jsChessEngine.Game()
+```
+
+**Node.js (CommonJS)**
+```js
+const jsChessEngine = require('js-chess-engine')
+const game = new jsChessEngine.Game()
+```
+
+**React**
+```js
+import { Game, move, status, moves, aiMove, getFen } from 'js-chess-engine';
+const game = new Game()
+```
+
+You can find more about UMD [here](https://github.com/umdjs/umd).
 
 **Basically, you have two options how to use this engine.** <BR/>
 - [With in-memory](#option-1---with-in-memory)
@@ -43,18 +64,10 @@ In this documentation I am using ECMAScript Modules instead of `require`, but yo
 <BR/>
 
 ### Option 1 - With in-memory
-Import the Game class and create a new game.
-
+Use the Game class and create a new game.
 ```js
-// Node.js
-import jsChessEngine from 'js-chess-engine'
+const jsChessEngine = require('js-chess-engine')
 const game = new jsChessEngine.Game()
-```
-
-```js
-// React
-import { Game } from 'js-chess-engine';
-const game = new Game()
 ```
 
 You can control your game with game object.
@@ -72,7 +85,7 @@ Params
 
 **move**
 
-`game.move(from, to)` - Perform a move on a chessboard and recalculates in-game situation.
+`game.move(from, to)` - Perform a move on a chessboard and recalculates in-game situation. Returns played move `{"H7":"H5"}`
 
 Params
  - `from` String (_mandatory_) - Location on a chessboard where move starts (like A1,B3,...)
@@ -102,7 +115,7 @@ Params
 
 **aiMove**
 
-`game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally.
+`game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally. Returns played move `{"H7":"H5"}`
 
 Params
  - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
@@ -131,18 +144,13 @@ Params
 <BR/>
 
 ### Option 2 - Without in-memory
-Import functions you want to use. Every function needs configuration of your chessboard to work properly.
-This approach needs little more computing time on the server to create and calculate everything from scratch on every call.
+It is possible to avoid using a Game object and call stateless functions directly. Every function needs configuration of your chessboard to work properly.
+This approach needs little more computing time to create and calculate everything from scratch for every call. 
+But this can be handy in stateless environments.
 
 ```js
-// Node.js
-import jsChessEngine from 'js-chess-engine'
-const { move, status, moves, aiMove, getFen } = jsChessEngine    
-```
-
-```js
-// React
-import { move, status, moves, aiMove, getFen } from 'js-chess-engine'; 
+const jsChessEngine = require('js-chess-engine')
+const { move, status, moves, aiMove, getFen } = jsChessEngine
 ```
 #### API description
 
@@ -190,7 +198,7 @@ Params
 Board configuration could be described by JSON Object or FEN.
 
 #### JSON
-This could be handy for modern application, where is a state represented by an Object (like in React, Redux,...).
+This can be handy for modern application, where is a state represented by an Object (like in React, Redux,...).
 You can easily merge returned state with your app state and get a new updated chessboard.
 
 
