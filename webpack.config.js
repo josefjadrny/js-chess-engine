@@ -7,6 +7,6 @@ module.exports = {
         libraryTarget: 'umd',
         globalObject: 'this',
         umdNamedDefine: true,
-        filename: 'js-chess-engine.js'
-    }
+        filename: 'js-chess-engine.js',
+    },
 }
