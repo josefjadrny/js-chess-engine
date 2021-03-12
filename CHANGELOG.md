@@ -1,3 +1,12 @@
+# [0.10.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.9.1...v0.10.0) (2021-03-12)
+
+
+### Features
+
+* Add response object with performed move to move() and aiMove() ([8d3cbe5](https://github.com/josefjadrny/js-chess-engine/commit/8d3cbe5a367b2bf2330e1e107ee908ed054fd8be))
+
+
+
 ## [0.9.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.9.0...v0.9.1) (2021-03-11)
 
 
