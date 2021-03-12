@@ -51,7 +51,7 @@ const game = new jsChessEngine.Game()
 
 **React**
 ```js
-import { Game, move, status, moves, aiMove, getFen } from 'js-chess-engine';
+import { Game, move, status, moves, aiMove, getFen } from 'js-chess-engine'
 const game = new Game()
 ```
 
