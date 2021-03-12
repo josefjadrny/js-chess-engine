@@ -78,7 +78,7 @@ You can still export your game to JSON or FEN and you can use this JSON or FEN t
 
 **constructor**
 
-`new Game(configuration = NEW_GAME_BOARD_CONFIG)` - Create a new game, init players and in-game situation. 
+`new Game(configuration)` - Create a new game, init players and in-game situation. 
 
 Params
  - `configuration` Object or String (_optional_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
@@ -93,7 +93,7 @@ Params
 
 **moves**
 
-`game.moves(from = null)` - Return possible moves for playing player.
+`game.moves(from)` - Return possible moves for playing player.
 
 Params
  - `from` String (_optional_) - Location on a chessboard (like A1,B3,...). When not provided, returns all possible moves.
@@ -115,14 +115,14 @@ Params
 
 **aiMove**
 
-`game.aiMove(level = 2)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally. Returns played move `{"H7":"H5"}`
+`game.aiMove(level)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally. Returns played move `{"H7":"H5"}`
 
 Params
- - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai).
+ - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai). Default 2.
 
 **getHistory**
 
-`game.getHistory(reversed = false)` - Returns all played moves in array with chess board configuration like `[{from:'A2',to:'A3',configuration:{...}},{from:'A7',to:'A6',configuration:{...}}]`.
+`game.getHistory(reversed)` - Returns all played moves in array with chess board configuration like `[{from:'A2',to:'A3',configuration:{...}},{from:'A7',to:'A6',configuration:{...}}]`.
 
 `configuration` object is a previous chess board [configuration](#board-configuration) (before that move was played) and can be used to start new game with `new Game(configuration)`.
 
@@ -186,7 +186,7 @@ Params
 
 **aiMove**
 
-`aiMove(boardConfiguration, level = 2)` - Return computed move as an object like `{"H7":"H5"}`. Use `move(yourBoardConfiguration, from, to)` to play this move.
+`aiMove(boardConfiguration, level)` - Return computed move as an object like `{"H7":"H5"}`. Use `move(yourBoardConfiguration, from, to)` to play this move.
 
 Params
  - `boardConfiguration` Object or String (_mandatory_) - Is a chess board [configuration](#board-configuration). Default value is a configuration for new game.
