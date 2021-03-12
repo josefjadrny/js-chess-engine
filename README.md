@@ -274,7 +274,7 @@ Means A7 can move to A6 and A5. B7 can move to B6 and B5.
 You can also use the Forsyth–Edwards Notation ([FEN](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)).
 
 ```js
-import jsChessEngine from 'js-chess-engine'
+const jsChessEngine = require('js-chess-engine')
 const { move } = jsChessEngine    
 const newFen = move('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', 'H7', 'H5')
 console.log(newFen)
