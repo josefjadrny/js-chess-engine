@@ -118,7 +118,7 @@ Params
 `game.aiMove(level)` - Calculates and perform next move by computer player. `game.move(from, to)` is called internally. Returns played move `{"H7":"H5"}`
 
 Params
- - `level` Integer (_optional_) - Computer player skill from 0 to 4. Read more about [computer AI](#computer-ai). Default 2.
+ - `level` Integer (_optional_) - Computer player skill from 0 to 3. Read more about [computer AI](#computer-ai). Default 2.
 
 **getHistory**
 
@@ -289,10 +289,10 @@ This engine includes configurable AI computer logic based on Minimax algorithm. 
 
 |Level|Alias|Moves to the future|HW requirements|Approx. time to move (s)*|
 | :-: | :-:| :-:| :-:| :-:|
-| 0 |Well-trained monkey| 1-2 | None | <0.1 |
-| 1 |Beginner| 2-3 | Very low | 0.11 |
-| 2 |Intermediate| 3-4 | Low | 1.65 |
-| 3 |Advanced| 3-5 | Medium | 9.89 |
+| 0 |Well-trained monkey| 1 | None | <0.1 |
+| 1 |Beginner| 2 | Very low | 0.11 |
+| 2 |Intermediate| 3 | Low | 1.50 |
+| 3 |Intermediate+| 3-4 | Medium | 2.82 |
 
 ***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during a chess game on t3.nano AWS instance.
 T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please note, amount of time needed for calculations heavily depends on in-game situation (number of chess pieces still on a chessboard).
@@ -312,7 +312,6 @@ When a move is recognized as a castling - played with a king across two chess fi
 
 ## TODO
 - Calculation and result caching
-- AI level 3 calculation time optimization
 - Forsyth–Edwards Notation (FEN) validation
 
 <BR/>
