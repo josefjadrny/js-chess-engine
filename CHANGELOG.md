@@ -1,3 +1,17 @@
+# [0.11.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.10.0...v0.11.0) (2021-03-20)
+
+
+### Bug Fixes
+
+* Error message for AI levels ([db2e856](https://github.com/josefjadrny/js-chess-engine/commit/db2e856ddf7ddc96b59755f3325093fc2cb8dadd))
+
+
+### Features
+
+* AI calculation time decreased and AI level 3 plays better ([a47bd5f](https://github.com/josefjadrny/js-chess-engine/commit/a47bd5f6045cd781177078e75b1c901ae5ab3224))
+
+
+
 # [0.10.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.9.1...v0.10.0) (2021-03-12)
 
 
