@@ -1,3 +1,12 @@
+## [0.11.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.1...v0.11.2) (2021-03-27)
+
+
+### Bug Fixes
+
+* **AI:** Calculation time - fixing v0.11.1 ([4d426ae](https://github.com/josefjadrny/js-chess-engine/commit/4d426ae82dd78efbc2cbd370c2dca69dae17bd5d))
+
+
+
 ## [0.11.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.0...v0.11.1) (2021-03-27)
 
 
