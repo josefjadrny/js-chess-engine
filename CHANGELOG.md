@@ -1,3 +1,13 @@
+## [0.11.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.0...v0.11.1) (2021-03-27)
+
+
+### Bug Fixes
+
+* **AI:** Checkmate is not ignored when score is not changed ([56b98d9](https://github.com/josefjadrny/js-chess-engine/commit/56b98d9e04f1ce0f4ab74cf4663aa8958f5b5742))
+* **AI:** Do not end with draw ([5000a17](https://github.com/josefjadrny/js-chess-engine/commit/5000a176d443680d05d9de2b981fc51ff064d6cf))
+
+
+
 # [0.11.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.10.0...v0.11.0) (2021-03-20)
 
 
