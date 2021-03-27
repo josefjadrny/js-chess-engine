@@ -44,6 +44,22 @@ describe('Should properly calculate BEST AI move', function () {
         expect(game.exportJson().checkMate).to.be.equal(true)
     })
 
+    it('Should not end with draw', function () {
+        const game = new Game({
+            pieces: {
+                E3: 'K',
+                F2: 'r',
+                D6: 'q',
+                E8: 'k',
+                G3: 'p',
+            },
+            turn: 'black',
+        })
+        game.printToConsole()
+        game.aiMove(this.aiLevel)
+        expect(game.exportJson().isFinished).to.be.equal(false)
+    })
+
     it('Should move with knight', function () {
         const game = new Game({
             pieces: {
