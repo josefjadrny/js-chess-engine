@@ -171,9 +171,7 @@ describe('Should properly calculate possible moves', function () {
                 H8: 'r',
             },
         })
-        game.printToConsole()
         game.move('E1', 'G1')
-        game.printToConsole()
         expect(game.moves('E8')).to.have.members(expectedMoves)
     })
 
@@ -190,9 +188,7 @@ describe('Should properly calculate possible moves', function () {
                 H8: 'r',
             },
         })
-        game.printToConsole()
         game.move('E1', 'G1')
-        game.printToConsole()
         expect(game.moves('E8')).to.have.members(expectedMoves)
     })
 
@@ -283,8 +279,6 @@ describe('Should properly calculate score', function () {
                 D5: 'b', // 3
             },
         })
-        game.printToConsole()
-
         expect(game.board.calculateScore()).to.be.equal(130)
     })
     it('Only piece values for new game', function () {
