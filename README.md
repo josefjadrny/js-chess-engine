@@ -32,6 +32,7 @@ more about [importing](#import) this library.
 **More examples**<BR/>
 [Simple Fastify server](example/server.mjs) <BR/>
 [Console](example/console.mjs) <BR/>
+[PC vs PC match](example/aiMatch.mjs) <BR/>
 
 ## Documentation
 ### Import
@@ -285,14 +286,15 @@ console.log(newFen)
 
 ### Computer AI
 
-This engine includes configurable AI computer logic based on Minimax algorithm. There are four possible levels at this time.
+This engine includes configurable AI computer logic based on Minimax algorithm. There are five possible levels at this time.
 
 |Level|Alias|Moves to the future|HW requirements|Approx. time to move (s)*|
 | :-: | :-:| :-:| :-:| :-:|
-| 0 |Well-trained monkey| 1 | None | <0.1 |
-| 1 |Beginner| 2 | Very low | 0.11 |
-| 2 |Intermediate| 3 | Low | 1.50 |
-| 3 |Intermediate+| 3-4 | Medium | 2.82 |
+| 0 |Well-trained monkey| 1-2 | None | <0.01 |
+| 1 |Beginner| 2-4 | Very low | <0.1 |
+| 2 |Intermediate| 2-4 | Low | 0.7 |
+| 3 |Advanced| 3-5 | Medium | 4.6 |
+| 4 |Experienced| 4-5 | High | 9.5 |
 
 ***Approx. time to move (s)** - This number represent the average amount of seconds needed for one move during a chess game on t3.nano AWS instance.
 T3.nano is a low-cost machine with 0.5 GiB RAM and basic CPU performance. Please note, amount of time needed for calculations heavily depends on in-game situation (number of chess pieces still on a chessboard).

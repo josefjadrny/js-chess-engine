@@ -5,7 +5,7 @@ const expect = chai.expect
 
 describe('Should properly calculate BEST AI move', function () {
     before(function () {
-        this.aiLevel = 3
+        this.aiLevel = 4
         console.time('UI test calculated in')
     })
 
@@ -90,5 +90,43 @@ describe('Should properly calculate BEST AI move', function () {
         const result = game.board.calculateAiMove(this.aiLevel)
         expect(['B8', 'G8'].includes(result.from)).to.be.equal(true)
         expect(['C6', 'F6'].includes(result.to)).to.be.equal(true)
+    })
+
+    it('Should move with pawn', function () {
+        const game = new Game({
+            pieces: {
+                D1: 'Q',
+                A1: 'R',
+                B2: 'P',
+                C2: 'P',
+                F2: 'P',
+                G2: 'P',
+                H2: 'P',
+                D8: 'q',
+                A8: 'r',
+                A7: 'p',
+                B7: 'p',
+                C7: 'p',
+                F7: 'p',
+                G7: 'p',
+                H7: 'p',
+                E4: 'P',
+                E5: 'N',
+                A3: 'P',
+                C5: 'p',
+                D5: 'N',
+                G8: 'k',
+                F8: 'r',
+                B5: 'B',
+                B8: 'n',
+                E6: 'b',
+                G1: 'K',
+                F1: 'R',
+            },
+            turn: 'black',
+        })
+        game.printToConsole()
+        const move = game.aiMove(this.aiLevel)
+        expect(move).to.be.deep.equal({ C7: 'C6' })
     })
 })
