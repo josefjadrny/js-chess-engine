@@ -1,3 +1,12 @@
+## [0.11.3](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.2...v0.11.3) (2021-03-29)
+
+
+### Bug Fixes
+
+* **AI:** AI configuration and logic improved. Add new level (4) for testing. Add new Example ([bd2261b](https://github.com/josefjadrny/js-chess-engine/commit/bd2261be6b99df8f4de8d5a5326398e33d3015d4))
+
+
+
 ## [0.11.2](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.1...v0.11.2) (2021-03-27)
 
 
