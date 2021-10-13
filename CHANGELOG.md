@@ -1,3 +1,7 @@
+# [1.0.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.3...v1.0.0) (2021-10-13)
+
+
+
 ## [0.11.3](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.2...v0.11.3) (2021-03-29)
 
 
