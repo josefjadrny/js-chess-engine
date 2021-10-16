@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.3...v1.0.1) (2021-10-16)
+
+
+### Bug Fixes
+
+* fixed array sort in firefox ([#21](https://github.com/josefjadrny/js-chess-engine/issues/21)) ([42c5913](https://github.com/josefjadrny/js-chess-engine/commit/42c5913a46faa5eaccf142dfd34cf83adf538435))
+
+
+
 # [1.0.0](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.3...v1.0.0) (2021-10-13)
 
 
