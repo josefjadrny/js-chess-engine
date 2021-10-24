@@ -312,6 +312,12 @@ When a move is recognized as a castling - played with a king across two chess fi
 
 <BR/>
 
+## Collaboration
+
+**Collaborators are welcome.** Please do not forget to check ESLint and run tests before submitting a new pull request (`npm run test`). 
+
+If it is possible, also use commit message prefixes like `feat: ` or `fix: ` - changelog is generated from this.
+
 ## TODO
 - Calculation and result caching
 - Forsyth–Edwards Notation (FEN) validation
