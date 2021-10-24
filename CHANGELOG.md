@@ -1,3 +1,12 @@
+## [1.0.2](https://github.com/josefjadrny/js-chess-engine/compare/v1.0.1...v1.0.2) (2021-10-24)
+
+
+### Bug Fixes
+
+* Fixed FEN parsing ([#23](https://github.com/josefjadrny/js-chess-engine/issues/23)) ([14ebe50](https://github.com/josefjadrny/js-chess-engine/commit/14ebe506e300e2a22fed81696f76ef117c00c2d7))
+
+
+
 ## [1.0.1](https://github.com/josefjadrny/js-chess-engine/compare/v0.11.3...v1.0.1) (2021-10-16)
 
 
