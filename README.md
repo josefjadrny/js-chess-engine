@@ -318,6 +318,8 @@ When a move is recognized as a castling - played with a king across two chess fi
 
 If it is possible, also use commit message prefixes like `feat: ` or `fix: ` - changelog is generated from this.
 
+<BR/>
+
 ## TODO
 - Calculation and result caching
 - Forsyth–Edwards Notation (FEN) validation
