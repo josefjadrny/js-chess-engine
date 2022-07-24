@@ -40,7 +40,7 @@ In this documentation I am using CommonJS require known from Node.js, but there 
 
 **Node.js (ESM)**
 ```js
-import jsChessEngine from 'js-chess-engine'
+import * as jsChessEngine from 'js-chess-engine'
 const game = new jsChessEngine.Game()
 ```
 
