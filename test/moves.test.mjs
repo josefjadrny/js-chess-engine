@@ -631,6 +631,31 @@ describe('Should properly get history', function () {
 
         expect(game.getHistory()).to.be.deep.equal([expectedHistory1])
     })
+
+    it('should properly track check property through multiple moves', function () {
+        const game = new Game({
+            turn: 'white',
+            pieces: {
+                E1: 'K',
+                C3: 'R',
+                E8: 'k',
+            },
+        })
+
+        game.move('C3', 'E3')
+        game.move('E8', 'F8')
+        game.move('E3', 'F3')
+
+        const history = game.getHistory()
+
+        expect(history).to.have.length(3)
+        // eslint-disable-next-line no-unused-expressions
+        expect(history[0].configuration.check).to.be.true
+        // eslint-disable-next-line no-unused-expressions
+        expect(history[1].configuration.check).to.be.false
+        // eslint-disable-next-line no-unused-expressions
+        expect(history[2].configuration.check).to.be.true
+    })
 })
 
 describe('Set new piece should', function () {
