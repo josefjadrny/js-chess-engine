@@ -1,3 +1,13 @@
+## [1.0.3](https://github.com/josefjadrny/js-chess-engine/compare/v1.0.2...v1.0.3) (2025-09-01)
+
+
+### Bug Fixes
+
+* Add nodejs 20 support ([559244d](https://github.com/josefjadrny/js-chess-engine/commit/559244d6cd4c67fea15e6bfe6b55c862e728cd62))
+* getHistory() check property consistently returning false ([#31](https://github.com/josefjadrny/js-chess-engine/issues/31)) ([05845d1](https://github.com/josefjadrny/js-chess-engine/commit/05845d1506ca377ad7dcbc46afe2bc88608cd127)), closes [#28](https://github.com/josefjadrny/js-chess-engine/issues/28)
+
+
+
 ## [1.0.2](https://github.com/josefjadrny/js-chess-engine/compare/v1.0.1...v1.0.2) (2021-10-24)
 
 
