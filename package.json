@@ -22,6 +22,9 @@
   "repository": "github:josefjadrny/js-chess-engine",
   "homepage": "https://github.com/josefjadrny/js-chess-engine#readme",
   "license": "MIT",
+  "engines": {
+    "node": ">=20 <21"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "conventional-changelog-cli": "^2.0.34",
