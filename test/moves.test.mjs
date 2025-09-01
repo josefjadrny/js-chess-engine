@@ -539,7 +539,7 @@ describe('Should properly get history', function () {
                     whiteLong: true,
                     whiteShort: true,
                 },
-                check: false,
+                check: true,
                 checkMate: false,
                 enPassant: null,
                 fullMove: 1,
@@ -650,11 +650,11 @@ describe('Should properly get history', function () {
 
         expect(history).to.have.length(3)
         // eslint-disable-next-line no-unused-expressions
-        expect(history[0].configuration.check).to.be.true
+        expect(history[0].configuration.check).to.be.false
         // eslint-disable-next-line no-unused-expressions
-        expect(history[1].configuration.check).to.be.false
+        expect(history[1].configuration.check).to.be.true
         // eslint-disable-next-line no-unused-expressions
-        expect(history[2].configuration.check).to.be.true
+        expect(history[2].configuration.check).to.be.false
     })
 })
 
