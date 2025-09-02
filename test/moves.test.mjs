@@ -1,11 +1,8 @@
-import chai from 'chai'
 import { Game } from '../lib/js-chess-engine.mjs'
 import { COLORS } from '../lib/const/board.mjs'
 
-const expect = chai.expect
-
-describe('Should properly calculate possible moves', function () {
-    it('For rook', function () {
+describe('Should properly calculate possible moves', () => {
+    it('For rook', () => {
         const game = new Game({
             pieces: {
                 B8: 'R',
@@ -15,10 +12,10 @@ describe('Should properly calculate possible moves', function () {
         const expectedMoves = {
             B8: ['B7', 'B6', 'B5', 'B4', 'B3', 'B2', 'B1', 'C8', 'D8', 'E8', 'A8'],
         }
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves()).toEqual(expectedMoves)
     })
 
-    it('For rook in corner', function () {
+    it('For rook in corner', () => {
         const game = new Game({
             pieces: {
                 H8: 'R',
@@ -29,10 +26,10 @@ describe('Should properly calculate possible moves', function () {
         const expectedMoves = {
             H8: ['H7', 'G8', 'F8', 'E8', 'D8', 'C8', 'B8', 'A8'],
         }
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves()).toEqual(expectedMoves)
     })
 
-    it('New game when white is on move', function () {
+    it('New game when white is on move', () => {
         const game = new Game()
         const expectedMoves = {
             B1: ['C3', 'A3'],
@@ -46,10 +43,10 @@ describe('Should properly calculate possible moves', function () {
             G2: ['G3', 'G4'],
             H2: ['H3', 'H4'],
         }
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves()).toEqual(expectedMoves)
     })
 
-    it('White can do a long castling', function () {
+    it('White can do a long castling', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -61,11 +58,11 @@ describe('Should properly calculate possible moves', function () {
         const expectedMovesCastle = ['A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'B1', 'C1', 'D1']
         const expectedMovesKing = ['E2', 'F1', 'D1', 'D2', 'F2', 'C1']
 
-        expect(game.moves('E1')).to.have.members(expectedMovesKing)
-        expect(game.moves('A1')).to.have.members(expectedMovesCastle)
+        expect(game.moves('E1')).toEqual(expect.arrayContaining(expectedMovesKing))
+        expect(game.moves('A1')).toEqual(expect.arrayContaining(expectedMovesCastle))
     })
 
-    it('White can do a short castling', function () {
+    it('White can do a short castling', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -79,10 +76,10 @@ describe('Should properly calculate possible moves', function () {
             H1: ['H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'G1', 'F1'],
         }
 
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves()).toEqual(expectedMoves)
     })
 
-    it('White can`t do a long castling when his King was moved', function () {
+    it('White can`t do a long castling when his King was moved', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -100,10 +97,10 @@ describe('Should properly calculate possible moves', function () {
         game.move('D1', 'E1')
         game.move('E7', 'E6')
 
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves()).toEqual(expectedMoves)
     })
 
-    it('White can`t do a short castling when his King was moved', function () {
+    it('White can`t do a short castling when his King was moved', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -121,10 +118,10 @@ describe('Should properly calculate possible moves', function () {
         game.move('D1', 'E1')
         game.move('E7', 'E6')
 
-        expect(game.moves()).to.deep.equal(expectedMoves)
+        expect(game.moves()).toEqual(expectedMoves)
     })
 
-    it('White can`t do castling when is in check', function () {
+    it('White can`t do castling when is in check', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -136,10 +133,10 @@ describe('Should properly calculate possible moves', function () {
         })
 
         const expectedMoves = ['F1', 'D1', 'D2']
-        expect(game.moves('E1')).to.have.members(expectedMoves)
+        expect(game.moves('E1')).toEqual(expect.arrayContaining(expectedMoves))
     })
 
-    it('White can`t do castling when jumped field is under attack', function () {
+    it('White can`t do castling when jumped field is under attack', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -150,10 +147,10 @@ describe('Should properly calculate possible moves', function () {
             },
         })
         const expectedMoves = ['D1', 'D2']
-        expect(game.moves('E1')).to.have.members(expectedMoves)
+        expect(game.moves('E1')).toEqual(expect.arrayContaining(expectedMoves))
     })
 
-    it('black can do castling after white castling (https://github.com/josefjadrny/js-chess-engine/issues/9)', function () {
+    it('black can do castling after white castling (https://github.com/josefjadrny/js-chess-engine/issues/9)', () => {
         const expectedMoves = ['E7', 'D7', 'G8', 'F8']
 
         const game = new Game({
@@ -172,10 +169,10 @@ describe('Should properly calculate possible moves', function () {
             },
         })
         game.move('E1', 'G1')
-        expect(game.moves('E8')).to.have.members(expectedMoves)
+        expect(game.moves('E8')).toEqual(expect.arrayContaining(expectedMoves))
     })
 
-    it('black can not do castling over attacked fields', function () {
+    it('black can not do castling over attacked fields', () => {
         const expectedMoves = ['E7', 'D7', 'D8']
 
         const game = new Game({
@@ -189,10 +186,10 @@ describe('Should properly calculate possible moves', function () {
             },
         })
         game.move('E1', 'G1')
-        expect(game.moves('E8')).to.have.members(expectedMoves)
+        expect(game.moves('E8')).toEqual(expect.arrayContaining(expectedMoves))
     })
 
-    it('White can do a en Passant', function () {
+    it('White can do a en Passant', () => {
         const expectedMoves = ['C6', 'B6']
 
         const game = new Game()
@@ -201,21 +198,21 @@ describe('Should properly calculate possible moves', function () {
         game.move('C4', 'C5')
         game.move('B7', 'B5')
 
-        expect(game.moves('C5')).to.deep.equal(expectedMoves)
+        expect(game.moves('C5')).toEqual(expectedMoves)
 
         game.move('C5', 'B6')
 
-        expect(game.board.getPiece('B5')).to.be.a('undefined')
+        expect(game.board.getPiece('B5')).toBeUndefined()
     })
 
-    it('White can do a en Passant from FEN (#11)', function () {
+    it('White can do a en Passant from FEN (#11)', () => {
         const expectedMoves = ['D6']
         const game = new Game('rn1qk2r/pbp1nppp/1p2p3/3pP3/1bBP4/2N2N2/PPP2PPP/R1BQK2R w KQkq d6 0 7')
 
-        expect(game.moves('E5')).to.deep.equal(expectedMoves)
+        expect(game.moves('E5')).toEqual(expectedMoves)
     })
 
-    it('White cannot do a en Passant later', function () {
+    it('White cannot do a en Passant later', () => {
         const expectedMoves = ['C6']
 
         const game = new Game()
@@ -226,10 +223,10 @@ describe('Should properly calculate possible moves', function () {
         game.move('A2', 'A4')
         game.move('H7', 'H6')
 
-        expect(game.moves('C5')).to.deep.equal(expectedMoves)
+        expect(game.moves('C5')).toEqual(expectedMoves)
     })
 
-    it('Black can do a en Passant', function () {
+    it('Black can do a en Passant', () => {
         const expectedMoves = ['A3', 'B3']
 
         const game = new Game()
@@ -239,16 +236,16 @@ describe('Should properly calculate possible moves', function () {
         game.move('A5', 'A4')
         game.move('B2', 'B4')
 
-        expect(game.moves('A4')).to.deep.equal(expectedMoves)
+        expect(game.moves('A4')).toEqual(expectedMoves)
 
         game.move('A4', 'B3')
 
-        expect(game.board.getPiece('B4')).to.be.a('undefined')
+        expect(game.board.getPiece('B4')).toBeUndefined()
     })
 })
 
-describe('Should properly calculate score', function () {
-    it('Black player score is -128', function () {
+describe('Should properly calculate score', () => {
+    it('Black player score is -128', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -263,9 +260,9 @@ describe('Should properly calculate score', function () {
             },
         })
 
-        expect(game.board.calculateScore()).to.be.equal(-90)
+        expect(game.board.calculateScore()).toBe(-90)
     })
-    it('White player score is +129', function () {
+    it('White player score is +129', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -279,21 +276,23 @@ describe('Should properly calculate score', function () {
                 D5: 'b', // 3
             },
         })
-        expect(game.board.calculateScore()).to.be.equal(130)
+        expect(game.board.calculateScore()).toBe(130)
     })
-    it('Only piece values for new game', function () {
+    it('Only piece values for new game', () => {
         const game = new Game()
 
-        expect(game.board.getIngamePiecesValue()).to.be.equal(98)
+        expect(game.board.getIngamePiecesValue()).toBe(98)
     })
 })
 
-describe('Should properly calculate score by pieces locations', function () {
-    before(function () {
-        this.multiplier = 0.5
+describe('Should properly calculate score by pieces locations', () => {
+    let multiplier
+
+    beforeAll(() => {
+        multiplier = 0.5
     })
 
-    it('for pawns', function () {
+    it('for pawns', () => {
         const game = new Game({
             pieces: {
                 A2: 'P', // 0.5
@@ -305,12 +304,12 @@ describe('Should properly calculate score by pieces locations', function () {
             },
         })
 
-        expect(game.board.calculateScoreByPiecesLocation()).to.be.equal(0.5 * this.multiplier)
+        expect(game.board.calculateScoreByPiecesLocation()).toBe(0.5 * multiplier)
     })
 })
 
-describe('Should properly calculate check', function () {
-    it('when Rook is attacking from left', function () {
+describe('Should properly calculate check', () => {
+    it('when Rook is attacking from left', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -321,9 +320,9 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
     })
-    it('when Rook is attacking from right', function () {
+    it('when Rook is attacking from right', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -334,9 +333,9 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
     })
-    it('when Queen is attacking from bottom', function () {
+    it('when Queen is attacking from bottom', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -347,9 +346,9 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
     })
-    it('when Bishop is attacking from left down', function () {
+    it('when Bishop is attacking from left down', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -360,9 +359,9 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
     })
-    it('when Queen is attacking from right down', function () {
+    it('when Queen is attacking from right down', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -373,9 +372,9 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
     })
-    it('when and opponent is in check', function () {
+    it('when and opponent is in check', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -386,11 +385,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.false
+        expect(game.exportJson().check).toBe(false)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing()).to.be.true
+        expect(game.board.isAttackingKing()).toBe(true)
     })
-    it('when Bishop is blocked by pawn', function () {
+    it('when Bishop is blocked by pawn', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -402,9 +401,9 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.false
+        expect(game.exportJson().check).toBe(false)
     })
-    it('when Pawn is attacking from left', function () {
+    it('when Pawn is attacking from left', () => {
         const game = new Game({
             turn: 'black',
             pieces: {
@@ -415,11 +414,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.false
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(false)
     })
-    it('when Pawn is attacking from right', function () {
+    it('when Pawn is attacking from right', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -430,11 +429,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(true)
     })
-    it('when Knight is attacking from left', function () {
+    it('when Knight is attacking from left', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -445,11 +444,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(true)
     })
-    it('when Knight was attacking from left', function () {
+    it('when Knight was attacking from left', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -460,18 +459,18 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(true)
 
         game.move('e1', 'e2')
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.false
+        expect(game.exportJson().check).toBe(false)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.false
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(false)
     })
-    it('when Knight is attacking from left up', function () {
+    it('when Knight is attacking from left up', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -482,11 +481,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(true)
     })
-    it('when Knight is attacking from right up', function () {
+    it('when Knight is attacking from right up', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -497,11 +496,11 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(true)
     })
-    it('when Knight is attacking from right', function () {
+    it('when Knight is attacking from right', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -512,14 +511,14 @@ describe('Should properly calculate check', function () {
         })
 
         // eslint-disable-next-line no-unused-expressions
-        expect(game.exportJson().check).to.be.true
+        expect(game.exportJson().check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(game.board.isAttackingKing(COLORS.BLACK)).to.be.true
+        expect(game.board.isAttackingKing(COLORS.BLACK)).toBe(true)
     })
 })
 
-describe('Should properly get history', function () {
-    it('reversed and not reversed', function () {
+describe('Should properly get history', () => {
+    it('reversed and not reversed', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -581,16 +580,16 @@ describe('Should properly get history', function () {
 
         game.move('e1', 'e2')
 
-        expect(game.getHistory()).to.be.deep.equal([expectedHistory1])
-        expect(game.getHistory(true)).to.be.deep.equal([expectedHistory1])
+        expect(game.getHistory()).toEqual([expectedHistory1])
+        expect(game.getHistory(true)).toEqual([expectedHistory1])
 
         game.move('e8', 'e7')
 
-        expect(game.getHistory()).to.be.deep.equal([expectedHistory1, expectedHistory2])
-        expect(game.getHistory(true)).to.be.deep.equal([expectedHistory2, expectedHistory1])
+        expect(game.getHistory()).toEqual([expectedHistory1, expectedHistory2])
+        expect(game.getHistory(true)).toEqual([expectedHistory2, expectedHistory1])
     })
 
-    it('when set and remove pieces were used', function () {
+    it('when set and remove pieces were used', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -629,10 +628,10 @@ describe('Should properly get history', function () {
         game.removePiece('g2')
         game.move('e1', 'e2')
 
-        expect(game.getHistory()).to.be.deep.equal([expectedHistory1])
+        expect(game.getHistory()).toEqual([expectedHistory1])
     })
 
-    it('should properly track check property through multiple moves', function () {
+    it('should properly track check property through multiple moves', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -648,18 +647,18 @@ describe('Should properly get history', function () {
 
         const history = game.getHistory()
 
-        expect(history).to.have.length(3)
+        expect(history).toHaveLength(3)
         // eslint-disable-next-line no-unused-expressions
-        expect(history[0].configuration.check).to.be.false
+        expect(history[0].configuration.check).toBe(false)
         // eslint-disable-next-line no-unused-expressions
-        expect(history[1].configuration.check).to.be.true
+        expect(history[1].configuration.check).toBe(true)
         // eslint-disable-next-line no-unused-expressions
-        expect(history[2].configuration.check).to.be.false
+        expect(history[2].configuration.check).toBe(false)
     })
 })
 
-describe('Set new piece should', function () {
-    it('succeed for valid data', function () {
+describe('Set new piece should', () => {
+    it('succeed for valid data', () => {
         const expectedConfiguration = {
             castling: {
                 blackLong: true,
@@ -711,10 +710,10 @@ describe('Set new piece should', function () {
         game.setPiece('D4', 'n')
         game.setPiece('E4', 'p')
 
-        expect(game.board.configuration).to.be.deep.equal(expectedConfiguration)
+        expect(game.board.configuration).toEqual(expectedConfiguration)
     })
 
-    it('fail for invalid location', function () {
+    it('fail for invalid location', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -725,10 +724,10 @@ describe('Set new piece should', function () {
 
         expect(() => {
             game.setPiece('A9', 'Q')
-        }).to.throw(/Invalid location/)
+        }).toThrow(/Invalid location/)
     })
 
-    it('fail for invalid piece', function () {
+    it('fail for invalid piece', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -739,12 +738,12 @@ describe('Set new piece should', function () {
 
         expect(() => {
             game.setPiece('A8', 'F')
-        }).to.throw(/Invalid piece/)
+        }).toThrow(/Invalid piece/)
     })
 })
 
-describe('Delete piece should', function () {
-    it('succeed for valid data', function () {
+describe('Delete piece should', () => {
+    it('succeed for valid data', () => {
         const expectedConfiguration = {
             castling: {
                 blackLong: true,
@@ -778,10 +777,10 @@ describe('Delete piece should', function () {
         game.removePiece('D7')
         game.removePiece('d6')
 
-        expect(game.board.configuration).to.be.deep.equal(expectedConfiguration)
+        expect(game.board.configuration).toEqual(expectedConfiguration)
     })
 
-    it('fail for invalid location', function () {
+    it('fail for invalid location', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -793,6 +792,6 @@ describe('Delete piece should', function () {
 
         expect(() => {
             game.removePiece('A9')
-        }).to.throw(/Invalid location/)
+        }).toThrow(/Invalid location/)
     })
 })

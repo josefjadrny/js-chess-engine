@@ -1,11 +1,11 @@
 {
   "plugins": [
-    "mocha"
+    "jest"
   ],
   "extends": [
-    "plugin:mocha/recommended"
+    "plugin:jest/recommended"
   ],
   "env": {
-    "mocha": true
+    "jest": true
   }
 }

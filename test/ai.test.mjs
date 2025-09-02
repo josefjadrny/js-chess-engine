@@ -1,19 +1,18 @@
-import chai from 'chai'
 import { Game } from '../lib/js-chess-engine.mjs'
 
-const expect = chai.expect
+describe('Should properly calculate BEST AI move', () => {
+    let aiLevel
 
-describe('Should properly calculate BEST AI move', function () {
-    before(function () {
-        this.aiLevel = 4
+    beforeAll(() => {
+        aiLevel = 4
         console.time('UI test calculated in')
     })
 
-    after(function () {
+    afterAll(() => {
         console.timeEnd('UI test calculated in')
     })
 
-    it('Should do checkmate in one move', function () {
+    it('Should do checkmate in one move', () => {
         const game = new Game({
             turn: 'white',
             pieces: {
@@ -24,11 +23,11 @@ describe('Should properly calculate BEST AI move', function () {
             },
         })
         game.printToConsole()
-        game.aiMove(this.aiLevel)
-        expect(game.exportJson().checkMate).to.be.equal(true)
+        game.aiMove(aiLevel)
+        expect(game.exportJson().checkMate).toBe(true)
     })
 
-    it('Should do checkmate in tree moves', function () {
+    it('Should do checkmate in tree moves', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -38,13 +37,13 @@ describe('Should properly calculate BEST AI move', function () {
             },
         })
         game.printToConsole()
-        game.aiMove(this.aiLevel)
+        game.aiMove(aiLevel)
         game.aiMove(0)
-        game.aiMove(this.aiLevel)
-        expect(game.exportJson().checkMate).to.be.equal(true)
+        game.aiMove(aiLevel)
+        expect(game.exportJson().checkMate).toBe(true)
     })
 
-    it('Should not end with draw', function () {
+    it('Should not end with draw', () => {
         const game = new Game({
             pieces: {
                 E3: 'K',
@@ -56,11 +55,11 @@ describe('Should properly calculate BEST AI move', function () {
             turn: 'black',
         })
         game.printToConsole()
-        game.aiMove(this.aiLevel)
-        expect(game.exportJson().isFinished).to.be.equal(false)
+        game.aiMove(aiLevel)
+        expect(game.exportJson().isFinished).toBe(false)
     })
 
-    it('Should move with knight', function () {
+    it('Should move with knight', () => {
         const game = new Game({
             pieces: {
                 E1: 'K',
@@ -87,12 +86,12 @@ describe('Should properly calculate BEST AI move', function () {
             turn: 'black',
         })
         game.printToConsole()
-        const result = game.board.calculateAiMove(this.aiLevel)
-        expect(['B8', 'G8'].includes(result.from)).to.be.equal(true)
-        expect(['C6', 'F6'].includes(result.to)).to.be.equal(true)
+        const result = game.board.calculateAiMove(aiLevel)
+        expect(['B8', 'G8'].includes(result.from)).toBe(true)
+        expect(['C6', 'F6'].includes(result.to)).toBe(true)
     })
 
-    it('Should move with pawn', function () {
+    it('Should move with pawn', () => {
         const game = new Game({
             pieces: {
                 D1: 'Q',
@@ -126,7 +125,7 @@ describe('Should properly calculate BEST AI move', function () {
             turn: 'black',
         })
         game.printToConsole()
-        const move = game.aiMove(this.aiLevel)
-        expect(move).to.be.deep.equal({ C7: 'C6' })
+        const move = game.aiMove(aiLevel)
+        expect(move).toEqual({ C7: 'C6' })
     })
 })
