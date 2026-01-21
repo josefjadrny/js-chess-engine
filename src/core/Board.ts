@@ -51,10 +51,10 @@ export function createEmptyBoard(): InternalBoard {
         // Game state
         turn: InternalColor.WHITE,
         castlingRights: {
-            whiteShort: true,
-            blackShort: true,
-            whiteLong: true,
-            blackLong: true,
+            whiteShort: false,
+            blackShort: false,
+            whiteLong: false,
+            blackLong: false,
         },
         enPassantSquare: null,
         halfMoveClock: 0,
@@ -107,6 +107,14 @@ export function createStartingBoard(): InternalBoard {
     setPiece(board, 61, Piece.BLACK_BISHOP); // F8
     setPiece(board, 62, Piece.BLACK_KNIGHT); // G8
     setPiece(board, 63, Piece.BLACK_ROOK);   // H8
+
+    // Enable castling rights for starting position
+    board.castlingRights = {
+        whiteShort: true,
+        whiteLong: true,
+        blackShort: true,
+        blackLong: true,
+    };
 
     return board;
 }
