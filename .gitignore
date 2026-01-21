@@ -1,5 +1,12 @@
 node_modules
 .idea
-dist
-coverage
-*.tsbuildinfo
+
+# Build output
+dist/
+
+# Test coverage
+coverage/
+
+# OS files
+.DS_Store
+*.log
