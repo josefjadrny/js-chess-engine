@@ -51,10 +51,10 @@ export function createEmptyBoard(): InternalBoard {
         // Game state
         turn: InternalColor.WHITE,
         castlingRights: {
-            whiteShort: false,
-            blackShort: false,
-            whiteLong: false,
-            blackLong: false,
+            whiteShort: true,
+            blackShort: true,
+            whiteLong: true,
+            blackLong: true,
         },
         enPassantSquare: null,
         halfMoveClock: 0,

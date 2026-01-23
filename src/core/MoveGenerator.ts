@@ -524,6 +524,8 @@ function generateCastlingMoves(
         // White short castling (O-O)
         if (
             board.castlingRights.whiteShort &&
+            getPiece(board, CASTLING.WHITE_SHORT.kingFrom as SquareIndex) === Piece.WHITE_KING &&
+            getPiece(board, CASTLING.WHITE_SHORT.rookFrom as SquareIndex) === Piece.WHITE_ROOK &&
             isSquareEmpty(board, 5 as SquareIndex) && // F1
             isSquareEmpty(board, 6 as SquareIndex) && // G1
             !isSquareAttacked(board, 4 as SquareIndex, opponentColor) && // E1 not in check
@@ -542,6 +544,8 @@ function generateCastlingMoves(
         // White long castling (O-O-O)
         if (
             board.castlingRights.whiteLong &&
+            getPiece(board, CASTLING.WHITE_LONG.kingFrom as SquareIndex) === Piece.WHITE_KING &&
+            getPiece(board, CASTLING.WHITE_LONG.rookFrom as SquareIndex) === Piece.WHITE_ROOK &&
             isSquareEmpty(board, 1 as SquareIndex) && // B1
             isSquareEmpty(board, 2 as SquareIndex) && // C1
             isSquareEmpty(board, 3 as SquareIndex) && // D1
@@ -561,6 +565,8 @@ function generateCastlingMoves(
         // Black short castling (O-O)
         if (
             board.castlingRights.blackShort &&
+            getPiece(board, CASTLING.BLACK_SHORT.kingFrom as SquareIndex) === Piece.BLACK_KING &&
+            getPiece(board, CASTLING.BLACK_SHORT.rookFrom as SquareIndex) === Piece.BLACK_ROOK &&
             isSquareEmpty(board, 61 as SquareIndex) && // F8
             isSquareEmpty(board, 62 as SquareIndex) && // G8
             !isSquareAttacked(board, 60 as SquareIndex, opponentColor) && // E8 not in check
@@ -579,6 +585,8 @@ function generateCastlingMoves(
         // Black long castling (O-O-O)
         if (
             board.castlingRights.blackLong &&
+            getPiece(board, CASTLING.BLACK_LONG.kingFrom as SquareIndex) === Piece.BLACK_KING &&
+            getPiece(board, CASTLING.BLACK_LONG.rookFrom as SquareIndex) === Piece.BLACK_ROOK &&
             isSquareEmpty(board, 57 as SquareIndex) && // B8
             isSquareEmpty(board, 58 as SquareIndex) && // C8
             isSquareEmpty(board, 59 as SquareIndex) && // D8
@@ -641,4 +649,182 @@ export function getMovesForPiece(board: InternalBoard, square: SquareIndex): Int
 export function isMoveLegal(board: InternalBoard, from: SquareIndex, to: SquareIndex): boolean {
     const legalMoves = generateLegalMoves(board);
     return legalMoves.some(move => move.from === from && move.to === to);
+}
+
+/**
+ * Apply a move to the board with full state updates (mutates the board)
+ * Updates turn, castling rights, en passant, move counters, and game status
+ *
+ * @param board - Board state to modify
+ * @param move - Move to apply
+ * @returns The applied move
+ */
+export function applyMoveComplete(board: InternalBoard, move: InternalMove): InternalMove {
+    const { from, to, piece, capturedPiece, flags, promotionPiece } = move;
+
+    // Reset en passant square (will be set if this is a double pawn push)
+    board.enPassantSquare = null;
+
+    // Handle captures
+    if (capturedPiece !== Piece.EMPTY) {
+        removePiece(board, to);
+        board.halfMoveClock = 0;
+    } else {
+        board.halfMoveClock++;
+    }
+
+    // Handle en passant capture
+    if (flags & MoveFlag.EN_PASSANT) {
+        const captureSquare = board.turn === InternalColor.WHITE ? to - 8 : to + 8;
+        removePiece(board, captureSquare as SquareIndex);
+        board.halfMoveClock = 0;
+    }
+
+    // Handle castling
+    if (flags & MoveFlag.CASTLING) {
+        // Move the rook
+        if (to === CASTLING.WHITE_SHORT.kingTo) {
+            // White kingside
+            removePiece(board, CASTLING.WHITE_SHORT.rookFrom as SquareIndex);
+            setPiece(board, CASTLING.WHITE_SHORT.rookTo as SquareIndex, Piece.WHITE_ROOK);
+        } else if (to === CASTLING.WHITE_LONG.kingTo) {
+            // White queenside
+            removePiece(board, CASTLING.WHITE_LONG.rookFrom as SquareIndex);
+            setPiece(board, CASTLING.WHITE_LONG.rookTo as SquareIndex, Piece.WHITE_ROOK);
+        } else if (to === CASTLING.BLACK_SHORT.kingTo) {
+            // Black kingside
+            removePiece(board, CASTLING.BLACK_SHORT.rookFrom as SquareIndex);
+            setPiece(board, CASTLING.BLACK_SHORT.rookTo as SquareIndex, Piece.BLACK_ROOK);
+        } else if (to === CASTLING.BLACK_LONG.kingTo) {
+            // Black queenside
+            removePiece(board, CASTLING.BLACK_LONG.rookFrom as SquareIndex);
+            setPiece(board, CASTLING.BLACK_LONG.rookTo as SquareIndex, Piece.BLACK_ROOK);
+        }
+    }
+
+    // Move the piece
+    removePiece(board, from);
+
+    // Handle promotion
+    if (flags & MoveFlag.PROMOTION && promotionPiece) {
+        setPiece(board, to, promotionPiece);
+    } else {
+        setPiece(board, to, piece);
+    }
+
+    // Reset half-move clock on pawn moves
+    if (piece === Piece.WHITE_PAWN || piece === Piece.BLACK_PAWN) {
+        board.halfMoveClock = 0;
+    }
+
+    // Handle double pawn push (set en passant square)
+    if (flags & MoveFlag.PAWN_DOUBLE_PUSH) {
+        const enPassantSquare = board.turn === InternalColor.WHITE ? from + 8 : from - 8;
+        board.enPassantSquare = enPassantSquare as SquareIndex;
+    }
+
+    // Update castling rights
+    updateCastlingRights(board, from, to, piece);
+
+    // Switch turn
+    board.turn = board.turn === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
+
+    // Increment full move number after black's move
+    if (board.turn === InternalColor.WHITE) {
+        board.fullMoveNumber++;
+    }
+
+    // Update game status (check, checkmate, stalemate)
+    updateGameStatus(board);
+
+    return move;
+}
+
+/**
+ * Update castling rights after a move
+ *
+ * @param board - Board state
+ * @param from - From square
+ * @param to - To square
+ * @param piece - Piece that moved
+ */
+function updateCastlingRights(
+    board: InternalBoard,
+    from: SquareIndex,
+    to: SquareIndex,
+    piece: Piece
+): void {
+    // If king moves, lose all castling rights for that color
+    if (piece === Piece.WHITE_KING) {
+        board.castlingRights.whiteShort = false;
+        board.castlingRights.whiteLong = false;
+    } else if (piece === Piece.BLACK_KING) {
+        board.castlingRights.blackShort = false;
+        board.castlingRights.blackLong = false;
+    }
+
+    // If rook moves from starting square, lose castling right for that side
+    if (piece === Piece.WHITE_ROOK) {
+        if (from === CASTLING.WHITE_SHORT.rookFrom) {
+            board.castlingRights.whiteShort = false;
+        } else if (from === CASTLING.WHITE_LONG.rookFrom) {
+            board.castlingRights.whiteLong = false;
+        }
+    } else if (piece === Piece.BLACK_ROOK) {
+        if (from === CASTLING.BLACK_SHORT.rookFrom) {
+            board.castlingRights.blackShort = false;
+        } else if (from === CASTLING.BLACK_LONG.rookFrom) {
+            board.castlingRights.blackLong = false;
+        }
+    }
+
+    // If rook is captured, lose castling right for that side
+    if (to === CASTLING.WHITE_SHORT.rookFrom) {
+        board.castlingRights.whiteShort = false;
+    } else if (to === CASTLING.WHITE_LONG.rookFrom) {
+        board.castlingRights.whiteLong = false;
+    } else if (to === CASTLING.BLACK_SHORT.rookFrom) {
+        board.castlingRights.blackShort = false;
+    } else if (to === CASTLING.BLACK_LONG.rookFrom) {
+        board.castlingRights.blackLong = false;
+    }
+}
+
+/**
+ * Update game status (check, checkmate, stalemate)
+ *
+ * @param board - Board state
+ */
+function updateGameStatus(board: InternalBoard): void {
+    const currentColor = board.turn;
+    const kingBitboard = currentColor === InternalColor.WHITE ? board.whiteKing : board.blackKing;
+
+    if (kingBitboard === 0n) {
+        board.isCheck = false;
+        board.isCheckmate = false;
+        board.isStalemate = false;
+        return;
+    }
+
+    const kingSquare = getLowestSetBit(kingBitboard) as SquareIndex;
+    const inCheck = isSquareAttacked(board, kingSquare, currentColor);
+
+    board.isCheck = inCheck;
+
+    // Check if there are any legal moves
+    const legalMoves = generateLegalMoves(board);
+    const hasLegalMoves = legalMoves.length > 0;
+
+    if (!hasLegalMoves) {
+        if (inCheck) {
+            board.isCheckmate = true;
+            board.isStalemate = false;
+        } else {
+            board.isCheckmate = false;
+            board.isStalemate = true;
+        }
+    } else {
+        board.isCheckmate = false;
+        board.isStalemate = false;
+    }
 }
