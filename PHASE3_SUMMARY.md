@@ -58,11 +58,14 @@ Complete implementation with all v1 API methods:
   - Game status updates (check, checkmate, stalemate)
 
 ### 6. Integration Tests
-- ✅ **FEN Tests** (`test/integration/fen.test.ts`) - 10 tests
-  - FEN export for various positions
-  - FEN import with full state restoration
+- ✅ **FEN Tests** (`test/integration/fen.test.ts`) - 14 tests
+  - FEN export for various positions (7 tests)
+  - FEN import with full board state validation (7 tests)
+  - Round-trip FEN conversion (import → export → verify match)
   - Castling rights tracking
   - En passant square handling
+  - Complex positions with captures
+  - High move counter handling
 
 - ✅ **API Tests** (`test/integration/api.test.ts`) - 22 tests
   - Game class constructor (all 3 variants)
@@ -78,18 +81,18 @@ Complete implementation with all v1 API methods:
 
 ```
 Test Suites: 5 passed, 5 total
-Tests:       177 passed, 177 total
+Tests:       181 passed, 181 total
 ```
 
 **Phase 3 Specific Tests:**
-- ✅ 10/10 FEN tests passing
+- ✅ 14/14 FEN tests passing (7 export + 7 import with full board validation)
 - ✅ 22/22 API tests passing
-- ✅ **32 total Phase 3 tests passing**
+- ✅ **36 total Phase 3 tests passing**
 
 **Overall:**
 - ✅ 145 Phase 2 move generation tests (including stalemate fix)
-- ✅ 32 Phase 3 API tests
-- ✅ **100% test pass rate**
+- ✅ 36 Phase 3 API tests
+- ✅ **100% test pass rate (181/181 tests)**
 
 ## Key Features Implemented
 
