@@ -157,24 +157,24 @@ src/
 
 **Deliverable**: ✅ Full API working, 176/177 tests passing (1 Phase 2 stalemate edge case)
 
-### Phase 4: Basic AI
+### Phase 4: Basic AI ✅ COMPLETE
 
 **Goal**: AI at v1 parity
 
 **Tasks:**
-- [ ] Basic evaluator (`ai/Evaluator.ts`)
+- [x] Basic evaluator (`ai/Evaluator.ts`)
   - Material counting
   - Piece-square tables
-- [ ] Simple alpha-beta search (`ai/Search.ts`)
+- [x] Simple alpha-beta search (`ai/Search.ts`)
   - Minimax with alpha-beta pruning
   - Depth-limited search
-- [ ] AI engine (`ai/AIEngine.ts`)
+- [x] AI engine (`ai/AIEngine.ts`)
   - Level → depth mapping
   - Search orchestration
-- [ ] `aiMove()` implementation in Game class
-- [ ] Port AI tests (5 tests)
+- [x] `aiMove()` implementation in Game class
+- [x] Create AI tests (12 tests)
 
-**Deliverable**: All 72 tests passing, AI functional
+**Deliverable**: ✅ All 193 tests passing (181 + 12 AI tests), AI functional at all levels
 
 ### Phase 5: AI Enhancements
 
@@ -406,4 +406,4 @@ npm run test:perft        # Verify move counts
 
 ---
 
-**Current Status**: Phase 3 Complete ✅ | [See PHASE3_SUMMARY.md](./PHASE3_SUMMARY.md)
+**Current Status**: Phase 4 Complete ✅ | [See PHASE4_SUMMARY.md](./PHASE4_SUMMARY.md)

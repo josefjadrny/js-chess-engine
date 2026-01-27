@@ -24,6 +24,8 @@ import {
     normalizeSquare,
     symbolToPiece,
 } from './adapters/APIAdapter';
+import { AIEngine } from './ai/AIEngine';
+import { AILevel } from './types/ai.types';
 
 // Export types for TypeScript users
 export * from './types';
@@ -34,6 +36,7 @@ export * from './types';
 export class Game {
     private board: InternalBoard;
     private history: HistoryEntry[] = [];
+    private aiEngine: AIEngine;
 
     /**
      * Create a new game
@@ -41,6 +44,8 @@ export class Game {
      * @param configuration - Optional board configuration (JSON object, FEN string, or undefined for new game)
      */
     constructor(configuration?: BoardConfig | string) {
+        this.aiEngine = new AIEngine();
+
         if (!configuration) {
             // New game with standard starting position
             this.board = createStartingBoard();
@@ -203,12 +208,35 @@ export class Game {
     }
 
     /**
-     * AI move (placeholder for Phase 4)
+     * Make an AI move
      *
-     * @param level - AI level (0-4)
+     * @param level - AI level (0-4, default 2)
+     * @returns Board configuration after AI move
      */
-    aiMove(_level: number = 2): BoardConfig {
-        throw new Error('AI not yet implemented - Phase 4');
+    aiMove(level: number = 2): BoardConfig {
+        // Validate level
+        if (level < 0 || level > 4) {
+            throw new Error('AI level must be between 0 and 4');
+        }
+
+        // Find best move
+        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel);
+
+        if (!bestMove) {
+            // No legal moves available - game must be finished (checkmate or stalemate)
+            throw new Error('Game is already finished');
+        }
+
+        // Record move in history
+        const fromSquare = indexToSquare(bestMove.from);
+        const toSquare = indexToSquare(bestMove.to);
+        const historyEntry: HistoryEntry = { [fromSquare]: toSquare };
+        this.history.push(historyEntry);
+
+        // Apply the move
+        applyMoveComplete(this.board, bestMove);
+
+        return boardToConfig(this.board);
     }
 }
 
@@ -283,10 +311,10 @@ export function move(config: BoardConfig | string, from: string, to: string): Bo
 }
 
 /**
- * Make an AI move (placeholder for Phase 4)
+ * Make an AI move
  *
  * @param config - Board configuration or FEN string
- * @param level - AI level (0-4)
+ * @param level - AI level (0-4, default 2)
  * @returns Board configuration after AI move
  */
 export function aiMove(config: BoardConfig | string, level: number = 2): BoardConfig {

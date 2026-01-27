@@ -807,7 +807,9 @@ function updateGameStatus(board: InternalBoard): void {
     }
 
     const kingSquare = getLowestSetBit(kingBitboard) as SquareIndex;
-    const inCheck = isSquareAttacked(board, kingSquare, currentColor);
+    // Check if the current player's king is attacked by the OPPONENT
+    const opponentColor = currentColor === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
+    const inCheck = isSquareAttacked(board, kingSquare, opponentColor);
 
     board.isCheck = inCheck;
 
