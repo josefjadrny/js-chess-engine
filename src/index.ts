@@ -185,26 +185,27 @@ export class Game {
     }
 
     /**
-     * Print board to console (ASCII representation)
+     * Print board to console (Unicode chess pieces)
      */
     printToConsole(): void {
-        console.log('\n  +---+---+---+---+---+---+---+---+');
+        process.stdout.write('\n');
 
         for (let rank = 7; rank >= 0; rank--) {
-            let row = `${rank + 1} |`;
+            process.stdout.write(`${rank + 1}`);
 
             for (let file = 0; file < 8; file++) {
                 const index = rank * 8 + file;
                 const piece = this.board.mailbox[index];
-                const symbol = pieceToSymbol(piece);
-                row += ` ${symbol} |`;
+                const isWhiteSquare = (rank + file) % 2 === 0;
+
+                const symbol = pieceToUnicode(piece, isWhiteSquare);
+                process.stdout.write(symbol);
             }
 
-            console.log(row);
-            console.log('  +---+---+---+---+---+---+---+---+');
+            process.stdout.write('\n');
         }
 
-        console.log('    A   B   C   D   E   F   G   H\n');
+        process.stdout.write(' ABCDEFGH\n');
     }
 
     /**
@@ -241,25 +242,25 @@ export class Game {
 }
 
 /**
- * Helper function to convert piece enum to symbol for printing
+ * Helper function to convert piece enum to Unicode symbol for printing
  */
-function pieceToSymbol(piece: number): string {
+function pieceToUnicode(piece: number, isWhiteSquare: boolean): string {
     const symbols: Record<number, string> = {
-        0: ' ',  // EMPTY
-        1: 'P',  // WHITE_PAWN
-        2: 'N',  // WHITE_KNIGHT
-        3: 'B',  // WHITE_BISHOP
-        4: 'R',  // WHITE_ROOK
-        5: 'Q',  // WHITE_QUEEN
-        6: 'K',  // WHITE_KING
-        7: 'p',  // BLACK_PAWN
-        8: 'n',  // BLACK_KNIGHT
-        9: 'b',  // BLACK_BISHOP
-        10: 'r', // BLACK_ROOK
-        11: 'q', // BLACK_QUEEN
-        12: 'k', // BLACK_KING
+        0: isWhiteSquare ? '\u2588' : '\u2591',  // EMPTY - filled/light block
+        1: '\u2659',  // WHITE_PAWN ♙
+        2: '\u2658',  // WHITE_KNIGHT ♘
+        3: '\u2657',  // WHITE_BISHOP ♗
+        4: '\u2656',  // WHITE_ROOK ♖
+        5: '\u2655',  // WHITE_QUEEN ♕
+        6: '\u2654',  // WHITE_KING ♔
+        7: '\u265F',  // BLACK_PAWN ♟
+        8: '\u265E',  // BLACK_KNIGHT ♞
+        9: '\u265D',  // BLACK_BISHOP ♝
+        10: '\u265C', // BLACK_ROOK ♜
+        11: '\u265B', // BLACK_QUEEN ♛
+        12: '\u265A', // BLACK_KING ♚
     };
-    return symbols[piece] || ' ';
+    return symbols[piece] || (isWhiteSquare ? '\u2588' : '\u2591');
 }
 
 // ==================== Stateless Functions ====================

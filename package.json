@@ -21,6 +21,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
+    "play": "node example/play.mjs",
     "preversion": "npm test && npm run build && git add -A dist",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
