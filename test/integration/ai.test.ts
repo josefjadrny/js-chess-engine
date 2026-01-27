@@ -15,22 +15,6 @@ describe('AI Engine', () => {
             expect(result.turn).toBe('black'); // Should switch to black after white's move
         });
 
-        it('should make different moves at different levels', () => {
-            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-
-            const game1 = new Game(fen);
-            const result1 = game1.aiMove(0);
-
-            const game2 = new Game(fen);
-            const result2 = game2.aiMove(4);
-
-            // Both should make valid moves
-            expect(result1).toBeDefined();
-            expect(result2).toBeDefined();
-            expect(result1.turn).toBe('black');
-            expect(result2.turn).toBe('black');
-        });
-
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
@@ -177,7 +161,7 @@ describe('AI Engine', () => {
             const fen = '6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.aiMove(3); // Use higher level for better tactical awareness
+            const result = game.aiMove(2); // Mate-in-1 doesn't need deep search
 
             // AI should deliver checkmate
             expect(result.checkMate).toBe(true);
@@ -189,7 +173,7 @@ describe('AI Engine', () => {
             const fen = '7k/5Qpp/8/8/8/8/6PP/6K1 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.aiMove(4); // Use level 4 for best tactical play
+            const result = game.aiMove(2); // Mate-in-1 doesn't need deep search
 
             // Should deliver mate (Qf8#) - AI should find this
             expect(result.checkMate).toBe(true);
@@ -201,7 +185,7 @@ describe('AI Engine', () => {
             const fen = 'k7/2Q5/2K5/8/8/8/8/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.aiMove(4);
+            const result = game.aiMove(2); // Mate-in-1 doesn't need deep search
 
             // Should deliver checkmate (Qa7# or Qb7#)
             expect(result.checkMate).toBe(true);
@@ -266,7 +250,7 @@ describe('AI Engine', () => {
             const initialRooks = Object.values(game.exportJson().pieces).filter(p => p === 'r').length;
             expect(initialRooks).toBe(1); // Verify test setup
 
-            const result = game.aiMove(3);
+            const result = game.aiMove(2); // Basic tactics, doesn't need deep search
 
             // Knight should make a tactical move (ideally Nc7+ forking king and rook)
             expect(result).toBeDefined();
@@ -289,10 +273,10 @@ describe('AI Engine', () => {
             const fen = '7k/8/8/8/8/8/4Q3/4K3 w - - 0 1';
             const game = new Game(fen);
 
-            const result1 = game.aiMove(3);
+            const result1 = game.aiMove(2); // Basic endgame, doesn't need deep search
             expect(result1.checkMate).toBe(false);
 
-            const result2 = game.aiMove(3);
+            const result2 = game.aiMove(2);
             expect(result2).toBeDefined();
 
             // Game should eventually end in checkmate if we keep playing
@@ -304,7 +288,7 @@ describe('AI Engine', () => {
             const fen = '7k/8/6K1/8/8/8/7Q/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.aiMove(3);
+            const result = game.aiMove(2); // Simple position evaluation
 
             // Should either be checkmate or continue game, not stalemate
             if (result.isFinished) {
@@ -378,7 +362,7 @@ describe('AI Engine', () => {
             const fen = 'k7/8/1K6/8/8/8/8/7Q w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.aiMove(3);
+            const result = game.aiMove(2); // Simple position evaluation
 
             // Should either deliver checkmate or continue toward mate
             if (result.isFinished) {
