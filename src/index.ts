@@ -16,7 +16,7 @@ import { createStartingBoard, setPiece as setBoardPiece, removePiece as removeBo
 import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/MoveGenerator';
 import { parseFEN, toFEN, getStartingFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
-import { getDefaultTTSize } from './utils/environment';
+import { getDefaultTTSize, getRecommendedTTSize } from './utils/environment';
 import {
     boardToConfig,
     configToBoard,
@@ -212,13 +212,13 @@ export class Game {
     /**
      * Make an AI move (v1 compatible - returns only the move)
      *
-     * @param level - AI level (0-4, default 2)
+     * @param level - AI level (1-5, default 3)
      * @returns The played move object (e.g., {"E2": "E4"})
      */
-    aiMove(level: number = 2): HistoryEntry {
+    aiMove(level: number = 3): HistoryEntry {
         // Validate level
-        if (level < 0 || level > 4) {
-            throw new Error('AI level must be between 0 and 4');
+        if (level < 1 || level > 5) {
+            throw new Error('AI level must be between 1 and 5');
         }
 
         // Find best move
@@ -245,21 +245,22 @@ export class Game {
      * Make an AI move and return both move and board state
      *
      * @param options - Optional configuration object
-     * @param options.level - AI difficulty level (0-4, default: 2)
+     * @param options.level - AI difficulty level (1-5, default: 3)
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
+     * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 16 MB Node.js, 2 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
     ai(options: { level?: number; play?: boolean; ttSizeMB?: number } = {}): { move: HistoryEntry; board: BoardConfig } {
-        const level = options.level ?? 2;
+        const level = options.level ?? 3;
         const play = options.play ?? true;
         // Allow 0 to disable TT, or 0.25-256 MB range
-        // Default: 16 MB in Node.js, 1 MB in browser (auto-detected)
-        const defaultSize = getDefaultTTSize();
+        // Default: auto-scaled by AI level (lower levels use less memory, higher levels use more)
+        const defaultSize = getRecommendedTTSize(level);
         const ttSizeMB = options.ttSizeMB === 0 ? 0 : Math.max(0.25, Math.min(256, options.ttSizeMB ?? defaultSize));
 
         // Validate level
-        if (level < 0 || level > 4) {
-            throw new Error('AI level must be between 0 and 4');
+        if (level < 1 || level > 5) {
+            throw new Error('AI level must be between 1 and 5');
         }
 
         // Find best move
@@ -368,10 +369,10 @@ export function move(config: BoardConfig | string, from: string, to: string): Bo
  * Make an AI move (v1 compatible - returns only the move)
  *
  * @param config - Board configuration or FEN string
- * @param level - AI level (0-4, default 2)
+ * @param level - AI level (1-5, default 3)
  * @returns The played move object (e.g., {"E2": "E4"})
  */
-export function aiMove(config: BoardConfig | string, level: number = 2): HistoryEntry {
+export function aiMove(config: BoardConfig | string, level: number = 3): HistoryEntry {
     const game = new Game(config);
     return game.aiMove(level);
 }
@@ -381,9 +382,9 @@ export function aiMove(config: BoardConfig | string, level: number = 2): History
  *
  * @param config - Board configuration or FEN string
  * @param options - Optional configuration object
- * @param options.level - AI difficulty level (0-4, default: 2)
+ * @param options.level - AI difficulty level (1-5, default: 3)
  * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
- * @param options.ttSizeMB - Transposition table size in MB (1-256, default: 16). Larger values improve performance but use more memory.
+ * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 16 MB Node.js, 2 MB browser)
  * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
  */
 export function ai(

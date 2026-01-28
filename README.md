@@ -3,7 +3,7 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/josefjadrny/js-chess-engine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Complete TypeScript chess engine without dependencies for Node.js >=24 and browsers. Includes configurable AI with difficulty levels 0-4.
+Complete TypeScript chess engine without dependencies for Node.js >=24 and browsers. Includes configurable AI with difficulty levels 1-5.
 
 **⚠️ Upgrading from v1?** See [Breaking Changes](#breaking-changes-from-v1) section at the end of this document
 
@@ -174,14 +174,14 @@ game.removePiece('E5')
 `game.aiMove(level)` - Calculate and perform the best move for the current player using AI. **Returns only the move** (v1 API compatible).
 
 Params:
-- `level` AILevel (_optional_) - AI difficulty level (0-4). See [Computer AI](#computer-ai) section. Default: 2
+- `level` AILevel (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: 3
 
 Returns: `HistoryEntry` - The played move (e.g., `{"E2": "E4"}`)
 
 ```typescript
 import type { HistoryEntry, AILevel } from 'js-chess-engine'
 
-const level: AILevel = 3
+const level: AILevel = 4
 const move: HistoryEntry = game.aiMove(level)
 console.log(move) // {"E2": "E4"}
 
@@ -195,9 +195,9 @@ const board = game.exportJson()
 
 Params:
 - `options` object (_optional_) - Configuration options:
-  - `level` number (_optional_) - AI difficulty level (0-4). See [Computer AI](#computer-ai) section. Default: `2`
+  - `level` number (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
-  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-detected (`16 MB` in Node.js, `1 MB` in browser)
+  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
 
 Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`)
 
@@ -205,31 +205,30 @@ Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the mo
 import type { HistoryEntry, BoardConfig } from 'js-chess-engine'
 
 // Play the move (default behavior)
-const result1 = game.ai({ level: 3 })
+const result1 = game.ai({ level: 4 })
 console.log(result1.move)       // {"E2": "E4"}
 console.log(result1.board.turn) // "black" (updated after move)
 
 // Analysis mode: get move without applying it
-const result2 = game.ai({ level: 3, play: false })
+const result2 = game.ai({ level: 4, play: false })
 console.log(result2.move)       // {"E2": "E4"}
 console.log(result2.board.turn) // "white" (current state, before move)
 
-// Use default level 2
+// Use default level 3
 const result3 = game.ai()
-console.log(result3.move) // AI move with level 2
+console.log(result3.move) // AI move with level 3
 
-// Default uses auto-detection:
-// - Node.js: 16 MB cache
-// - Browser: 1 MB cache (mobile-friendly)
-const result4 = game.ai({ level: 3 })
+// TT size auto-scales by level (see Auto-Scaling Transposition Table section)
+const result4 = game.ai({ level: 5 })
+console.log(result4.move) // Level 5: 64 MB Node.js / 32 MB browser (auto)
 
-// Override for high-performance scenarios
-const result5 = game.ai({ level: 4, ttSizeMB: 64 })
-console.log(result5.move) // 64MB cache for complex positions
+// Override TT size manually if needed
+const result5 = game.ai({ level: 3, ttSizeMB: 128 })
+console.log(result5.move) // Force 128MB cache
 
 // Ultra-lightweight mode for low-end devices
-const result6 = game.ai({ level: 1, ttSizeMB: 0.5 })
-console.log(result6.move) // 512KB cache
+const result6 = game.ai({ level: 2, ttSizeMB: 0.5 })
+console.log(result6.move) // Force 512KB cache
 ```
 
 **getHistory**
@@ -383,7 +382,7 @@ const config2: BoardConfig = move(config1, 'E7', 'E5')
 
 Params:
 - `boardConfiguration` BoardConfig | string (_mandatory_) - Board [configuration](#board-configuration)
-- `level` AILevel (_optional_) - AI difficulty level (0-4). Default: 2
+- `level` AILevel (_optional_) - AI difficulty level (1-5). Default: 3
 
 Returns: `HistoryEntry` - The played move (e.g., `{"E2": "E4"}`)
 
@@ -392,7 +391,7 @@ import { aiMove } from 'js-chess-engine'
 import type { HistoryEntry, AILevel } from 'js-chess-engine'
 
 const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-const level: AILevel = 3
+const level: AILevel = 4
 const move: HistoryEntry = aiMove(fen, level)
 console.log(move) // {"E2": "E4"}
 ```
@@ -404,9 +403,9 @@ console.log(move) // {"E2": "E4"}
 Params:
 - `boardConfiguration` BoardConfig | string (_mandatory_) - Board [configuration](#board-configuration)
 - `options` object (_optional_) - Configuration options:
-  - `level` number (_optional_) - AI difficulty level (0-4). Default: `2`
+  - `level` number (_optional_) - AI difficulty level (1-5). Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the board. Default: `true`. If `false`, returns the move without modifying the board state, and `board` will contain the current state (before the move).
-  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-detected (`16 MB` in Node.js, `1 MB` in browser)
+  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
 
 Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`)
 
@@ -416,26 +415,31 @@ import type { HistoryEntry, BoardConfig } from 'js-chess-engine'
 
 const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
-// Calculate move and resulting board state
-const result1 = ai(fen, { level: 3 })
+// Play the move (default behavior)
+const result1 = ai(fen, { level: 4 })
 console.log(result1.move)       // {"E2": "E4"}
 console.log(result1.board.turn) // "black" (updated after move)
 
 // Analysis mode: get move without applying it
-const result2 = ai(fen, { level: 3, play: false })
+const result2 = ai(fen, { level: 4, play: false })
 console.log(result2.move)       // {"E2": "E4"}
 console.log(result2.board.turn) // "white" (current state, before move)
 
-// Default auto-detects environment (16 MB Node.js, 1 MB browser)
-const result3 = ai(fen, { level: 3 })
+// Use default level 3
+const result3 = ai(fen)
+console.log(result3.move) // AI move with level 3
 
-// Use larger cache for complex positions
-const result4 = ai(fen, { level: 4, ttSizeMB: 128 })
-console.log(result4.move) // 128MB cache
+// TT size auto-scales by level (see Auto-Scaling Transposition Table section)
+const result4 = ai(fen, { level: 5 })
+console.log(result4.move) // Level 5: 64 MB Node.js / 32 MB browser (auto)
 
-// Ultra-lightweight for feature phones
-const result5 = ai(fen, { level: 1, ttSizeMB: 0.25 })
-console.log(result5.move) // 256KB cache
+// Override TT size manually if needed
+const result5 = ai(fen, { level: 3, ttSizeMB: 128 })
+console.log(result5.move) // Force 128MB cache
+
+// Ultra-lightweight mode for low-end devices
+const result6 = ai(fen, { level: 2, ttSizeMB: 0.5 })
+console.log(result6.move) // Force 512KB cache
 ```
 
 ### Board Configuration
@@ -521,11 +525,11 @@ The engine includes a sophisticated AI based on the Minimax algorithm with alpha
 
 | Level | Alias             | Description                          | Search Depth | Avg. Time |
 | :---: | :---------------- | :----------------------------------- | :----------: | :-------: |
-|   0   | Well-trained monkey | Very weak play, minimal lookahead  | 1-2 ply      | <10ms     |
-|   1   | Beginner          | Suitable for new chess players       | 2-3 ply      | ~50ms     |
-|   2   | Intermediate      | Balanced difficulty (default)        | 3-4 ply      | ~300ms    |
-|   3   | Advanced          | Strong play with deeper search       | 4-5 ply      | ~2s       |
-|   4   | Experienced       | Maximum difficulty and search depth  | 5-6 ply      | ~7s       |
+|   1   | Beginner          | Very weak play, minimal lookahead    | 1-2 ply      | <10ms     |
+|   2   | Easy              | Suitable for new chess players       | 2-3 ply      | ~50ms     |
+|   3   | Intermediate      | Balanced difficulty (default)        | 3-4 ply      | ~300ms    |
+|   4   | Advanced          | Strong play with deeper search       | 4-5 ply      | ~2s       |
+|   5   | Expert            | Maximum difficulty and search depth  | 5-6 ply      | ~7s       |
 
 **Note:** Performance varies based on hardware and position complexity. Times shown are approximate averages on modern hardware.
 
@@ -536,20 +540,34 @@ import type { AILevel } from 'js-chess-engine'
 const game = new Game()
 
 // Different difficulty levels
-game.aiMove(0)  // Well-trained monkey
 game.aiMove(1)  // Beginner
-game.aiMove(2)  // Intermediate (default)
-game.aiMove(3)  // Advanced
-game.aiMove(4)  // Experienced
+game.aiMove(2)  // Easy
+game.aiMove(3)  // Intermediate (default)
+game.aiMove(4)  // Advanced
+game.aiMove(5)  // Expert
 ```
 
 **Implementation Highlights:**
-- Alpha-beta pruning with transposition table (auto-configured: 16 MB Node.js, 1 MB browser)
+- Alpha-beta pruning with transposition table (auto-scales by AI level for optimal memory usage)
 - Advanced move ordering (PV moves, MVV-LVA captures, killer moves)
 - Iterative deepening for optimal move ordering
 - Position evaluation with material balance and piece-square tables
 - 65% performance improvement over baseline implementation
-- Smart environment detection for optimal performance across platforms
+- Smart environment detection and level-based memory scaling for optimal performance across platforms
+
+#### Auto-Scaling Transposition Table (Smart Memory Management) {#transposition-table}
+
+The engine automatically adjusts cache size based on AI level and environment:
+
+| AI Level | Node.js Cache | Browser Cache | Use Case                     |
+| :------: | :-----------: | :-----------: | :--------------------------- |
+|    1     |     2 MB      |     1 MB      | Lightweight, fast responses  |
+|    2     |     4 MB      |     2 MB      | Mobile-friendly performance  |
+|    3     |    16 MB      |     8 MB      | Balanced (default)           |
+|    4     |    32 MB      |    16 MB      | Strong tactical play         |
+|    5     |    64 MB      |    32 MB      | Maximum strength             |
+
+Lower levels use less memory for faster responses, higher levels use more for better move quality. Browser cache sizes are appropriate for modern devices (2024+). Override with `ttSizeMB` option if needed.
 
 📚 **[Complete AI Implementation Guide →](docs/AI_IMPLEMENTATION.md)**
 
@@ -664,16 +682,30 @@ aiMove(config, 2)  // Returns move object: {"E2": "E4"}
 **v2 Behavior (Current):**
 
 ```typescript
-aiMove(config, 2)  // Returns move object: {"E2": "E4"} ✅ v1 compatible
+aiMove(config, 3)  // Returns move object: {"E2": "E4"} ✅ v1 compatible
 ```
 
 **New `ai()` function** - For users who need both move and board state:
 
 ```typescript
-ai(config, 2)  // Returns: { move: {"E2": "E4"}, board: {...} }
+ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 ```
 
-### 4. Node.js Version Requirement
+### 4. AI Difficulty Levels Changed
+
+- **v1:** Levels 0-4 (0=easiest, 4=hardest)
+- **v2:** Levels 1-5 (1=easiest, 5=hardest)
+
+**Migration:**
+- Level 0 → Level 1 (Beginner)
+- Level 1 → Level 2 (Easy)
+- Level 2 → Level 3 (Intermediate, default)
+- Level 3 → Level 4 (Advanced)
+- Level 4 → Level 5 (Expert)
+
+The default level has changed from `2` to `3` to maintain similar difficulty in the middle range.
+
+### 5. Node.js Version Requirement
 
 - **v1:** Node.js >=20 <21
 - **v2:** Node.js >=24
@@ -682,7 +714,6 @@ ai(config, 2)  // Returns: { move: {"E2": "E4"}, board: {...} }
 
 - ✅ Game class constructor signature
 - ✅ Method names (move, moves, aiMove, etc.)
-- ✅ AI difficulty levels (0-4)
 - ✅ Board formats (JSON and FEN)
 - ✅ Chess rules (castling, en passant, promotions)
 - ✅ Square notation (case-insensitive: 'E2' or 'e2')

@@ -37,19 +37,19 @@ describe('Environment Detection', () => {
     describe('getRecommendedTTSize', () => {
         it('should return appropriate sizes for each level in Node.js', () => {
             // Running in Node.js
-            expect(getRecommendedTTSize(0)).toBe(2);
-            expect(getRecommendedTTSize(1)).toBe(4);
-            expect(getRecommendedTTSize(2)).toBe(16);
-            expect(getRecommendedTTSize(3)).toBe(32);
-            expect(getRecommendedTTSize(4)).toBe(64);
+            expect(getRecommendedTTSize(1)).toBe(2);
+            expect(getRecommendedTTSize(2)).toBe(4);
+            expect(getRecommendedTTSize(3)).toBe(16);
+            expect(getRecommendedTTSize(4)).toBe(32);
+            expect(getRecommendedTTSize(5)).toBe(64);
         });
 
         it('should return default for unknown levels', () => {
-            expect(getRecommendedTTSize(99)).toBe(16); // Node.js default
+            expect(getRecommendedTTSize(99)).toBe(16); // Node.js default (browser would be 8)
         });
 
         it('should return positive numbers for all levels', () => {
-            for (let level = 0; level <= 4; level++) {
+            for (let level = 1; level <= 5; level++) {
                 expect(getRecommendedTTSize(level)).toBeGreaterThan(0);
             }
         });

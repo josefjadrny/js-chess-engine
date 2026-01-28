@@ -25,7 +25,7 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 - Advanced move ordering (PV moves, MVV-LVA, killer moves)
 - Iterative deepening
 - Quiescence search for tactical stability
-- Configurable difficulty levels (0-4)
+- Configurable difficulty levels (1-5)
 - Memory-efficient with tunable cache size (browser and mobile-friendly)
 
 **Performance:** 65% faster than baseline implementation (16.3s → 5.6s on test suite)
@@ -61,7 +61,7 @@ Search (Alpha-Beta + Optimizations)
 ### Data Flow
 
 1. **API Call**: User calls `game.ai()` or `game.aiMove()`
-2. **Configuration**: AIEngine maps level (0-4) to search depths
+2. **Configuration**: AIEngine maps level (1-5) to search depths
 3. **Search**: Iterative deepening progressively searches deeper
 4. **Ordering**: Moves ordered by PV → Captures → Killers → Quiet
 5. **Evaluation**: Positions scored by material + piece-square tables

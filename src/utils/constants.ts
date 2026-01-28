@@ -147,17 +147,17 @@ export const KING_PST_EG: readonly number[] = [
 
 // ==================== AI Constants ====================
 
-export const AI_LEVELS = [0, 1, 2, 3, 4] as const;
+export const AI_LEVELS = [1, 2, 3, 4, 5] as const;
 
 /**
  * AI depth mapping by level
  */
 export const AI_DEPTH_BY_LEVEL: Record<number, { BASE: number; EXTENDED: number }> = {
-    0: { BASE: 1, EXTENDED: 2 },
-    1: { BASE: 2, EXTENDED: 2 },
-    2: { BASE: 3, EXTENDED: 4 }, // Increased from v1 (was 2-4)
-    3: { BASE: 4, EXTENDED: 5 }, // Increased from v1 (was 3-4)
-    4: { BASE: 5, EXTENDED: 6 },
+    1: { BASE: 1, EXTENDED: 2 },
+    2: { BASE: 2, EXTENDED: 2 },
+    3: { BASE: 3, EXTENDED: 4 }, // Increased from v1 (was 2-4)
+    4: { BASE: 4, EXTENDED: 5 }, // Increased from v1 (was 3-4)
+    5: { BASE: 5, EXTENDED: 6 },
 };
 
 // ==================== Score Constants ====================

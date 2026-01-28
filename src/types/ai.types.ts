@@ -7,9 +7,9 @@ import { InternalMove } from './move.types';
 // ==================== AI Types ====================
 
 /**
- * AI difficulty level (0-4)
+ * AI difficulty level (1-5)
  */
-export type AILevel = 0 | 1 | 2 | 3 | 4;
+export type AILevel = 1 | 2 | 3 | 4 | 5;
 
 /**
  * Search depth

@@ -9,7 +9,7 @@ describe('AI Engine', () => {
     describe('ai() - Core AI functionality', () => {
         it('should make a legal move and return move with board state', () => {
             const game = new Game();
-            const result = game.ai({ level: 0 });
+            const result = game.ai({ level: 1 });
 
             expect(result.move).toBeDefined();
             expect(typeof result.move).toBe('object');
@@ -29,15 +29,15 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.ai({ level: -1 })).toThrow('AI level must be between 0 and 4');
-            expect(() => game.ai({ level: 5 })).toThrow('AI level must be between 0 and 4');
+            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 5');
+            expect(() => game.ai({ level: 6 })).toThrow('AI level must be between 1 and 5');
         });
 
         it('should throw error when game is finished', () => {
             // Checkmate position: Scholar's mate
             const game = new Game('rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3');
 
-            expect(() => game.ai({ level: 0 })).toThrow('Game is already finished');
+            expect(() => game.ai({ level: 1 })).toThrow('Game is already finished');
         });
 
         it('should make moves in complex positions', () => {
@@ -45,7 +45,7 @@ describe('AI Engine', () => {
             const fen = 'rnb1kbnr/pppppppp/8/8/8/3q4/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // AI should make a valid move
             expect(result.move).toBeDefined();
@@ -58,7 +58,7 @@ describe('AI Engine', () => {
             const fen = 'rnb1kbnr/pppp1ppp/8/4p3/6P1/5P1q/PPPPP2P/RNBQKBNR w KQkq - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 2 });
+            const result = game.ai({ level: 3 });
 
             // Should make some defensive move
             expect(result.move).toBeDefined();
@@ -69,7 +69,7 @@ describe('AI Engine', () => {
     describe('aiMove() - Legacy v1 API compatibility', () => {
         it('should return move object only (v1 compatible)', () => {
             const game = new Game();
-            const move = game.aiMove(0);
+            const move = game.aiMove(1);
 
             expect(move).toBeDefined();
             expect(typeof move).toBe('object');
@@ -87,7 +87,7 @@ describe('AI Engine', () => {
             const game = new Game();
             const initialTurn = game.exportJson().turn;
 
-            const move = game.aiMove(0);
+            const move = game.aiMove(1);
 
             expect(move).toBeDefined();
 
@@ -99,13 +99,13 @@ describe('AI Engine', () => {
         it('should handle multiple sequential moves', () => {
             const game = new Game();
 
-            const move1 = game.aiMove(1);
+            const move1 = game.aiMove(2);
             expect(move1).toBeDefined();
 
-            const move2 = game.aiMove(1);
+            const move2 = game.aiMove(2);
             expect(move2).toBeDefined();
 
-            const move3 = game.aiMove(1);
+            const move3 = game.aiMove(2);
             expect(move3).toBeDefined();
 
             // Verify history length and content
@@ -142,22 +142,22 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.aiMove(-1)).toThrow('AI level must be between 0 and 4');
-            expect(() => game.aiMove(5)).toThrow('AI level must be between 0 and 4');
+            expect(() => game.aiMove(0)).toThrow('AI level must be between 1 and 5');
+            expect(() => game.aiMove(6)).toThrow('AI level must be between 1 and 5');
         });
 
         it('should throw error when game is finished', () => {
             // Checkmate position
             const game = new Game('rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3');
 
-            expect(() => game.aiMove(0)).toThrow('Game is already finished');
+            expect(() => game.aiMove(1)).toThrow('Game is already finished');
         });
 
         it('should work with complex positions', () => {
             const fen = 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3';
             const game = new Game(fen);
 
-            const move = game.aiMove(0);
+            const move = game.aiMove(1);
 
             expect(move).toBeDefined();
             expect(typeof move).toBe('object');
@@ -191,7 +191,7 @@ describe('AI Engine', () => {
                 fullMove: 1,
             } as any;
 
-            const result = ai(config, { level: 0 });
+            const result = ai(config, { level: 1 });
 
             expect(result.move).toBeDefined();
             expect(typeof result.move).toBe('object');
@@ -201,7 +201,7 @@ describe('AI Engine', () => {
         it('should calculate move from FEN string', () => {
             const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-            const result = ai(fen, { level: 0 });
+            const result = ai(fen, { level: 1 });
 
             expect(result.move).toBeDefined();
             expect(typeof result.move).toBe('object');
@@ -233,7 +233,7 @@ describe('AI Engine', () => {
                 fullMove: 1,
             } as any;
 
-            const move = aiMove(config, 0);
+            const move = aiMove(config, 1);
 
             expect(move).toBeDefined();
             expect(typeof move).toBe('object');
@@ -246,7 +246,7 @@ describe('AI Engine', () => {
         it('should return move only from FEN string', () => {
             const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-            const move = aiMove(fen, 0);
+            const move = aiMove(fen, 1);
 
             expect(move).toBeDefined();
             expect(typeof move).toBe('object');
@@ -266,7 +266,7 @@ describe('AI Engine', () => {
                 if (game.exportJson().isFinished) {
                     break;
                 }
-                const result = game.ai({ level: 0 }); // Use level 0 for fastest testing
+                const result = game.ai({ level: 1 }); // Use level 1 for fastest testing
                 expect(result.move).toBeDefined();
                 expect(result.board).toBeDefined();
             }
@@ -278,15 +278,15 @@ describe('AI Engine', () => {
         it('should handle alternating turns correctly', () => {
             const game = new Game();
 
-            let result = game.ai({ level: 0 });
+            let result = game.ai({ level: 1 });
             expect(result.board.turn).toBe('black');
             expect(result.board.fullMove).toBe(1);
 
-            result = game.ai({ level: 0 });
+            result = game.ai({ level: 1 });
             expect(result.board.turn).toBe('white');
             expect(result.board.fullMove).toBe(2);
 
-            result = game.ai({ level: 0 });
+            result = game.ai({ level: 1 });
             expect(result.board.turn).toBe('black');
             expect(result.board.fullMove).toBe(2);
         });
@@ -298,7 +298,7 @@ describe('AI Engine', () => {
             const fen = 'rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // Should make a valid move in a tactical position
             expect(result.move).toBeDefined();
@@ -311,7 +311,7 @@ describe('AI Engine', () => {
             const fen = 'rnbqkb1r/pppp1ppp/5n2/4p3/4P2Q/8/PPPP1PPP/RNB1KBNR b KQkq - 0 3';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // Should make a valid defensive move
             expect(result.move).toBeDefined();
@@ -325,7 +325,7 @@ describe('AI Engine', () => {
             const fen = '6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 }); // Mate-in-1 doesn't need deep search
+            const result = game.ai({ level: 2 }); // Mate-in-1 doesn't need deep search
 
             expect(result.move).toBeDefined();
 
@@ -339,7 +339,7 @@ describe('AI Engine', () => {
             const fen = '7k/5Qpp/8/8/8/8/6PP/6K1 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 }); // Mate-in-1 doesn't need deep search
+            const result = game.ai({ level: 2 }); // Mate-in-1 doesn't need deep search
 
             expect(result.move).toBeDefined();
 
@@ -353,7 +353,7 @@ describe('AI Engine', () => {
             const fen = 'k7/2Q5/2K5/8/8/8/8/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 }); // Mate-in-1 doesn't need deep search
+            const result = game.ai({ level: 2 }); // Mate-in-1 doesn't need deep search
 
             expect(result.move).toBeDefined();
 
@@ -372,7 +372,7 @@ describe('AI Engine', () => {
             const initialQueens = Object.values(game.exportJson().pieces).filter(p => p === 'q').length;
             expect(initialQueens).toBe(1); // Verify test setup
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // AI should make a legal move (ideally capturing the queen, but at minimum not losing material)
             expect(result.move).toBeDefined();
@@ -388,7 +388,7 @@ describe('AI Engine', () => {
             const fen = 'rnbqkbnr/pppp1ppp/8/4p3/8/3B4/PPPPPPPP/RNBQK1NR w KQkq - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // AI should make a legal, reasonable move
             expect(result.move).toBeDefined();
@@ -404,7 +404,7 @@ describe('AI Engine', () => {
             const fen = '7k/8/8/8/8/8/8/Q6K w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             expect(result.move).toBeDefined();
 
@@ -422,7 +422,7 @@ describe('AI Engine', () => {
             const initialRooks = Object.values(game.exportJson().pieces).filter(p => p === 'r').length;
             expect(initialRooks).toBe(1); // Verify test setup
 
-            const result = game.ai({ level: 1 }); // Basic tactics, doesn't need deep search
+            const result = game.ai({ level: 2 }); // Basic tactics, doesn't need deep search
 
             // Knight should make a tactical move (ideally Nc7+ forking king and rook)
             expect(result.move).toBeDefined();
@@ -461,7 +461,7 @@ describe('AI Engine', () => {
             const fen = '7k/8/6K1/8/8/8/7Q/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 }); // Simple position evaluation
+            const result = game.ai({ level: 2 }); // Simple position evaluation
 
             expect(result.move).toBeDefined();
 
@@ -476,7 +476,7 @@ describe('AI Engine', () => {
             const fen = '8/4P3/8/8/3k4/8/8/4K3 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 2 });
+            const result = game.ai({ level: 3 });
 
             expect(result.move).toBeDefined();
 
@@ -489,7 +489,7 @@ describe('AI Engine', () => {
     });
 
     describe('AI options and configuration', () => {
-        it('should use default level 2 when no options provided', () => {
+        it('should use default level 3 when no options provided', () => {
             const game = new Game();
             const result = game.ai();
 
@@ -522,7 +522,7 @@ describe('AI Engine', () => {
         it('should apply move by default when play option not specified', () => {
             const game = new Game();
 
-            const result = game.ai({ level: 0 });
+            const result = game.ai({ level: 1 });
 
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
@@ -545,8 +545,8 @@ describe('AI Engine', () => {
         it('should return different board states for play true vs false', () => {
             const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-            const resultPlay = ai(fen, { play: true, level: 1 });
-            const resultAnalysis = ai(fen, { play: false, level: 1 });
+            const resultPlay = ai(fen, { play: true, level: 2 });
+            const resultAnalysis = ai(fen, { play: false, level: 2 });
 
             // Both should have moves
             expect(resultPlay.move).toBeDefined();
@@ -574,13 +574,13 @@ describe('AI Engine', () => {
 
             // Should not throw with custom TT size
             expect(() => {
-                game.ai({ level: 2, ttSizeMB: 32 });
+                game.ai({ level: 3, ttSizeMB: 32 });
             }).not.toThrow();
         });
 
         it('should work with minimum ttSizeMB (0.25MB)', () => {
             const game = new Game();
-            const result = game.ai({ level: 0, ttSizeMB: 0.25 });
+            const result = game.ai({ level: 1, ttSizeMB: 0.25 });
 
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
@@ -588,7 +588,7 @@ describe('AI Engine', () => {
 
         it('should work with TT disabled (0MB)', () => {
             const game = new Game();
-            const result = game.ai({ level: 0, ttSizeMB: 0 });
+            const result = game.ai({ level: 1, ttSizeMB: 0 });
 
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
@@ -596,7 +596,7 @@ describe('AI Engine', () => {
 
         it('should work with maximum ttSizeMB (256MB)', () => {
             const game = new Game();
-            const result = game.ai({ level: 0, ttSizeMB: 256 });
+            const result = game.ai({ level: 1, ttSizeMB: 256 });
 
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
@@ -606,24 +606,24 @@ describe('AI Engine', () => {
             const game = new Game();
 
             // Below minimum (clamped to 0.25)
-            const result1 = game.ai({ level: 0, ttSizeMB: 0.1 });
+            const result1 = game.ai({ level: 1, ttSizeMB: 0.1 });
             expect(result1.move).toBeDefined();
 
             // Above maximum (clamped to 256)
-            const result2 = game.ai({ level: 0, ttSizeMB: 512 });
+            const result2 = game.ai({ level: 1, ttSizeMB: 512 });
             expect(result2.move).toBeDefined();
         });
 
         it('should allow different TT sizes across multiple AI calls', () => {
             const game = new Game();
 
-            const result1 = game.ai({ level: 1, ttSizeMB: 8 });
+            const result1 = game.ai({ level: 2, ttSizeMB: 8 });
             expect(result1.move).toBeDefined();
 
-            const result2 = game.ai({ level: 1, ttSizeMB: 64 });
+            const result2 = game.ai({ level: 2, ttSizeMB: 64 });
             expect(result2.move).toBeDefined();
 
-            const result3 = game.ai({ level: 1 }); // default
+            const result3 = game.ai({ level: 2 }); // default
             expect(result3.move).toBeDefined();
         });
 
@@ -631,7 +631,7 @@ describe('AI Engine', () => {
             const game = new Game();
 
             const result = game.ai({
-                level: 2,
+                level: 3,
                 play: false,
                 ttSizeMB: 32
             });
@@ -644,7 +644,7 @@ describe('AI Engine', () => {
         it('should support ttSizeMB in stateless ai() function', () => {
             const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-            const result = ai(fen, { level: 1, ttSizeMB: 8 });
+            const result = ai(fen, { level: 2, ttSizeMB: 8 });
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
         });
@@ -656,7 +656,7 @@ describe('AI Engine', () => {
             const fen = 'r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // Verify AI made a legal move
             expect(result.move).toBeDefined();
@@ -671,7 +671,7 @@ describe('AI Engine', () => {
             const fen = 'rnbqkbnr/ppp1pppp/8/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             // Should make a legal move (en passant or otherwise)
             expect(result.move).toBeDefined();
@@ -687,7 +687,7 @@ describe('AI Engine', () => {
             const game = new Game(fen);
 
             // This tests that the AI can handle endgame positions
-            const result = game.ai({ level: 1 });
+            const result = game.ai({ level: 2 });
 
             expect(result.move).toBeDefined();
 
@@ -701,7 +701,7 @@ describe('AI Engine', () => {
             const fen = 'k7/8/1K6/8/8/8/8/7Q w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 1 }); // Simple position evaluation
+            const result = game.ai({ level: 2 }); // Simple position evaluation
 
             expect(result.move).toBeDefined();
 
@@ -721,10 +721,10 @@ describe('AI Engine', () => {
             const fen = '6k1/5ppp/8/8/8/8/5PPP/R6K w - - 0 1';
 
             const gameLow = new Game(fen);
-            const resultLow = gameLow.ai({ level: 1 }); // Level 1 (depth 2-3)
+            const resultLow = gameLow.ai({ level: 2 }); // Level 2 (depth 2-3)
 
             const gameHigh = new Game(fen);
-            const resultHigh = gameHigh.ai({ level: 4 }); // Level 4 (depth 5-6)
+            const resultHigh = gameHigh.ai({ level: 5 }); // Level 5 (depth 5-6)
 
             // Both should make legal moves
             expect(resultLow.move).toBeDefined();

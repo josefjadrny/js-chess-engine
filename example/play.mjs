@@ -32,9 +32,9 @@ async function setupGame() {
     whitePlayer = whiteAnswer.toLowerCase() === 'a' ? 'ai' : 'human';
 
     if (whitePlayer === 'ai') {
-        const level = await askQuestion('White AI level (0-4, default 2): ');
-        whiteAiLevel = level ? parseInt(level) : 2;
-        if (whiteAiLevel < 0 || whiteAiLevel > 4) whiteAiLevel = 2;
+        const level = await askQuestion('White AI level (1-5, default 3): ');
+        whiteAiLevel = level ? parseInt(level) : 3;
+        if (whiteAiLevel < 1 || whiteAiLevel > 5) whiteAiLevel = 3;
     }
 
     // Ask for black player
@@ -42,9 +42,9 @@ async function setupGame() {
     blackPlayer = blackAnswer.toLowerCase() === 'a' ? 'ai' : 'human';
 
     if (blackPlayer === 'ai') {
-        const level = await askQuestion('Black AI level (0-4, default 2): ');
-        blackAiLevel = level ? parseInt(level) : 2;
-        if (blackAiLevel < 0 || blackAiLevel > 4) blackAiLevel = 2;
+        const level = await askQuestion('Black AI level (1-5, default 3): ');
+        blackAiLevel = level ? parseInt(level) : 3;
+        if (blackAiLevel < 1 || blackAiLevel > 5) blackAiLevel = 3;
     }
 
     console.log('\n--- Game Setup ---');

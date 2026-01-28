@@ -41,29 +41,29 @@ export function getDefaultTTSize(): number {
 /**
  * Get recommended TT size for a given AI level and environment
  *
- * @param level - AI difficulty level (0-4)
+ * @param level - AI difficulty level (1-5)
  * @returns Recommended TT size in MB
  */
 export function getRecommendedTTSize(level: number): number {
     if (isNodeEnvironment()) {
         // Node.js - more generous memory allocation
         const nodeSizes: Record<number, number> = {
-            0: 2,   // Level 0: 2 MB
-            1: 4,   // Level 1: 4 MB
-            2: 16,  // Level 2: 16 MB (default)
-            3: 32,  // Level 3: 32 MB
-            4: 64,  // Level 4: 64 MB
+            1: 2,   // Level 1: 2 MB
+            2: 4,   // Level 2: 4 MB
+            3: 16,  // Level 3: 16 MB (default)
+            4: 32,  // Level 4: 32 MB
+            5: 64,  // Level 5: 64 MB
         };
         return nodeSizes[level] ?? 16;
     } else {
-        // Browser - conservative memory allocation
+        // Browser - modern-device-friendly allocation (reasonable for 2024+ devices)
         const browserSizes: Record<number, number> = {
-            0: 0.5,  // Level 0: 512 KB
-            1: 1,    // Level 1: 1 MB (default)
-            2: 2,    // Level 2: 2 MB
-            3: 4,    // Level 3: 4 MB
-            4: 8,    // Level 4: 8 MB
+            1: 1,    // Level 1: 1 MB (lightweight, older devices)
+            2: 2,    // Level 2: 2 MB (mobile-friendly)
+            3: 8,    // Level 3: 8 MB (balanced default - appropriate for modern browsers)
+            4: 16,   // Level 4: 16 MB (strong performance)
+            5: 32,   // Level 5: 32 MB (maximum strength)
         };
-        return browserSizes[level] ?? 1;
+        return browserSizes[level] ?? 8;
     }
 }
