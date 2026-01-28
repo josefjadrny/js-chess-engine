@@ -97,15 +97,18 @@ async function makeAiMove(color) {
     const level = color === 'white' ? whiteAiLevel : blackAiLevel;
 
     console.time('Calculated in');
-    game.aiMove(level);
+    const result = game.ai({ level });
     console.timeEnd('Calculated in');
 
-    // Get the last move from history
-    const history = game.getHistory();
-    if (history.length > 0) {
-        const lastMove = history[history.length - 1].move;
-        const [from, to] = Object.entries(lastMove)[0];
-        console.log(`AI moved: ${from} → ${to}`);
+    // Display the move
+    const [from, to] = Object.entries(result.move)[0];
+    console.log(`AI moved: ${from} → ${to}`);
+
+    // Show check/checkmate status
+    if (result.board.checkMate) {
+        console.log('*** CHECKMATE ***');
+    } else if (result.board.check) {
+        console.log('*** CHECK ***');
     }
 
     await play();

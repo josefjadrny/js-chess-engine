@@ -209,12 +209,12 @@ export class Game {
     }
 
     /**
-     * Make an AI move
+     * Make an AI move (v1 compatible - returns only the move)
      *
      * @param level - AI level (0-4, default 2)
-     * @returns Board configuration after AI move
+     * @returns The played move object (e.g., {"E2": "E4"})
      */
-    aiMove(level: number = 2): BoardConfig {
+    aiMove(level: number = 2): HistoryEntry {
         // Validate level
         if (level < 0 || level > 4) {
             throw new Error('AI level must be between 0 and 4');
@@ -237,7 +237,55 @@ export class Game {
         // Apply the move
         applyMoveComplete(this.board, bestMove);
 
-        return boardToConfig(this.board);
+        return historyEntry;
+    }
+
+    /**
+     * Make an AI move and return both move and board state
+     *
+     * @param options - Optional configuration object
+     * @param options.level - AI difficulty level (0-4, default: 2)
+     * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
+     * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
+     */
+    ai(options: { level?: number; play?: boolean } = {}): { move: HistoryEntry; board: BoardConfig } {
+        const level = options.level ?? 2;
+        const play = options.play ?? true;
+
+        // Validate level
+        if (level < 0 || level > 4) {
+            throw new Error('AI level must be between 0 and 4');
+        }
+
+        // Find best move
+        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel);
+
+        if (!bestMove) {
+            // No legal moves available - game must be finished (checkmate or stalemate)
+            throw new Error('Game is already finished');
+        }
+
+        // Create move entry
+        const fromSquare = indexToSquare(bestMove.from);
+        const toSquare = indexToSquare(bestMove.to);
+        const historyEntry: HistoryEntry = { [fromSquare]: toSquare };
+
+        if (!play) {
+            // Return move without applying it, with current board state
+            return {
+                move: historyEntry,
+                board: boardToConfig(this.board),
+            };
+        }
+
+        // Record move in history and apply it
+        this.history.push(historyEntry);
+        applyMoveComplete(this.board, bestMove);
+
+        return {
+            move: historyEntry,
+            board: boardToConfig(this.board),
+        };
     }
 }
 
@@ -312,13 +360,30 @@ export function move(config: BoardConfig | string, from: string, to: string): Bo
 }
 
 /**
- * Make an AI move
+ * Make an AI move (v1 compatible - returns only the move)
  *
  * @param config - Board configuration or FEN string
  * @param level - AI level (0-4, default 2)
- * @returns Board configuration after AI move
+ * @returns The played move object (e.g., {"E2": "E4"})
  */
-export function aiMove(config: BoardConfig | string, level: number = 2): BoardConfig {
+export function aiMove(config: BoardConfig | string, level: number = 2): HistoryEntry {
     const game = new Game(config);
     return game.aiMove(level);
+}
+
+/**
+ * Make an AI move and return both move and board state
+ *
+ * @param config - Board configuration or FEN string
+ * @param options - Optional configuration object
+ * @param options.level - AI difficulty level (0-4, default: 2)
+ * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
+ * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
+ */
+export function ai(
+    config: BoardConfig | string,
+    options: { level?: number; play?: boolean } = {}
+): { move: HistoryEntry; board: BoardConfig } {
+    const game = new Game(config);
+    return game.ai(options);
 }
