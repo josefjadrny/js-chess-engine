@@ -2,7 +2,7 @@
  * Alpha-beta search implementation for js-chess-engine v2
  *
  * Implements minimax with alpha-beta pruning and extensions for checks and captures.
- * Based on v1's testMoveScores implementation.
+ * Phase 5: Enhanced with transposition table, move ordering, and iterative deepening.
  */
 
 import { InternalBoard, InternalColor, InternalMove, MoveFlag, Piece } from '../types';
@@ -10,15 +10,43 @@ import { generateLegalMoves, applyMoveComplete } from '../core/MoveGenerator';
 import { isKingInCheck } from '../core/AttackDetector';
 import { Evaluator, SCORE_MIN, SCORE_MAX } from './Evaluator';
 import { Score, SearchResult } from '../types/ai.types';
+import { TranspositionTable, TTEntryType } from './TranspositionTable';
+import { KillerMoves, orderMoves } from './MoveOrdering';
 
 /**
- * Search engine with alpha-beta pruning
+ * Search engine with alpha-beta pruning, transposition table, and move ordering
  */
 export class Search {
     private nodesSearched: number = 0;
+    private transpositionTable: TranspositionTable | null;
+    private killerMoves: KillerMoves;
+    private useOptimizations: boolean = true;
+
+    constructor(ttSizeMB: number = 16) {
+        // Only create TT if size > 0
+        this.transpositionTable = ttSizeMB > 0 ? new TranspositionTable(ttSizeMB) : null as any;
+        this.killerMoves = new KillerMoves();
+    }
 
     /**
-     * Find the best move using alpha-beta search
+     * Enable or disable optimizations (for testing)
+     */
+    setOptimizations(enabled: boolean): void {
+        this.useOptimizations = enabled;
+    }
+
+    /**
+     * Clear search data structures
+     */
+    clear(): void {
+        if (this.transpositionTable) {
+            this.transpositionTable.clear();
+        }
+        this.killerMoves.clear();
+    }
+
+    /**
+     * Find the best move using alpha-beta search with iterative deepening
      *
      * @param board - Current board position
      * @param baseDepth - Base search depth
@@ -31,6 +59,9 @@ export class Search {
         extendedDepth: number
     ): SearchResult | null {
         this.nodesSearched = 0;
+        if (this.transpositionTable) {
+            this.transpositionTable.newSearch();
+        }
         const playerColor = board.turn;
 
         // Generate all legal moves
@@ -48,8 +79,32 @@ export class Search {
         let bestMove: InternalMove = moves[0];
         let bestScore = SCORE_MIN;
 
+        // Iterative deepening: search progressively deeper
+        // This improves move ordering for deeper searches
+        if (this.useOptimizations && baseDepth > 2) {
+            for (let depth = 1; depth < baseDepth; depth++) {
+                this.searchDepth(
+                    board,
+                    playerColor,
+                    depth,
+                    Math.min(depth + 1, extendedDepth),
+                    moves
+                );
+            }
+        }
+
+        // Get PV move from transposition table for move ordering (if available)
+        const pvMove = this.useOptimizations && this.transpositionTable
+            ? this.transpositionTable.getBestMove(board.zobristHash)
+            : null;
+
+        // Order moves for better alpha-beta pruning
+        const orderedMoves = this.useOptimizations
+            ? orderMoves(moves, pvMove, this.killerMoves, 0)
+            : moves;
+
         // Search each root move
-        for (const move of moves) {
+        for (const move of orderedMoves) {
             // Make move (generateLegalMoves already filtered for legality)
             const testBoard = this.copyBoard(board);
             applyMoveComplete(testBoard, move);
@@ -122,6 +177,17 @@ export class Search {
             }
         }
 
+        // Store in transposition table (if available)
+        if (this.useOptimizations && this.transpositionTable) {
+            this.transpositionTable.store(
+                board.zobristHash,
+                baseDepth,
+                bestScore,
+                TTEntryType.EXACT,
+                bestMove
+            );
+        }
+
         return {
             move: bestMove,
             score: bestScore,
@@ -131,7 +197,64 @@ export class Search {
     }
 
     /**
-     * Alpha-beta search with extensions
+     * Search at a specific depth (used for iterative deepening)
+     */
+    private searchDepth(
+        board: InternalBoard,
+        playerColor: InternalColor,
+        baseDepth: number,
+        extendedDepth: number,
+        moves: InternalMove[]
+    ): void {
+        const pvMove = this.transpositionTable
+            ? this.transpositionTable.getBestMove(board.zobristHash)
+            : null;
+        const orderedMoves = orderMoves(moves, pvMove, this.killerMoves, 0);
+
+        let bestMove: InternalMove = orderedMoves[0];
+        let bestScore = SCORE_MIN;
+
+        for (const move of orderedMoves) {
+            const testBoard = this.copyBoard(board);
+            applyMoveComplete(testBoard, move);
+
+            const wasCapture = move.capturedPiece !== 0;
+            const initialScore = wasCapture
+                ? Evaluator.evaluate(testBoard, playerColor)
+                : null;
+
+            const score = -this.alphaBeta(
+                testBoard,
+                playerColor,
+                baseDepth,
+                extendedDepth,
+                1,
+                wasCapture,
+                initialScore,
+                SCORE_MIN,
+                SCORE_MAX
+            );
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = move;
+            }
+        }
+
+        // Store result in transposition table (if available)
+        if (this.transpositionTable) {
+            this.transpositionTable.store(
+                board.zobristHash,
+                baseDepth,
+                bestScore,
+                TTEntryType.EXACT,
+                bestMove
+            );
+        }
+    }
+
+    /**
+     * Alpha-beta search with extensions, transposition table, and move ordering
      *
      * @param board - Current position
      * @param rootPlayerColor - Player color at root (for evaluation perspective)
@@ -162,6 +285,29 @@ export class Search {
             return Evaluator.evaluate(board, rootPlayerColor, depth);
         }
 
+        // Probe transposition table (if available)
+        if (this.useOptimizations && this.transpositionTable) {
+            const ttEntry = this.transpositionTable.probe(
+                board.zobristHash,
+                baseDepth - depth + 1,
+                alpha,
+                beta
+            );
+
+            if (ttEntry && ttEntry.depth >= baseDepth - depth + 1) {
+                // We can use this score
+                if (ttEntry.type === TTEntryType.EXACT) {
+                    return ttEntry.score;
+                }
+                if (ttEntry.type === TTEntryType.LOWER_BOUND && ttEntry.score >= beta) {
+                    return ttEntry.score;
+                }
+                if (ttEntry.type === TTEntryType.UPPER_BOUND && ttEntry.score <= alpha) {
+                    return ttEntry.score;
+                }
+            }
+        }
+
         // Determine if we should continue searching
         let shouldSearch = false;
 
@@ -184,19 +330,27 @@ export class Search {
             return Evaluator.evaluate(board, rootPlayerColor);
         }
 
-        // Generate legal moves (with limit for extended search)
-        // In v1, extended search used getMoves with limit=5 for non-check positions
-        const moves = inCheck || depth < baseDepth
-            ? generateLegalMoves(board)
-            : generateLegalMoves(board); // No limit for now (Phase 4)
+        // Generate legal moves
+        const moves = generateLegalMoves(board);
+
+        // Get PV move from transposition table for move ordering (if available)
+        const pvMove = this.useOptimizations && this.transpositionTable
+            ? this.transpositionTable.getBestMove(board.zobristHash)
+            : null;
+
+        // Order moves for better pruning
+        const orderedMoves = this.useOptimizations
+            ? orderMoves(moves, pvMove, this.killerMoves, depth)
+            : moves;
 
         // Determine if we're maximizing or minimizing
         const isMaximizing = board.turn === rootPlayerColor;
         let bestScore = isMaximizing ? SCORE_MIN : SCORE_MAX;
+        let bestMove: InternalMove | null = null;
         let maxValueReached = false;
 
         // Search all moves
-        for (const move of moves) {
+        for (const move of orderedMoves) {
             if (maxValueReached) break;
 
             // Make move (generateLegalMoves already filtered for legality)
@@ -209,7 +363,7 @@ export class Search {
             // Calculate score if capture
             const moveInitialScore = moveWasCapture
                 ? Evaluator.evaluate(testBoard, rootPlayerColor)
-                : initialScore;
+                : null;
 
             // Recursive search
             const score = this.alphaBeta(
@@ -231,17 +385,47 @@ export class Search {
 
             // Update best score and bounds
             if (isMaximizing) {
-                bestScore = Math.max(bestScore, score);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
                 alpha = Math.max(alpha, score);
             } else {
-                bestScore = Math.min(bestScore, score);
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
                 beta = Math.min(beta, score);
             }
 
             // Alpha-beta cutoff
             if (beta <= alpha) {
+                // Store killer move (non-captures that caused cutoff)
+                if (this.useOptimizations && !(move.flags & MoveFlag.CAPTURE)) {
+                    this.killerMoves.store(move, depth);
+                }
                 break; // Prune
             }
+        }
+
+        // Store in transposition table (if available)
+        if (this.useOptimizations && this.transpositionTable && bestMove) {
+            let entryType: TTEntryType;
+            if (bestScore <= alpha) {
+                entryType = TTEntryType.UPPER_BOUND;
+            } else if (bestScore >= beta) {
+                entryType = TTEntryType.LOWER_BOUND;
+            } else {
+                entryType = TTEntryType.EXACT;
+            }
+
+            this.transpositionTable.store(
+                board.zobristHash,
+                baseDepth - depth + 1,
+                bestScore,
+                entryType,
+                bestMove
+            );
         }
 
         return bestScore;

@@ -35,9 +35,10 @@ const LEVEL_CONFIG: Record<AILevel, LevelConfig> = {
  */
 export class AIEngine {
     private search: Search;
+    private currentTTSize: number = 16;
 
     constructor() {
-        this.search = new Search();
+        this.search = new Search(this.currentTTSize);
     }
 
     /**
@@ -45,9 +46,16 @@ export class AIEngine {
      *
      * @param board - Current board state
      * @param level - AI difficulty level (0-4, default 2)
+     * @param ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256 MB, default 16)
      * @returns Best move found by the AI
      */
-    findBestMove(board: InternalBoard, level: AILevel = 2): InternalMove | null {
+    findBestMove(board: InternalBoard, level: AILevel = 2, ttSizeMB: number = 16): InternalMove | null {
+        // Recreate search if TT size changed
+        if (ttSizeMB !== this.currentTTSize) {
+            this.currentTTSize = ttSizeMB;
+            this.search = new Search(ttSizeMB);
+        }
+
         // Get depth configuration for this level
         const config = LEVEL_CONFIG[level];
 

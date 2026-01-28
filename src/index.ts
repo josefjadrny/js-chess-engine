@@ -16,6 +16,7 @@ import { createStartingBoard, setPiece as setBoardPiece, removePiece as removeBo
 import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/MoveGenerator';
 import { parseFEN, toFEN, getStartingFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
+import { getDefaultTTSize } from './utils/environment';
 import {
     boardToConfig,
     configToBoard,
@@ -248,9 +249,13 @@ export class Game {
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
-    ai(options: { level?: number; play?: boolean } = {}): { move: HistoryEntry; board: BoardConfig } {
+    ai(options: { level?: number; play?: boolean; ttSizeMB?: number } = {}): { move: HistoryEntry; board: BoardConfig } {
         const level = options.level ?? 2;
         const play = options.play ?? true;
+        // Allow 0 to disable TT, or 0.25-256 MB range
+        // Default: 16 MB in Node.js, 1 MB in browser (auto-detected)
+        const defaultSize = getDefaultTTSize();
+        const ttSizeMB = options.ttSizeMB === 0 ? 0 : Math.max(0.25, Math.min(256, options.ttSizeMB ?? defaultSize));
 
         // Validate level
         if (level < 0 || level > 4) {
@@ -258,7 +263,7 @@ export class Game {
         }
 
         // Find best move
-        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel);
+        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB);
 
         if (!bestMove) {
             // No legal moves available - game must be finished (checkmate or stalemate)
@@ -378,11 +383,12 @@ export function aiMove(config: BoardConfig | string, level: number = 2): History
  * @param options - Optional configuration object
  * @param options.level - AI difficulty level (0-4, default: 2)
  * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
+ * @param options.ttSizeMB - Transposition table size in MB (1-256, default: 16). Larger values improve performance but use more memory.
  * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
  */
 export function ai(
     config: BoardConfig | string,
-    options: { level?: number; play?: boolean } = {}
+    options: { level?: number; play?: boolean; ttSizeMB?: number } = {}
 ): { move: HistoryEntry; board: BoardConfig } {
     const game = new Game(config);
     return game.ai(options);

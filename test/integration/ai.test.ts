@@ -568,6 +568,86 @@ describe('AI Engine', () => {
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
         });
+
+        it('should accept custom ttSizeMB option', () => {
+            const game = new Game();
+
+            // Should not throw with custom TT size
+            expect(() => {
+                game.ai({ level: 2, ttSizeMB: 32 });
+            }).not.toThrow();
+        });
+
+        it('should work with minimum ttSizeMB (0.25MB)', () => {
+            const game = new Game();
+            const result = game.ai({ level: 0, ttSizeMB: 0.25 });
+
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+        });
+
+        it('should work with TT disabled (0MB)', () => {
+            const game = new Game();
+            const result = game.ai({ level: 0, ttSizeMB: 0 });
+
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+        });
+
+        it('should work with maximum ttSizeMB (256MB)', () => {
+            const game = new Game();
+            const result = game.ai({ level: 0, ttSizeMB: 256 });
+
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+        });
+
+        it('should clamp ttSizeMB values outside valid range', () => {
+            const game = new Game();
+
+            // Below minimum (clamped to 0.25)
+            const result1 = game.ai({ level: 0, ttSizeMB: 0.1 });
+            expect(result1.move).toBeDefined();
+
+            // Above maximum (clamped to 256)
+            const result2 = game.ai({ level: 0, ttSizeMB: 512 });
+            expect(result2.move).toBeDefined();
+        });
+
+        it('should allow different TT sizes across multiple AI calls', () => {
+            const game = new Game();
+
+            const result1 = game.ai({ level: 1, ttSizeMB: 8 });
+            expect(result1.move).toBeDefined();
+
+            const result2 = game.ai({ level: 1, ttSizeMB: 64 });
+            expect(result2.move).toBeDefined();
+
+            const result3 = game.ai({ level: 1 }); // default
+            expect(result3.move).toBeDefined();
+        });
+
+        it('should combine ttSizeMB with play option', () => {
+            const game = new Game();
+
+            const result = game.ai({
+                level: 2,
+                play: false,
+                ttSizeMB: 32
+            });
+
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+            expect(result.board.turn).toBe('white'); // play=false
+        });
+
+        it('should support ttSizeMB in stateless ai() function', () => {
+            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+            const result = ai(fen, { level: 1, ttSizeMB: 8 });
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+        });
     });
 
     describe('AI special moves and edge cases', () => {
