@@ -26,7 +26,10 @@
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "author": "bc.josefjadrny@gmail.com",
-  "repository": "github:josefjadrny/js-chess-engine",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josefjadrny/js-chess-engine.git"
+  },
   "homepage": "https://github.com/josefjadrny/js-chess-engine#readme",
   "license": "MIT",
   "engines": {
