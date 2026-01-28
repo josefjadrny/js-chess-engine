@@ -1,3 +1,66 @@
+## [2.0.1-rc.0](https://github.com/josefjadrny/js-chess-engine/compare/v1.0.3...v2.0.1-rc.0) (2026-01-28)
+
+
+* feat!: change AI levels from 0-4 to 1-5, implement auto-scaling TT cache ([e373a35](https://github.com/josefjadrny/js-chess-engine/commit/e373a353225926c1b8555d60c5cdc678559ec8d8))
+
+
+### Bug Fixes
+
+* remove stub test that conflicts with Phase 1 placeholder ([63344c3](https://github.com/josefjadrny/js-chess-engine/commit/63344c3ee38287cae2dae84dfc65c4937ce60d71))
+
+
+### Features
+
+* add interactive example and improve board visualization ([38128f0](https://github.com/josefjadrny/js-chess-engine/commit/38128f08e5da7c6788d03f0fe8402f1bb804481d))
+* add new ai() method with move and board state return ([4f93fdb](https://github.com/josefjadrny/js-chess-engine/commit/4f93fdbd29d1dd61a4dfdaaa8ac4e86dc7810fb3))
+* implement move generation with comprehensive test suite ([34721ee](https://github.com/josefjadrny/js-chess-engine/commit/34721ee30bfc9ec0ee3279090c95ceebbe5d0a81))
+* implement performance optimizations with 65% faster AI ([67d2943](https://github.com/josefjadrny/js-chess-engine/commit/67d294399edbbcba7f9a6bd34f612d0aeba4293e))
+* Phase 1 - Core foundation with TypeScript ([2559f15](https://github.com/josefjadrny/js-chess-engine/commit/2559f15fec83c46e6548a08793873bdcbec6a673))
+* Phase 3 - Complete v1-compatible API layer ([4c5e810](https://github.com/josefjadrny/js-chess-engine/commit/4c5e810bd384fe075e051a012ee5bb8864be333c))
+
+
+### Performance Improvements
+
+* optimize AI test performance (81% faster) ([0b45506](https://github.com/josefjadrny/js-chess-engine/commit/0b45506356dd4abe6f00ad6020cecbc05e3ca139))
+* optimize AI test performance (85% faster) ([7c8f48f](https://github.com/josefjadrny/js-chess-engine/commit/7c8f48f2fd8ce3b23f85f1291bd147633b0a6f91))
+
+
+### BREAKING CHANGES
+
+* AI difficulty levels now range from 1-5 instead of 0-4
+
+Changes:
+- AI levels: 0-4 → 1-5 (level 0 becomes level 1, etc.)
+- Default level: 2 → 3 (maintains similar difficulty in middle range)
+- Level names updated: Beginner/Easy/Intermediate/Advanced/Expert
+- Auto-scaling transposition table: cache size now scales automatically by AI level
+  * Lower levels use less memory for faster responses
+  * Higher levels use more cache for better move quality
+- Modernized browser cache sizes for 2024+ devices:
+  * Level 3 (default): 2 MB → 8 MB (appropriate for modern browsers)
+  * All browser caches increased 2-4x for better performance
+- Added centralized TT size table in README with anchor links
+- Updated all error messages, validation, tests, and documentation
+
+Migration:
+- Level 0 → Level 1 (Beginner)
+- Level 1 → Level 2 (Easy)
+- Level 2 → Level 3 (Intermediate, default)
+- Level 3 → Level 4 (Advanced)
+- Level 4 → Level 5 (Expert)
+
+Benefits:
+- More intuitive: levels starting from 1 instead of 0
+- Smarter memory management: auto-scales cache by level
+- Better performance: modern browser cache sizes
+- Cleaner docs: centralized TT table, no duplication
+
+All tests passing (237/237)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
+
+
 ## [1.0.3](https://github.com/josefjadrny/js-chess-engine/compare/v1.0.2...v1.0.3) (2025-09-01)
 
 
