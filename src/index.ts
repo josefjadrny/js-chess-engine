@@ -14,7 +14,7 @@ import {
 } from './types';
 import { createStartingBoard, setPiece as setBoardPiece, removePiece as removeBoardPiece, copyBoard } from './core/Board';
 import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/MoveGenerator';
-import { parseFEN, toFEN, getStartingFEN } from './utils/fen';
+import { parseFEN, toFEN, getStartingFEN, validateFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
 import { getDefaultTTSize, getRecommendedTTSize } from './utils/environment';
 import {
@@ -52,6 +52,7 @@ export class Game {
             this.board = createStartingBoard();
         } else if (typeof configuration === 'string') {
             // FEN string
+            validateFEN(configuration);
             this.board = parseFEN(configuration);
         } else {
             // BoardConfig object

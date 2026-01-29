@@ -9,6 +9,9 @@ import { InternalBoard, Piece, InternalColor, SquareIndex } from '../types';
 import { createEmptyBoard, setPiece } from '../core/Board';
 import { squareToIndex, indexToSquare } from './conversion';
 
+const FEN_CASTLING_RE = /^(-|[KQkq]{1,4})$/;
+const FEN_EN_PASSANT_RE = /^(-|[a-h][36])$/;
+
 /**
  * Parse a FEN string into an internal board
  *
@@ -61,6 +64,17 @@ export function parseFEN(fen: string): InternalBoard {
         }
     }
 
+    // Validate piece placement has exactly one king of each color
+    let whiteKings = 0;
+    let blackKings = 0;
+    for (const p of board.mailbox) {
+        if (p === Piece.WHITE_KING) whiteKings++;
+        if (p === Piece.BLACK_KING) blackKings++;
+    }
+    if (whiteKings !== 1 || blackKings !== 1) {
+        throw new Error(`Invalid FEN: expected exactly one white king and one black king`);
+    }
+
     // Parse active color
     if (activeColor === 'w') {
         board.turn = InternalColor.WHITE;
@@ -70,6 +84,17 @@ export function parseFEN(fen: string): InternalBoard {
         throw new Error(`Invalid FEN: unknown active color '${activeColor}'`);
     }
 
+    // Validate castling rights string
+    if (!FEN_CASTLING_RE.test(castling)) {
+        throw new Error(`Invalid FEN: invalid castling rights '${castling}'`);
+    }
+    if (castling !== '-') {
+        const unique = new Set(castling.split(''));
+        if (unique.size !== castling.length) {
+            throw new Error(`Invalid FEN: duplicate castling rights '${castling}'`);
+        }
+    }
+
     // Parse castling rights
     board.castlingRights.whiteShort = castling.includes('K');
     board.castlingRights.whiteLong = castling.includes('Q');
@@ -77,7 +102,11 @@ export function parseFEN(fen: string): InternalBoard {
     board.castlingRights.blackLong = castling.includes('q');
 
     // Parse en passant square
+    if (!FEN_EN_PASSANT_RE.test(enPassant)) {
+        throw new Error(`Invalid FEN: invalid en passant square '${enPassant}'`);
+    }
     if (enPassant !== '-') {
+        // enPassant is lowercase by regex; squareToIndex expects uppercase.
         board.enPassantSquare = squareToIndex(enPassant.toUpperCase());
     }
 
@@ -86,14 +115,31 @@ export function parseFEN(fen: string): InternalBoard {
     if (isNaN(board.halfMoveClock)) {
         throw new Error(`Invalid FEN: invalid half-move clock '${halfMove}'`);
     }
+    if (board.halfMoveClock < 0) {
+        throw new Error(`Invalid FEN: half-move clock must be >= 0`);
+    }
 
     // Parse full move number
     board.fullMoveNumber = parseInt(fullMove, 10);
     if (isNaN(board.fullMoveNumber)) {
         throw new Error(`Invalid FEN: invalid full move number '${fullMove}'`);
     }
+    if (board.fullMoveNumber < 1) {
+        throw new Error(`Invalid FEN: full move number must be >= 1`);
+    }
 
     return board;
+}
+
+/**
+ * Validate a FEN string.
+ *
+ * This is intended for user-provided input. It throws with a descriptive message
+ * when the FEN is invalid.
+ */
+export function validateFEN(fen: string): void {
+    // parseFEN already performs full validation and throws on any error.
+    parseFEN(fen);
 }
 
 /**
