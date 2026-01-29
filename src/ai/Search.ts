@@ -71,12 +71,6 @@ export class Search {
             return null; // No legal moves
         }
 
-        // Add small random factor to avoid repeating same moves
-        // Based on halfmove clock (more randomness in opening)
-        const randomFactor = board.halfMoveClock > 10
-            ? board.halfMoveClock - 10
-            : 1;
-
         let bestMove: InternalMove = moves[0];
         let bestScore = SCORE_MIN;
 
@@ -104,7 +98,7 @@ export class Search {
             ? orderMoves(moves, pvMove, this.killerMoves, 0)
             : moves;
 
-        // Search each root move
+    // Search each root move
         for (const move of orderedMoves) {
             // Make move (generateLegalMoves already filtered for legality)
             const testBoard = this.copyBoard(board);
@@ -192,8 +186,27 @@ export class Search {
                 finalScore += 200;
             }
 
-            // Update best move
-            if (finalScore > bestScore) {
+            // Update best move.
+            // Use a tiny deterministic tie-breaker so equal evaluations don't behave like “random”.
+            // Prefer:
+            // 1) captures
+            // 2) promotions
+            // 3) checks
+            const tieBreaker =
+                (move.flags & MoveFlag.CAPTURE ? 3 : 0) +
+                (move.flags & MoveFlag.PROMOTION ? 2 : 0) +
+                (testBoard.isCheck ? 1 : 0);
+
+            const bestTieBreaker =
+                (bestMove.flags & MoveFlag.CAPTURE ? 3 : 0) +
+                (bestMove.flags & MoveFlag.PROMOTION ? 2 : 0) +
+                ((bestMove as any)._deliversCheck ? 1 : 0);
+
+            // Note: bestMove doesn't carry board state, so we stash whether a move gave check
+            // for tie-breaking at the root only.
+            (move as any)._deliversCheck = testBoard.isCheck;
+
+            if (finalScore > bestScore || (finalScore === bestScore && tieBreaker > bestTieBreaker)) {
                 bestScore = finalScore;
                 bestMove = move;
             }
@@ -301,6 +314,11 @@ export class Search {
         beta: Score
     ): Score {
         this.nodesSearched++;
+
+        // Save original window bounds for correct TT entry classification.
+        // Alpha/beta are mutated during the search.
+        const originalAlpha = alpha;
+        const originalBeta = beta;
 
         // Check if game is over
         if (board.isCheckmate || board.isStalemate) {
@@ -433,9 +451,9 @@ export class Search {
         // Store in transposition table (if available)
         if (this.useOptimizations && this.transpositionTable && bestMove) {
             let entryType: TTEntryType;
-            if (bestScore <= alpha) {
+            if (bestScore <= originalAlpha) {
                 entryType = TTEntryType.UPPER_BOUND;
-            } else if (bestScore >= beta) {
+            } else if (bestScore >= originalBeta) {
                 entryType = TTEntryType.LOWER_BOUND;
             } else {
                 entryType = TTEntryType.EXACT;

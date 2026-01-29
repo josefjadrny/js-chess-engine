@@ -822,5 +822,65 @@ describe('AI Engine', () => {
             expect(result.board.checkMate).toBe(true);
             expect(result.board.isFinished).toBe(true);
         });
+
+    it('regression position (2026-01-29): level-3 best move stays stable', () => {
+            // Reported 2026-01-29:
+            // This position used to yield {"D7":"G4"} at level 3.
+            // After search fixes (TT bound classification + deterministic tie-breaking),
+            // the engine prefers a different move. Keep the position as a regression lock.
+            const board = {
+                turn: 'black',
+                pieces: {
+                    A1: 'R',
+                    D1: 'Q',
+                    E1: 'K',
+                    F1: 'B',
+                    H1: 'R',
+                    A2: 'P',
+                    B2: 'P',
+                    F2: 'P',
+                    G2: 'P',
+                    H2: 'P',
+                    D3: 'P',
+                    F3: 'N',
+                    C4: 'P',
+                    A5: 'p',
+                    B5: 'N',
+                    C5: 'p',
+                    D5: 'P',
+                    H5: 'p',
+                    B6: 'p',
+                    A7: 'r',
+                    D7: 'q',
+                    E7: 'p',
+                    F7: 'p',
+                    G7: 'p',
+                    H7: 'r',
+                    B8: 'B',
+                    C8: 'b',
+                    E8: 'k',
+                    F8: 'b',
+                    G8: 'n',
+                },
+                isFinished: false,
+                check: false,
+                checkMate: false,
+                castling: {
+                    whiteShort: true,
+                    blackShort: false,
+                    whiteLong: true,
+                    blackLong: false,
+                },
+                enPassant: null,
+                halfMove: 0,
+                fullMove: 9,
+            } as any;
+
+            const move = aiMove(board, 3);
+
+            // Lock the behavior for now so we can improve evaluation/search later without losing
+            // reproduction coverage.
+            expect(move).toEqual({ F7: 'F6' });
+        });
     });
 });
