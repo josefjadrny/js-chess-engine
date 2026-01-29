@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.0...v2.0.1) (2026-01-29)
+
+
+### Bug Fixes
+
+* ai sacrifice pieces bug ([f75ceb6](https://github.com/josefjadrny/js-chess-engine/commit/f75ceb6e848266b7a8f4567f07f8d25f470fdc64))
+
+
+
 ## [2.0.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.1-rc.2...v2.0.1) (2026-01-29)
 
 
