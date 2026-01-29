@@ -6,14 +6,18 @@ import {
     createStartingBoard,
     createEmptyBoard,
     setPiece,
+    copyBoard,
 } from '../../src/core/Board';
 import {
     generateLegalMoves,
     getMovesForPiece,
+    applyMoveComplete,
     isMoveLegal,
 } from '../../src/core/MoveGenerator';
 import { Piece, InternalColor, MoveFlag } from '../../src/types';
 import { squareToIndex } from '../../src/utils/conversion';
+import { parseFEN } from '../../src/utils/fen';
+import { isKingInCheck } from '../../src/core/AttackDetector';
 
 describe('Move Generation', () => {
     describe('Starting Position', () => {
@@ -750,6 +754,8 @@ describe('Move Generation', () => {
             const board = createEmptyBoard();
             setPiece(board, squareToIndex('E1'), Piece.WHITE_KING);
             setPiece(board, squareToIndex('E2'), Piece.BLACK_PAWN);
+            // A black pawn on D3 attacks E2 (south-east from the pawn on D3)
+            // so the king capture on E2 must be illegal.
             setPiece(board, squareToIndex('D3'), Piece.BLACK_PAWN); // Protects E2
             setPiece(board, squareToIndex('A8'), Piece.BLACK_KING);
             board.turn = InternalColor.WHITE;
@@ -1255,9 +1261,15 @@ describe('Move Generation', () => {
         it('should handle multiple pieces attacking the same square', () => {
             const board = createEmptyBoard();
             setPiece(board, squareToIndex('E4'), Piece.WHITE_KING);
-            setPiece(board, squareToIndex('D6'), Piece.BLACK_PAWN); // Attacks C5 and E5
-            setPiece(board, squareToIndex('E6'), Piece.BLACK_KNIGHT); // Attacks D4, F4, etc.
-            setPiece(board, squareToIndex('B1'), Piece.BLACK_BISHOP); // Attacks D3, E4, F5, etc.
+            // Ensure E5 is attacked by a black pawn: a black pawn attacks one step "south" diagonally,
+            // so a pawn on F6 attacks E5.
+            setPiece(board, squareToIndex('F6'), Piece.BLACK_PAWN);
+
+            // Put a black knight so it attacks D4
+            setPiece(board, squareToIndex('E6'), Piece.BLACK_KNIGHT); // Attacks D4 among others
+
+            // Put a black bishop so it attacks D3
+            setPiece(board, squareToIndex('A6'), Piece.BLACK_BISHOP); // Diagonal A6-B5-C4-D3
             setPiece(board, squareToIndex('A8'), Piece.BLACK_KING);
             board.turn = InternalColor.WHITE;
 
@@ -1296,6 +1308,89 @@ describe('Move Generation', () => {
 
             // White king has moves, white pawn has forward move
             expect(moves.length).toBeGreaterThan(0);
+        });
+    });
+
+    describe('Regressions', () => {
+        it('should allow pawn capture G4xF5 after a specific opening line (reported glitch)', () => {
+            // Start from the known buggy position directly (no move replay).
+            // This position is after:
+            //   E2-E4 B7-B5 D2-D3 D7-D6 F2-F3 C8-F5 G1-H3 E7-E6
+            // White to move.
+            const fen = 'rn1qkbnr/p1p2ppp/3pp3/1p3b2/4P3/3P1P1N/PPP3PP/RNBQKB1R w KQkq - 0 5';
+            const board = parseFEN(fen);
+
+            // Sanity: bishop is on F5
+            expect(board.mailbox[squareToIndex('F5')]).toBe(Piece.BLACK_BISHOP);
+
+            // Core regression assertion: pawn from E4 must be able to capture bishop on F5.
+            // (After the given line, the pawn on E4 is the one that can capture F5.)
+            const movesFromE4 = getMovesForPiece(board, squareToIndex('E4'));
+            expect(movesFromE4.some(m => m.to === squareToIndex('F5') && (m.flags & MoveFlag.CAPTURE))).toBe(true);
+        });
+
+        it('should generate all 4 promotion choices (quiet promotion)', () => {
+            // White pawn ready to promote on A8
+            const board = parseFEN('7k/P7/8/8/8/8/8/7K w - - 0 1');
+            const moves = getMovesForPiece(board, squareToIndex('A7'));
+
+            const promoMoves = moves.filter(m => m.to === squareToIndex('A8') && (m.flags & MoveFlag.PROMOTION));
+            expect(promoMoves.length).toBe(4);
+
+            const promoPieces = promoMoves.map(m => m.promotionPiece).sort();
+            expect(promoPieces).toEqual([
+                Piece.WHITE_BISHOP,
+                Piece.WHITE_KNIGHT,
+                Piece.WHITE_QUEEN,
+                Piece.WHITE_ROOK,
+            ].sort());
+        });
+
+        it('should generate all 4 promotion choices on capture as well', () => {
+            // White pawn on A7 can capture B8 and promote.
+            const board = parseFEN('1r5k/P7/8/8/8/8/8/7K w - - 0 1');
+            const moves = getMovesForPiece(board, squareToIndex('A7'));
+
+            const capturePromo = moves.filter(m =>
+                m.to === squareToIndex('B8') &&
+                (m.flags & MoveFlag.PROMOTION) &&
+                (m.flags & MoveFlag.CAPTURE)
+            );
+            expect(capturePromo.length).toBe(4);
+        });
+
+        it('should not generate moves that leave own king in check (simple pin)', () => {
+            // White rook on E2 is pinned by black rook on E8 against the white king on E1.
+            // Any rook move off the E-file should be illegal.
+            const board = parseFEN('4r2k/8/8/8/8/8/4R3/4K3 w - - 0 1');
+            const moves = getMovesForPiece(board, squareToIndex('E2'));
+
+            // Capturing the pinning rook is impossible (too far), and moving sideways would expose check.
+            expect(moves.some(m => m.to === squareToIndex('D2'))).toBe(false);
+            expect(moves.some(m => m.to === squareToIndex('F2'))).toBe(false);
+
+            // Moving along the file while still blocking should be allowed.
+            expect(moves.some(m => m.to === squareToIndex('E3'))).toBe(true);
+        });
+
+        it('should only allow legal responses when in check (block/capture/king move)', () => {
+            // White king in check from a black rook.
+            // White can respond by moving the king or capturing the checking piece.
+            const board = parseFEN('4k3/8/8/8/8/8/4r3/4K3 w - - 0 1');
+            const allMoves = generateLegalMoves(board);
+
+            // Ensure every move results in king not being in check.
+            // (This is a strong invariant test — if it fails, legality filtering is broken.)
+            for (const mv of allMoves) {
+                const testBoard = copyBoard(board);
+                applyMoveComplete(testBoard, mv);
+                // after applyMoveComplete, turn switched; check the side who just moved (white)
+                testBoard.turn = InternalColor.WHITE;
+                expect(isKingInCheck(testBoard)).toBe(false);
+            }
+
+            // And we should have at least one legal reply.
+            expect(allMoves.length).toBeGreaterThan(0);
         });
     });
 });

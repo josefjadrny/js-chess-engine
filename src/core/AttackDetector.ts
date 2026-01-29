@@ -41,12 +41,22 @@ export function isSquareAttacked(
     const attackers = attackerColor === InternalColor.WHITE ? board.whitePieces : board.blackPieces;
 
     // Check pawn attacks
-    const pawnAttacks = attackerColor === InternalColor.WHITE
-        ? getBlackPawnAttacks(square) // If white attacks, check where black pawns would be
-        : getWhitePawnAttacks(square); // If black attacks, check where white pawns would be
+    // IMPORTANT: `getWhitePawnAttacks(square)` returns the squares a *white pawn on `square`*
+    // would attack (north-east/north-west). For attack detection we need the inverse mapping:
+    // which pawn squares could attack `square`.
+    // That means:
+    //  - to see if `square` is attacked by WHITE pawns, look for WHITE pawns on the squares
+    //    that a BLACK pawn from `square` would attack (south-east/south-west), i.e. potential
+    //    white pawn origins.
+    //  - to see if `square` is attacked by BLACK pawns, look for BLACK pawns on the squares
+    //    that a WHITE pawn from `square` would attack (north-east/north-west), i.e. potential
+    //    black pawn origins.
+    const pawnAttackOrigins = attackerColor === InternalColor.WHITE
+        ? getBlackPawnAttacks(square)
+        : getWhitePawnAttacks(square);
 
     const pawns = attackerColor === InternalColor.WHITE ? board.whitePawns : board.blackPawns;
-    if ((pawnAttacks & pawns) !== 0n) {
+    if ((pawnAttackOrigins & pawns) !== 0n) {
         return true;
     }
 
@@ -185,11 +195,11 @@ export function getAttackers(
     let attackers = 0n;
 
     // Pawn attackers
-    const pawnAttacks = attackerColor === InternalColor.WHITE
+    const pawnAttackOrigins = attackerColor === InternalColor.WHITE
         ? getBlackPawnAttacks(square)
         : getWhitePawnAttacks(square);
     const pawns = attackerColor === InternalColor.WHITE ? board.whitePawns : board.blackPawns;
-    attackers |= pawnAttacks & pawns;
+    attackers |= pawnAttackOrigins & pawns;
 
     // Knight attackers
     const knightAttacks = getKnightAttacks(square);
