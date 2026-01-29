@@ -1,3 +1,12 @@
+## [2.0.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.1...v2.0.2) (2026-01-29)
+
+
+### Bug Fixes
+
+* Fixed bug in TT caching causing best moves being skipped ([252d9b8](https://github.com/josefjadrny/js-chess-engine/commit/252d9b8f4a5ac329d688940e5cda324df170ea98))
+
+
+
 ## [2.0.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.0...v2.0.1) (2026-01-29)
 
 
