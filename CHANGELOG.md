@@ -1,3 +1,12 @@
+## [2.0.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.2...v2.0.3) (2026-01-29)
+
+
+### Bug Fixes
+
+* Fixed Piece square table bug and minimax negation ([d434b11](https://github.com/josefjadrny/js-chess-engine/commit/d434b11250e4006d38cc27912b8093b65d6e1bc2))
+
+
+
 ## [2.0.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.1...v2.0.2) (2026-01-29)
 
 
