@@ -98,6 +98,10 @@ export class Search {
             ? orderMoves(moves, pvMove, this.killerMoves, 0)
             : moves;
 
+    // Debug: log first few moves (only at root, only first search)
+        const debugRoot = false; // Set to true for debugging
+        const debugMoves: Array<{ move: string, score: number }> = [];
+
     // Search each root move
         for (const move of orderedMoves) {
             // Make move (generateLegalMoves already filtered for legality)
@@ -137,18 +141,19 @@ export class Search {
             }
 
             // Search this move
-            const score =
-                -this.alphaBeta(
-                    testBoard,
-                    playerColor,
-                    baseDepth,
-                    extendedDepth,
-                    1, // depth = 1
-                    wasCapture,
-                    initialScore,
-                    SCORE_MIN,
-                    SCORE_MAX
-                );
+            // Note: alphaBeta already handles minimax internally (isMaximizing logic),
+            // so we don't negate the result. It returns scores from rootPlayerColor perspective.
+            const score = this.alphaBeta(
+                testBoard,
+                playerColor,
+                baseDepth,
+                extendedDepth,
+                1, // depth = 1
+                wasCapture,
+                initialScore,
+                SCORE_MIN,
+                SCORE_MAX
+            );
 
             // Heuristic guardrail: avoid obvious "hang the moved piece" blunders at the root.
             // This helps especially at low/medium depths where the search may miss immediate recaptures.
@@ -184,6 +189,16 @@ export class Search {
             // Promotion is almost always the best conversion in endgames, and this helps shallow searches.
             if (move.flags & MoveFlag.PROMOTION) {
                 finalScore += 200;
+            }
+
+            // Debug logging
+            if (debugRoot && debugMoves.length < 20) {  // Increased to 20 to see more moves
+                const fromFile = String.fromCharCode(65 + (move.from % 8));
+                const fromRank = Math.floor(move.from / 8) + 1;
+                const toFile = String.fromCharCode(65 + (move.to % 8));
+                const toRank = Math.floor(move.to / 8) + 1;
+                const moveStr = `${fromFile}${fromRank}-${toFile}${toRank}`;
+                debugMoves.push({ move: moveStr, score: finalScore });
             }
 
             // Update best move.
@@ -223,6 +238,17 @@ export class Search {
             );
         }
 
+        // Debug output
+        if (debugRoot && debugMoves.length > 0) {
+            console.log('\n=== ROOT SEARCH DEBUG (depth=' + baseDepth + ') ===');
+            debugMoves.sort((a, b) => b.score - a.score);
+            debugMoves.forEach((m, i) => {
+                const marker = i === 0 ? ' ← BEST' : '';
+                console.log(`  ${m.move}: ${m.score}${marker}`);
+            });
+            console.log('===================================\n');
+        }
+
         return {
             move: bestMove,
             score: bestScore,
@@ -258,7 +284,8 @@ export class Search {
                 ? Evaluator.evaluate(testBoard, playerColor)
                 : null;
 
-            const score = -this.alphaBeta(
+            // Note: alphaBeta handles minimax internally, don't negate
+            const score = this.alphaBeta(
                 testBoard,
                 playerColor,
                 baseDepth,

@@ -47,34 +47,38 @@ const PIECE_VALUE_MULTIPLIER = 10;
 const PST_MULTIPLIER = 0.5;
 
 // ==================== Piece-Square Tables ====================
-// From white's perspective (rank 0 = rank 1, rank 7 = rank 8)
+// Tables are defined from BLACK's perspective (rank 0 = black's promotion, rank 7 = black's starting rank)
+// They are reversed for white pieces in PST_MAP below
+// Values are in pawns (will be multiplied by PST_MULTIPLIER)
 
 /**
- * Pawn piece-square table (white perspective)
+ * Pawn piece-square table (black's perspective, reversed for white)
+ * Encourages center control and advancement
  */
 const PAWN_PST = [
-    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-    [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
-    [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
-    [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5],
-    [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0],
-    [0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.5],
-    [0.5, 0.0, 0.0, -2.0, -2.0, 0.0, 0.0, 0.5],
-    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],         // Rank 0 (promotion rank)
+    [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],         // Rank 1 (7th rank - near promotion)
+    [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],         // Rank 2 (6th rank)
+    [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5],         // Rank 3 (5th rank)
+    [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0],         // Rank 4 (4th rank - center breakthrough)
+    [0.5, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, 0.5],         // Rank 5 (3rd rank - reward advancement)
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],         // Rank 6 (starting rank - neutral)
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],         // Rank 7 (back rank - pawns never here)
 ];
 
 /**
- * Knight piece-square table
+ * Knight piece-square table (black's perspective, reversed for white)
+ * Encourages centralization and active placement
  */
 const KNIGHT_PST = [
-    [-4.0, -3.0, -2.0, -2.0, -2.0, -2.0, -3.0, -4.0],
-    [-3.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -3.0],
-    [-2.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -2.0],
-    [-2.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -2.0],
-    [-2.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -2.0],
-    [-2.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -2.0],
-    [-3.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -3.0],
-    [-4.0, -3.0, -2.0, -2.0, -2.0, -2.0, -3.0, -4.0],
+    [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],  // Back rank
+    [-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0],
+    [-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0],
+    [-3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0],
+    [-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0],
+    [-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0],
+    [-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0],
+    [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],  // Starting rank - discourage edge knights
 ];
 
 /**
