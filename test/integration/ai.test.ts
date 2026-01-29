@@ -744,4 +744,83 @@ describe('AI Engine', () => {
             }
         });
     });
+
+    describe('AI regression - best move (level 3)', () => {
+        // These are intentionally level 3 (deeper, slower) because we want to lock
+        // in avoidance of obvious tactical blunders.
+
+        it('should not hang the queen (reported 2026-01-29: avoid Qxd5??)', () => {
+            const board = {
+                turn: 'black',
+                pieces: {
+                    A1: 'R',
+                    B1: 'N',
+                    C1: 'B',
+                    D1: 'Q',
+                    E1: 'K',
+                    G1: 'N',
+                    H1: 'R',
+                    A2: 'P',
+                    B2: 'P',
+                    D2: 'P',
+                    F2: 'P',
+                    G2: 'P',
+                    H2: 'P',
+                    C4: 'B',
+                    D5: 'P',
+                    A7: 'p',
+                    C7: 'p',
+                    E7: 'p',
+                    F7: 'p',
+                    G7: 'p',
+                    H7: 'p',
+                    A8: 'r',
+                    B8: 'n',
+                    C8: 'b',
+                    D8: 'q',
+                    E8: 'k',
+                    F8: 'b',
+                    G8: 'n',
+                    H8: 'r',
+                },
+                isFinished: false,
+                check: false,
+                checkMate: false,
+                castling: {
+                    whiteShort: true,
+                    blackShort: true,
+                    whiteLong: true,
+                    blackLong: true,
+                },
+                enPassant: null,
+                halfMove: 0,
+                fullMove: 4,
+            } as any;
+
+            const move = aiMove(board, 3);
+
+            // Regression expectation: don't play the immediate queen blunder.
+            expect(move).not.toEqual({ D8: 'D5' });
+        });
+
+        it('should promote a pawn in a trivial promotion position', () => {
+            const fen = '8/4P3/8/8/3k4/8/8/4K3 w - - 0 1';
+            const result = ai(fen, { level: 3 });
+
+            // Must promote on the 8th rank.
+            const hasPromotionOnEighthRank = Object.entries(result.board.pieces).some(
+                ([sq, piece]) => sq[1] === '8' && (piece === 'Q' || piece === 'R' || piece === 'B' || piece === 'N')
+            );
+            expect(hasPromotionOnEighthRank).toBe(true);
+        });
+
+        it('should deliver mate in 1 when available (queen mate)', () => {
+            // Mate in 1 for white: Qf8#
+            const fen = '7k/5Qpp/8/8/8/8/6PP/6K1 w - - 0 1';
+            const result = ai(fen, { level: 3 });
+
+            expect(result.board.checkMate).toBe(true);
+            expect(result.board.isFinished).toBe(true);
+        });
+    });
 });

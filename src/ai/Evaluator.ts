@@ -18,13 +18,15 @@ const PIECE_VALUES: Record<number, number> = {
     [Piece.WHITE_KNIGHT]: 3,
     [Piece.WHITE_BISHOP]: 3,
     [Piece.WHITE_ROOK]: 5,
-    [Piece.WHITE_QUEEN]: 9,
+    // Queen is intentionally valued a bit higher to better discourage
+    // shallow-search blunders where the queen is sacrificed for minor material.
+    [Piece.WHITE_QUEEN]: 12,
     [Piece.WHITE_KING]: 10,
     [Piece.BLACK_PAWN]: 1,
     [Piece.BLACK_KNIGHT]: 3,
     [Piece.BLACK_BISHOP]: 3,
     [Piece.BLACK_ROOK]: 5,
-    [Piece.BLACK_QUEEN]: 9,
+    [Piece.BLACK_QUEEN]: 12,
     [Piece.BLACK_KING]: 10,
 };
 

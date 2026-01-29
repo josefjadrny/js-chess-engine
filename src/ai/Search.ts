@@ -12,6 +12,7 @@ import { Evaluator, SCORE_MIN, SCORE_MAX } from './Evaluator';
 import { Score, SearchResult } from '../types/ai.types';
 import { TranspositionTable, TTEntryType } from './TranspositionTable';
 import { KillerMoves, orderMoves } from './MoveOrdering';
+import { isSquareAttacked } from '../core/AttackDetector';
 
 /**
  * Search engine with alpha-beta pruning, transposition table, and move ordering
@@ -155,19 +156,40 @@ export class Search {
                     SCORE_MAX
                 );
 
-            // For non-checkmate moves, add positional bonus and randomness
+            // Heuristic guardrail: avoid obvious "hang the moved piece" blunders at the root.
+            // This helps especially at low/medium depths where the search may miss immediate recaptures.
+            // We only apply a penalty if the moved piece ends up attacked by the opponent.
             let finalScore = score;
+            const movedPieceSquare = move.to;
+            const opponentColor = playerColor === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
+            const movedPieceAttacked = isSquareAttacked(testBoard, movedPieceSquare, opponentColor);
+            if (movedPieceAttacked) {
+                // Determine the moved piece type to scale the penalty.
+                // (We can't reliably inspect mailbox vs enums across colors here, so use move.piece.)
+                const absPiece = move.piece;
+                const isQueen = absPiece === Piece.WHITE_QUEEN || absPiece === Piece.BLACK_QUEEN;
+                const isRook = absPiece === Piece.WHITE_ROOK || absPiece === Piece.BLACK_ROOK;
+                const isBishop = absPiece === Piece.WHITE_BISHOP || absPiece === Piece.BLACK_BISHOP;
+                const isKnight = absPiece === Piece.WHITE_KNIGHT || absPiece === Piece.BLACK_KNIGHT;
+                const isPawn = absPiece === Piece.WHITE_PAWN || absPiece === Piece.BLACK_PAWN;
+                const isKing = absPiece === Piece.WHITE_KING || absPiece === Piece.BLACK_KING;
 
-            // Only add randomness for non-decisive moves (not near mate scores)
-            if (Math.abs(score) < SCORE_MAX - 100) {
-                // Add positional bonus
-                const positionalBonus = Evaluator.evaluate(testBoard, playerColor) -
-                    Evaluator.evaluate(board, playerColor);
+                // Penalties are in the same score scale as Evaluator (centipawn-ish).
+                // Queen hangs should be strongly discouraged.
+                // Never apply this heuristic to king moves.
+                // The king is *supposed* to step into attacked squares only when illegal; legality is already filtered
+                // by move generation, so penalizing attacked king squares can distort endgames.
+                // Also skip this penalty for promotion moves; they are often tactically sound even if the new piece is attacked.
+                if (!isKing && !(move.flags & MoveFlag.PROMOTION)) {
+                    const penalty = isQueen ? 120 : isRook ? 60 : (isBishop || isKnight) ? 35 : isPawn ? 15 : 0;
+                    finalScore -= penalty;
+                }
+            }
 
-                // Add small random factor (v1 compatibility)
-                const random = Math.floor(Math.random() * randomFactor * 10) / 10;
-
-                finalScore = score + positionalBonus + random;
+            // Strongly encourage promotions at the root.
+            // Promotion is almost always the best conversion in endgames, and this helps shallow searches.
+            if (move.flags & MoveFlag.PROMOTION) {
+                finalScore += 200;
             }
 
             // Update best move
