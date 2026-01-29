@@ -1,3 +1,12 @@
+# [2.1.0](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.3...v2.1.0) (2026-01-29)
+
+
+### Features
+
+* New AI level 6, docs updated ([23b79f2](https://github.com/josefjadrny/js-chess-engine/commit/23b79f28fc35e9a667c50d3bf237fcf14a4b8c9a))
+
+
+
 ## [2.0.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.2...v2.0.3) (2026-01-29)
 
 
