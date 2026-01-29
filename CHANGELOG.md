@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.1-rc.2...v2.0.1) (2026-01-29)
+
+
+### Bug Fixes
+
+* bug with pawn moves ([ee0613c](https://github.com/josefjadrny/js-chess-engine/commit/ee0613c60ef4c2331afc06f241ea7ff014ee5155))
+
+
+
 ## [2.0.1-rc.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.0.1-rc.1...v2.0.1-rc.2) (2026-01-28)
 
 
