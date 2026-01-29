@@ -1,2 +1,12 @@
 node_modules
 .idea
+
+# Build output
+dist/
+
+# Test coverage
+coverage/
+
+# OS files
+.DS_Store
+*.log
