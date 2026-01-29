@@ -1,3 +1,12 @@
+## [2.1.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.1...v2.1.2) (2026-01-29)
+
+
+### Bug Fixes
+
+* AI engine fixes ([17c4fee](https://github.com/josefjadrny/js-chess-engine/commit/17c4fee6312fe8e79088bdac30046ba79b87902e))
+
+
+
 ## [2.1.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.0...v2.1.1) (2026-01-29)
 
 
