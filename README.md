@@ -636,6 +636,8 @@ I am not a chess pro. My father is.
 
 When I was ten, I had an Atari (with Turbo Basic), and I was hoping for a new PC. My father told me: "Make me a computer program which beats me in chess, and I'll buy you a new PC."
 
+![Me (and my brother) as kids debugging our way into a chess engine](assets/atari-kid.webp)
+
 Obviously, it was a trap and I failed. Twenty years later, it came back to my mind, and I decided to finish what I started. This is version 2.0 - a complete TypeScript rewrite with improved performance and architecture.
 
 ## Breaking Changes from v1
