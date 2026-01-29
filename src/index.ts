@@ -212,13 +212,13 @@ export class Game {
     /**
      * Make an AI move (v1 compatible - returns only the move)
      *
-     * @param level - AI level (1-5, default 3)
+     * @param level - AI level (1-6, default 3)
      * @returns The played move object (e.g., {"E2": "E4"})
      */
     aiMove(level: number = 3): HistoryEntry {
         // Validate level
-        if (level < 1 || level > 5) {
-            throw new Error('AI level must be between 1 and 5');
+        if (level < 1 || level > 6) {
+            throw new Error('AI level must be between 1 and 6');
         }
 
         // Find best move
@@ -245,9 +245,9 @@ export class Game {
      * Make an AI move and return both move and board state
      *
      * @param options - Optional configuration object
-     * @param options.level - AI difficulty level (1-5, default: 3)
+     * @param options.level - AI difficulty level (1-6, default: 3)
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
-     * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 16 MB Node.js, 2 MB browser)
+     * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
     ai(options: { level?: number; play?: boolean; ttSizeMB?: number } = {}): { move: HistoryEntry; board: BoardConfig } {
@@ -259,8 +259,8 @@ export class Game {
         const ttSizeMB = options.ttSizeMB === 0 ? 0 : Math.max(0.25, Math.min(256, options.ttSizeMB ?? defaultSize));
 
         // Validate level
-        if (level < 1 || level > 5) {
-            throw new Error('AI level must be between 1 and 5');
+        if (level < 1 || level > 6) {
+            throw new Error('AI level must be between 1 and 6');
         }
 
         // Find best move
@@ -369,7 +369,7 @@ export function move(config: BoardConfig | string, from: string, to: string): Bo
  * Make an AI move (v1 compatible - returns only the move)
  *
  * @param config - Board configuration or FEN string
- * @param level - AI level (1-5, default 3)
+ * @param level - AI level (1-6, default 3)
  * @returns The played move object (e.g., {"E2": "E4"})
  */
 export function aiMove(config: BoardConfig | string, level: number = 3): HistoryEntry {
@@ -382,9 +382,9 @@ export function aiMove(config: BoardConfig | string, level: number = 3): History
  *
  * @param config - Board configuration or FEN string
  * @param options - Optional configuration object
- * @param options.level - AI difficulty level (1-5, default: 3)
+ * @param options.level - AI difficulty level (1-6, default: 3)
  * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
- * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 16 MB Node.js, 2 MB browser)
+ * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
  * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
  */
 export function ai(

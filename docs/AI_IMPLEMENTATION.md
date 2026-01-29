@@ -25,7 +25,7 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 - Advanced move ordering (PV moves, MVV-LVA, killer moves)
 - Iterative deepening
 - Quiescence search for tactical stability
-- Configurable difficulty levels (1-5)
+- Configurable difficulty levels (1-6)
 - Memory-efficient with tunable cache size (browser and mobile-friendly)
 
 **Performance:** 65% faster than baseline implementation (16.3s → 5.6s on test suite)
@@ -61,7 +61,7 @@ Search (Alpha-Beta + Optimizations)
 ### Data Flow
 
 1. **API Call**: User calls `game.ai()` or `game.aiMove()`
-2. **Configuration**: AIEngine maps level (1-5) to search depths
+2. **Configuration**: AIEngine maps level (1-6) to search depths
 3. **Search**: Iterative deepening progressively searches deeper
 4. **Ordering**: Moves ordered by PV → Captures → Killers → Quiet
 5. **Evaluation**: Positions scored by material + piece-square tables
@@ -155,16 +155,16 @@ interface TTEntry {
 **Configuration:**
 
 The transposition table size is **auto-configured** based on the runtime environment:
-- **Node.js**: 16 MB (default) - ample memory available
-- **Browser**: 1 MB (default) - mobile-friendly
+- **Node.js**: 8 MB (default for level 3) - ample memory available
+- **Browser**: 4 MB (default for level 3) - mobile-friendly
 
 You can override the default through AI options:
 
 ```typescript
 // Use auto-detected default (recommended)
 game.ai({ level: 3 });
-// → Node.js: 16 MB cache
-// → Browser: 1 MB cache
+// → Node.js: 8 MB cache
+// → Browser: 4 MB cache
 
 // Override for specific requirements
 game.ai({ level: 4, ttSizeMB: 64 });     // High-performance: 64MB
@@ -182,7 +182,7 @@ The engine automatically detects the runtime environment using:
 - See `src/utils/environment.ts` for implementation
 
 **Key Features:**
-- **Size**: Configurable 0-256 MB (0 to disable, 0.25-256 MB range, default: auto-detected - 16 MB in Node.js ~400,000 entries, 1 MB in browser ~25,000 entries)
+- **Size**: Configurable 0-256 MB (0 to disable, 0.25-256 MB range, default: auto-detected - 8 MB in Node.js ~200,000 entries, 4 MB in browser ~100,000 entries)
 - **Hash Function**: Zobrist hashing (see below)
 - **Replacement Strategy**: Always replace if:
   - Slot is empty
@@ -282,7 +282,7 @@ score = victimValue * 10 - attackerValue
 
 **Impact:**
 - 2-3x reduction in nodes searched
-- Critical for deep searches (levels 3-4)
+- Critical for deep searches (levels 4-6)
 - Most effective with PV moves from transposition table
 
 ### 4. Iterative Deepening
@@ -527,13 +527,16 @@ enum MoveFlag {
 
 ```typescript
 const LEVEL_CONFIG: Record<AILevel, LevelConfig> = {
-    0: { baseDepth: 1, extendedDepth: 2 },  // ~3ms
-    1: { baseDepth: 2, extendedDepth: 3 },  // ~50ms
-    2: { baseDepth: 3, extendedDepth: 4 },  // ~300ms
-    3: { baseDepth: 4, extendedDepth: 5 },  // ~2s
-    4: { baseDepth: 5, extendedDepth: 6 },  // ~7s
+    1: { baseDepth: 1, extendedDepth: 2 },  // Beginner
+    2: { baseDepth: 2, extendedDepth: 3 },  // Easy
+    3: { baseDepth: 3, extendedDepth: 4 },  // Intermediate (default)
+    4: { baseDepth: 4, extendedDepth: 5 },  // Advanced
+    5: { baseDepth: 5, extendedDepth: 6 },  // Expert
+    6: { baseDepth: 6, extendedDepth: 7 },  // Master
 };
 ```
+
+**Performance:** Response time increases exponentially with search depth. Benchmarked on modern hardware (Linux x64, Node.js v24): levels 1-2 ~30ms, level 3 ~50ms, levels 4-6 ~60-90ms. Actual performance varies significantly by hardware (CPU, RAM), position complexity, and transposition table size. Use the benchmark script (`npm run benchmark`) to measure performance on your specific system.
 
 ### Performance Comparison
 
@@ -562,7 +565,7 @@ const LEVEL_CONFIG: Record<AILevel, LevelConfig> = {
 - Total lookups: ~50,000
 - Cache hits: ~35,000 (70% hit rate)
 - Stored entries: ~12,000 unique positions
-- Memory usage: ~480KB (of 16MB allocated in Node.js, or ~480KB of 1MB in browser)
+- Memory usage: ~480KB (of 8MB allocated in Node.js, or ~480KB of 4MB in browser)
 
 ## Future Enhancements
 

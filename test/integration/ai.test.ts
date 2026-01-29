@@ -29,8 +29,8 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 5');
-            expect(() => game.ai({ level: 6 })).toThrow('AI level must be between 1 and 5');
+            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 6');
+            expect(() => game.ai({ level: 7 })).toThrow('AI level must be between 1 and 6');
         });
 
         it('should throw error when game is finished', () => {
@@ -142,8 +142,8 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.aiMove(0)).toThrow('AI level must be between 1 and 5');
-            expect(() => game.aiMove(6)).toThrow('AI level must be between 1 and 5');
+            expect(() => game.aiMove(0)).toThrow('AI level must be between 1 and 6');
+            expect(() => game.aiMove(7)).toThrow('AI level must be between 1 and 6');
         });
 
         it('should throw error when game is finished', () => {

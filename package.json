@@ -15,6 +15,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "benchmark": "npm run build && node scripts/benchmark-levels.mjs",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "test": "jest",
