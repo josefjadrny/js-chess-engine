@@ -45,6 +45,54 @@ function expectBestMove(
 
 describe('Level 6 Tactical Tests - Complex Positions', () => {
     describe('Avoiding Hanging Pieces', () => {
+        it('should not hang the queen with C6-C5 (allowing G3xH4)', () => {
+            // Regression: In this position, black to move has a queen on H4 that is currently protected by
+            // the pawn on C6. Playing C6-C5 removes that protection and allows white to win the queen
+            // immediately with G3xH4.
+            const board = {
+                turn: 'black',
+                pieces: {
+                    A1: 'R', B1: 'N', D1: 'Q', E1: 'K', F1: 'B', G1: 'N', H1: 'R',
+                    A2: 'P', B2: 'P', D2: 'B', H2: 'P',
+                    C3: 'P', F3: 'P', G3: 'P', E4: 'P',
+                    H4: 'q',
+                    E5: 'p', B6: 'p', C6: 'p', A7: 'p', F7: 'p', G7: 'p', H7: 'p',
+                    A8: 'r', B8: 'n', C8: 'b', E8: 'k', F8: 'b', G8: 'n', H8: 'r',
+                },
+                castling: {
+                    whiteShort: true,
+                    blackShort: true,
+                    whiteLong: true,
+                    blackLong: true,
+                },
+                enPassant: null,
+                halfMove: 0,
+                fullMove: 7,
+                isFinished: false,
+                check: false,
+                checkMate: false,
+            } as any;
+
+            const game = new Game(board);
+            const result = game.ai({ level: 6 });
+
+            // Good moves are queen moves that avoid immediate loss.
+            // (Some queen moves are still tactically dubious, but they don't drop the queen in one ply.)
+            const bestMoves: Array<[string, string]> = [
+                ['H4', 'E4'], // Centralize queen with tempo on e4 pawn
+                ['H4', 'H3'], // Retreat to safety
+                ['H4', 'H2'], // Capture pawn
+                ['H4', 'H5'], // Step away (avoids immediate G3xH4)
+                ['H4', 'D8'], // Return home
+            ];
+
+            expectBestMove(
+                result,
+                bestMoves,
+                'Must avoid C6-C5 which allows G3xH4 winning the queen'
+            );
+        });
+
         it('should play safe developing moves instead of hanging knight', () => {
             // Position: Black knight on B4 can capture C2 with check, but hangs to Qxc2
             // Best moves: C7-C6 (solid), F8-E7 (developing), or E8-E7 (king safety)

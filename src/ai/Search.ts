@@ -210,6 +210,69 @@ export class Search {
                 }
             }
 
+            // Extended guardrail: avoid moves that newly expose a *different* valuable piece to capture.
+            //
+            // IMPORTANT: do *not* use isSquareAttacked() here.
+            // That function intentionally answers the chess question “is this square attacked?” which includes
+            // many pseudo-attacks (e.g., pinned pieces). For blunder prevention we need a stricter question:
+            // “can the opponent legally capture this square on the next move?”
+            //
+            // So we generate opponent legal moves and check if any of them can capture our queen/rook.
+            if (!isKing) {
+                const beforeOpponentMoves = generateLegalMoves(board);
+                const afterOpponentMoves = generateLegalMoves(testBoard);
+
+                const beforeCapturable = new Set<number>();
+                const afterCapturable = new Set<number>();
+
+                // Collect squares of our queen/rook that are capturable (i.e. appear as a capture destination)
+                // in opponent legal moves.
+                const collectCapturableMajorSquares = (
+                    opponentMoves: InternalMove[],
+                    position: InternalBoard,
+                    out: Set<number>
+                ) => {
+                    for (const m of opponentMoves) {
+                        if (!m.capturedPiece) continue;
+                        const captured = m.capturedPiece;
+                        const isCapturedQueen =
+                            captured === Piece.WHITE_QUEEN ||
+                            captured === Piece.BLACK_QUEEN;
+                        const isCapturedRook =
+                            captured === Piece.WHITE_ROOK ||
+                            captured === Piece.BLACK_ROOK;
+                        if (!isCapturedQueen && !isCapturedRook) continue;
+
+                        // Only count captures of the root player’s pieces.
+                        const capturedIsOurs = playerColor === InternalColor.WHITE
+                            ? (captured === Piece.WHITE_QUEEN || captured === Piece.WHITE_ROOK)
+                            : (captured === Piece.BLACK_QUEEN || captured === Piece.BLACK_ROOK);
+                        if (!capturedIsOurs) continue;
+
+                        out.add(m.to);
+                    }
+                };
+
+                collectCapturableMajorSquares(beforeOpponentMoves, board, beforeCapturable);
+                collectCapturableMajorSquares(afterOpponentMoves, testBoard, afterCapturable);
+
+                // If we created a new “queen/rook is capturable next ply” situation, penalize heavily.
+                let newlyExposedMajor = false;
+                for (const sq of afterCapturable) {
+                    if (!beforeCapturable.has(sq)) {
+                        // If we moved the major piece itself, the moved-piece guardrail above already covers it.
+                        if (sq !== movedPieceSquare) {
+                            newlyExposedMajor = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (newlyExposedMajor) {
+                    finalScore -= 250;
+                }
+            }
+
             // Strongly encourage promotions at the root.
             // Promotion is almost always the best conversion in endgames, and this helps shallow searches.
             if (move.flags & MoveFlag.PROMOTION) {
