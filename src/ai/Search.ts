@@ -178,15 +178,18 @@ export class Search {
                 // Never apply this heuristic to king moves.
                 // The king is *supposed* to step into attacked squares only when illegal; legality is already filtered
                 // by move generation, so penalizing attacked king squares can distort endgames.
-                // Also skip this penalty for:
-                // - Promotion moves: often tactically sound even if the new piece is attacked
-                // - Checking captures (e.g., Bxf7+): These are tactical sacrifices that deserve consideration.
-                //   The search will evaluate if they're good or bad based on the full continuation.
+                // Also skip full penalty for promotion moves: often tactically sound even if the new piece is attacked.
+                // For checking captures (e.g., Bxf7+), apply a reduced penalty (50%) since these may be
+                // tactical sacrifices, but we still want to discourage obvious blunders where the piece
+                // simply hangs to an immediate recapture.
                 const isCheckingMove = testBoard.isCheck;
                 const isCheckingCapture = isCheckingMove && (move.flags & MoveFlag.CAPTURE);
 
-                if (!isKing && !(move.flags & MoveFlag.PROMOTION) && !isCheckingCapture) {
-                    const penalty = isQueen ? 120 : isRook ? 60 : (isBishop || isKnight) ? 35 : isPawn ? 15 : 0;
+                if (!isKing && !(move.flags & MoveFlag.PROMOTION)) {
+                    const basePenalty = isQueen ? 120 : isRook ? 60 : (isBishop || isKnight) ? 35 : isPawn ? 15 : 0;
+                    // Apply reduced penalty for checking captures to allow tactical sacrifices
+                    // but still discourage simple blunders
+                    const penalty = isCheckingCapture ? Math.floor(basePenalty * 0.5) : basePenalty;
                     finalScore -= penalty;
                 }
             }
