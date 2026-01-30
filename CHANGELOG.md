@@ -1,3 +1,12 @@
+## [2.1.5](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.4...v2.1.5) (2026-01-30)
+
+
+### Bug Fixes
+
+* extended root blunder guardrail ([ef304e4](https://github.com/josefjadrny/js-chess-engine/commit/ef304e40cce69d883694c0614cc847ac6ea99a7e))
+
+
+
 ## [2.1.4](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.3...v2.1.4) (2026-01-30)
 
 
