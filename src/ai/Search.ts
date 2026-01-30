@@ -159,19 +159,20 @@ export class Search {
             // This helps especially at low/medium depths where the search may miss immediate recaptures.
             // We only apply a penalty if the moved piece ends up attacked by the opponent.
             let finalScore = score;
+
+            // Determine the moved piece type (used by multiple heuristics below)
+            const absPiece = move.piece;
+            const isQueen = absPiece === Piece.WHITE_QUEEN || absPiece === Piece.BLACK_QUEEN;
+            const isRook = absPiece === Piece.WHITE_ROOK || absPiece === Piece.BLACK_ROOK;
+            const isBishop = absPiece === Piece.WHITE_BISHOP || absPiece === Piece.BLACK_BISHOP;
+            const isKnight = absPiece === Piece.WHITE_KNIGHT || absPiece === Piece.BLACK_KNIGHT;
+            const isPawn = absPiece === Piece.WHITE_PAWN || absPiece === Piece.BLACK_PAWN;
+            const isKing = absPiece === Piece.WHITE_KING || absPiece === Piece.BLACK_KING;
+
             const movedPieceSquare = move.to;
             const opponentColor = playerColor === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
             const movedPieceAttacked = isSquareAttacked(testBoard, movedPieceSquare, opponentColor);
             if (movedPieceAttacked) {
-                // Determine the moved piece type to scale the penalty.
-                // (We can't reliably inspect mailbox vs enums across colors here, so use move.piece.)
-                const absPiece = move.piece;
-                const isQueen = absPiece === Piece.WHITE_QUEEN || absPiece === Piece.BLACK_QUEEN;
-                const isRook = absPiece === Piece.WHITE_ROOK || absPiece === Piece.BLACK_ROOK;
-                const isBishop = absPiece === Piece.WHITE_BISHOP || absPiece === Piece.BLACK_BISHOP;
-                const isKnight = absPiece === Piece.WHITE_KNIGHT || absPiece === Piece.BLACK_KNIGHT;
-                const isPawn = absPiece === Piece.WHITE_PAWN || absPiece === Piece.BLACK_PAWN;
-                const isKing = absPiece === Piece.WHITE_KING || absPiece === Piece.BLACK_KING;
 
                 // Penalties are in the same score scale as Evaluator (centipawn-ish).
                 // Queen hangs should be strongly discouraged.
@@ -179,18 +180,33 @@ export class Search {
                 // The king is *supposed* to step into attacked squares only when illegal; legality is already filtered
                 // by move generation, so penalizing attacked king squares can distort endgames.
                 // Also skip full penalty for promotion moves: often tactically sound even if the new piece is attacked.
-                // For checking captures (e.g., Bxf7+), apply a reduced penalty (50%) since these may be
-                // tactical sacrifices, but we still want to discourage obvious blunders where the piece
-                // simply hangs to an immediate recapture.
+                //
+                // IMPORTANT: Penalty application strategy:
+                // 1. Non-captures: Full penalty (piece hangs for nothing)
+                // 2. Checking captures: 50% penalty (tactical sacrifices)
+                // 3. Regular captures with valuable pieces (Q, R): 40% penalty (discourage bad trades like Qxp hanging)
+                // 4. Regular captures with minor pieces (B, N, p): No penalty (allow normal trades)
+                const isCapture = (move.flags & MoveFlag.CAPTURE) !== 0;
                 const isCheckingMove = testBoard.isCheck;
-                const isCheckingCapture = isCheckingMove && (move.flags & MoveFlag.CAPTURE);
+                const isCheckingCapture = isCheckingMove && isCapture;
+                const isRegularCapture = isCapture && !isCheckingMove;
+                const isValuablePiece = isQueen || isRook; // Queen and Rook are valuable
 
+                // Apply penalty based on move type
                 if (!isKing && !(move.flags & MoveFlag.PROMOTION)) {
                     const basePenalty = isQueen ? 120 : isRook ? 60 : (isBishop || isKnight) ? 35 : isPawn ? 15 : 0;
-                    // Apply reduced penalty for checking captures to allow tactical sacrifices
-                    // but still discourage simple blunders
-                    const penalty = isCheckingCapture ? Math.floor(basePenalty * 0.5) : basePenalty;
-                    finalScore -= penalty;
+
+                    if (!isCapture) {
+                        // Non-capture: full penalty
+                        finalScore -= basePenalty;
+                    } else if (isCheckingCapture) {
+                        // Checking capture: 50% penalty (allow tactical sacs)
+                        finalScore -= Math.floor(basePenalty * 0.5);
+                    } else if (isRegularCapture && isValuablePiece) {
+                        // Regular capture with valuable piece: 40% penalty (discourage Qxp hanging)
+                        finalScore -= Math.floor(basePenalty * 0.4);
+                    }
+                    // Regular captures with minor pieces: no penalty (allow normal trades)
                 }
             }
 
@@ -198,6 +214,32 @@ export class Search {
             // Promotion is almost always the best conversion in endgames, and this helps shallow searches.
             if (move.flags & MoveFlag.PROMOTION) {
                 finalScore += 200;
+            }
+
+            // Strongly reward castling in the opening/middlegame
+            // Castling is a fundamental strategic concept that should be prioritized
+            const isCastling = (move.flags & MoveFlag.CASTLING) !== 0;
+            const isOpening = testBoard.fullMoveNumber < 15; // Opening/early middlegame
+            if (isCastling && isOpening) {
+                finalScore += 50; // Large bonus to encourage castling
+            }
+
+            // Reward central pawn pushes in the opening
+            // E2-E4, D2-D4, E7-E5, D7-D5 are key opening moves
+            if (isPawn && testBoard.fullMoveNumber < 5) {
+                const fromRank = Math.floor(move.from / 8);
+                const toRank = Math.floor(move.to / 8);
+                const toFile = move.to % 8;
+
+                // Check for central pawn (d or e file) moving 2 squares from starting position
+                const isCentralFile = toFile === 3 || toFile === 4; // d or e file
+                const isTwoSquarePush = Math.abs(toRank - fromRank) === 2;
+                const isFromStartingRank = (playerColor === InternalColor.WHITE && fromRank === 1) ||
+                                           (playerColor === InternalColor.BLACK && fromRank === 6);
+
+                if (isCentralFile && isTwoSquarePush && isFromStartingRank) {
+                    finalScore += 30; // Encourage E2-E4, D2-D4, etc.
+                }
             }
 
             // Debug logging
