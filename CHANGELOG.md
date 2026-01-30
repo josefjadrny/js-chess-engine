@@ -1,3 +1,12 @@
+## [2.1.4](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.3...v2.1.4) (2026-01-30)
+
+
+### Bug Fixes
+
+* The hang penalty is now correctly applied during tactical evaluations. ([71b9085](https://github.com/josefjadrny/js-chess-engine/commit/71b90851113dc3a5f4dcdd76c018981d0cd5fb90))
+
+
+
 ## [2.1.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.2...v2.1.3) (2026-01-30)
 
 
