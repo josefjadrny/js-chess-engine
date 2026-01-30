@@ -1,3 +1,12 @@
+## [2.1.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.2...v2.1.3) (2026-01-30)
+
+
+### Bug Fixes
+
+* "hanging piece" blunder ([8453cc5](https://github.com/josefjadrny/js-chess-engine/commit/8453cc581ac05f45aa2a616148836ec0e9fb6fc3))
+
+
+
 ## [2.1.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.1...v2.1.2) (2026-01-29)
 
 
