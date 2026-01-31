@@ -968,6 +968,19 @@ describe('AI Tactical Tests', () => {
                     'Should advance f-pawn or king to promote and win'
                 );
             });
+
+            it('should not push f7 prematurely (draws after Kg7)', () => {
+                // Position: White king on e5, pawn on f6, black king on h7.
+                // Pushing f7 immediately is a DRAW: black plays Kg7 blocking the pawn.
+                // Correct play: advance king first to control the queening square.
+                const fen = '8/7k/5P2/4K3/8/8/8/8 w - - 0 60';
+
+                const result = new Game(fen).ai({ level: 5 });
+                const [from] = Object.entries(result.move)[0];
+
+                // Must NOT push f7 — it's a draw after Kg7 blocks the pawn
+                expect(from).not.toBe('F6');
+            });
         });
 
         describe('Performance and Correctness', () => {
