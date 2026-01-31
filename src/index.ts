@@ -14,6 +14,7 @@ import {
 } from './types';
 import { createStartingBoard, setPiece as setBoardPiece, removePiece as removeBoardPiece, copyBoard } from './core/Board';
 import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/MoveGenerator';
+import { isKingInCheck } from './core/AttackDetector';
 import { parseFEN, toFEN, getStartingFEN, validateFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
 import { getDefaultTTSize, getRecommendedTTSize } from './utils/environment';
@@ -213,7 +214,7 @@ export class Game {
     /**
      * Make an AI move (v1 compatible - returns only the move)
      *
-     * @param level - AI level (1-6, default 3)
+     * @param level - AI level (1-5, default 3)
      * @returns The played move object (e.g., {"E2": "E4"})
      */
     aiMove(level: number = 3): HistoryEntry {
@@ -246,7 +247,7 @@ export class Game {
      * Make an AI move and return both move and board state
      *
      * @param options - Optional configuration object
-     * @param options.level - AI difficulty level (1-6, default: 3)
+    * @param options.level - AI difficulty level (1-6, default: 3)
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
      * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
@@ -278,21 +279,39 @@ export class Game {
         const historyEntry: HistoryEntry = { [fromSquare]: toSquare };
 
         if (!play) {
-            // Return move without applying it, with current board state
-            return {
-                move: historyEntry,
-                board: boardToConfig(this.board),
-            };
+            // Return move without applying it, with current board state.
+            // Still return a consistent status snapshot.
+            const cfg = boardToConfig(this.board);
+            this.updateConfigStatusFromBoard(this.board, cfg);
+            return { move: historyEntry, board: cfg };
         }
 
         // Record move in history and apply it
         this.history.push(historyEntry);
         applyMoveComplete(this.board, bestMove);
 
+        const cfg = boardToConfig(this.board);
+        this.updateConfigStatusFromBoard(this.board, cfg);
+
         return {
             move: historyEntry,
-            board: boardToConfig(this.board),
+            board: cfg,
         };
+    }
+
+    private updateConfigStatusFromBoard(board: InternalBoard, cfg: BoardConfig): void {
+        // The internal engine doesn't always keep the public BoardConfig status fields
+        // (check/checkMate/staleMate/isFinished) in sync after applying a move.
+        // These flags are part of the public API and are used heavily in tests.
+        const inCheck = isKingInCheck(board);
+        const moves = generateLegalMoves(board);
+        const isMate = inCheck && moves.length === 0;
+        const isStalemate = !inCheck && moves.length === 0;
+
+        (cfg as any).check = inCheck;
+        (cfg as any).checkMate = isMate;
+        (cfg as any).staleMate = isStalemate;
+        (cfg as any).isFinished = isMate || isStalemate;
     }
 }
 
@@ -370,7 +389,7 @@ export function move(config: BoardConfig | string, from: string, to: string): Bo
  * Make an AI move (v1 compatible - returns only the move)
  *
  * @param config - Board configuration or FEN string
- * @param level - AI level (1-6, default 3)
+ * @param level - AI level (1-5, default 3)
  * @returns The played move object (e.g., {"E2": "E4"})
  */
 export function aiMove(config: BoardConfig | string, level: number = 3): HistoryEntry {
@@ -383,7 +402,7 @@ export function aiMove(config: BoardConfig | string, level: number = 3): History
  *
  * @param config - Board configuration or FEN string
  * @param options - Optional configuration object
- * @param options.level - AI difficulty level (1-6, default: 3)
+ * @param options.level - AI difficulty level (1-5, default: 3)
  * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
  * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
  * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)

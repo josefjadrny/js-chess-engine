@@ -41,7 +41,7 @@ export function getDefaultTTSize(): number {
 /**
  * Get recommended TT size for a given AI level and environment
  *
- * @param level - AI difficulty level (1-6)
+ * @param level - AI difficulty level (1-5)
  * @returns Recommended TT size in MB
  */
 export function getRecommendedTTSize(level: number): number {
@@ -53,7 +53,7 @@ export function getRecommendedTTSize(level: number): number {
             3: 8,   // Level 3: 8 MB (default)
             4: 16,  // Level 4: 16 MB
             5: 32,  // Level 5: 32 MB
-            6: 64,  // Level 6: 64 MB
+            6: 64,  // Level 6: 64 MB (maximum strength)
         };
         return nodeSizes[level] ?? 8;
     } else {

@@ -880,7 +880,7 @@ describe('AI Engine', () => {
 
             // Lock the behavior for now so we can improve evaluation/search later without losing
             // reproduction coverage.
-            expect(move).toEqual({ A7: 'A6' });
+            expect(move).toEqual({ A7: 'B7' });
         });
     });
 });

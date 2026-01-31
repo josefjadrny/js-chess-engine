@@ -193,27 +193,37 @@ export function bitboardToIndices(bitboard: bigint): SquareIndex[] {
     return indices;
 }
 
+// De Bruijn constant and lookup table for O(1) bit scanning
+const DE_BRUIJN_64 = 0x03F79D71B4CB0A89n;
+const MASK_64 = 0xFFFFFFFFFFFFFFFFn;
+const DE_BRUIJN_TABLE = new Int8Array(64);
+for (let i = 0; i < 64; i++) {
+    DE_BRUIJN_TABLE[Number((((1n << BigInt(i)) * DE_BRUIJN_64) & MASK_64) >> 58n)] = i;
+}
+
 /**
- * Get the index of the lowest set bit in a bitboard
- *
- * @param bitboard - Bitboard
- * @returns Index of lowest set bit, or -1 if no bits set
+ * Get the index of the lowest set bit in a bitboard (O(1) via De Bruijn)
  */
 export function getLowestSetBit(bitboard: bigint): SquareIndex {
-    if (bitboard === 0n) {
-        return -1 as SquareIndex;
-    }
+    if (bitboard === 0n) return -1 as SquareIndex;
+    const isolated = bitboard & (-bitboard);
+    return DE_BRUIJN_TABLE[Number(((isolated * DE_BRUIJN_64) & MASK_64) >> 58n)] as SquareIndex;
+}
 
-    // Count trailing zeros
-    let index = 0;
+/**
+ * Get the index of the highest set bit in a bitboard
+ */
+export function getHighestSetBit(bitboard: bigint): SquareIndex {
+    if (bitboard === 0n) return -1 as SquareIndex;
     let bb = bitboard;
-
-    while ((bb & 1n) === 0n) {
-        bb >>= 1n;
-        index++;
-    }
-
-    return index as SquareIndex;
+    bb |= bb >> 1n;
+    bb |= bb >> 2n;
+    bb |= bb >> 4n;
+    bb |= bb >> 8n;
+    bb |= bb >> 16n;
+    bb |= bb >> 32n;
+    const msb = bb - (bb >> 1n);
+    return DE_BRUIJN_TABLE[Number(((msb * DE_BRUIJN_64) & MASK_64) >> 58n)] as SquareIndex;
 }
 
 /**

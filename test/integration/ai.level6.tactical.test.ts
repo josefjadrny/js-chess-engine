@@ -1,8 +1,8 @@
 /**
- * Level 6 Tactical Tests for js-chess-engine
+ * High-strength tactical tests for js-chess-engine
  *
- * Tests that level 6 AI finds the BEST moves in complex tactical positions.
- * Each test validates that the AI plays one of the objectively best moves.
+ * These tests run the AI at the highest difficulty and validate it finds
+ * objectively best (or near-best) moves in complex tactical positions.
  *
  * Test Philosophy:
  * - Assert specific best moves, not just "didn't blunder"
@@ -43,7 +43,7 @@ function expectBestMove(
     expect(isGoodMove).toBe(true);
 }
 
-describe('Level 6 Tactical Tests - Complex Positions', () => {
+describe('High-strength Tactical Tests - Complex Positions', () => {
     describe('Avoiding Hanging Pieces', () => {
         it('should not hang the queen with C6-C5 (allowing G3xH4)', () => {
             // Regression: In this position, black to move has a queen on H4 that is currently protected by

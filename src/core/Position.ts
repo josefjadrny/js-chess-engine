@@ -6,7 +6,7 @@
  */
 
 import { Bitboard, SquareIndex, FileIndex, RankIndex } from '../types';
-import { getFileIndex, getRankIndex } from '../utils/conversion';
+import { getFileIndex, getRankIndex, getLowestSetBit, getHighestSetBit } from '../utils/conversion';
 
 // ==================== Bitboard Masks ====================
 
@@ -187,84 +187,75 @@ export function getAntiDiagonalMask(index: SquareIndex): Bitboard {
     return ANTI_DIAGONAL_MASKS[antiDiagonalIndex];
 }
 
-// ==================== Ray Attacks ====================
+// ==================== Precomputed Ray Tables ====================
 
-/**
- * Generate ray attacks in a direction using classical approach
- * (used for move generation and attack detection)
- */
-export function rayAttacks(
-    square: SquareIndex,
-    occupied: Bitboard,
-    direction: number
-): Bitboard {
-    let attacks = 0n;
-    let current = square;
+// Direction indices: 0=North, 1=South, 2=East, 3=West, 4=NE, 5=NW, 6=SE, 7=SW
+// "Positive" rays (toward higher bits): North(0), East(2), NE(4), NW(5)
+// "Negative" rays (toward lower bits): South(1), West(3), SE(6), SW(7)
+const RAY_TABLE: Bitboard[][] = Array.from({ length: 8 }, () => new Array<Bitboard>(64));
 
-    while (true) {
-        const next = current + direction;
-
-        // Check bounds
-        if (next < 0 || next > 63) break;
-
-        // Check if we wrapped around (file changed incorrectly)
-        const currentFile = getFileIndex(current as SquareIndex);
-        const nextFile = getFileIndex(next as SquareIndex);
-        const fileDiff = Math.abs(nextFile - currentFile);
-
-        // For horizontal moves, file diff should be 1
-        // For vertical moves, file diff should be 0
-        // For diagonal moves, file diff should be 1
-        if (direction === 1 || direction === -1) {
-            // East/West
-            if (fileDiff !== 1) break;
-        } else if (direction === 8 || direction === -8) {
-            // North/South
-            if (fileDiff !== 0) break;
-        } else {
-            // Diagonal
-            if (fileDiff !== 1) break;
+function initRayTables(): void {
+    const directions = [8, -8, 1, -1, 9, 7, -7, -9];
+    for (let dirIdx = 0; dirIdx < 8; dirIdx++) {
+        const dir = directions[dirIdx];
+        for (let sq = 0; sq < 64; sq++) {
+            let attacks = 0n;
+            let current = sq;
+            while (true) {
+                const next = current + dir;
+                if (next < 0 || next > 63) break;
+                const cf = current % 8;
+                const nf = next % 8;
+                const fd = Math.abs(nf - cf);
+                // Validate wrap: horizontal needs fd=1, vertical fd=0, diagonal fd=1
+                if (dir === 1 || dir === -1) { if (fd !== 1) break; }
+                else if (dir === 8 || dir === -8) { if (fd !== 0) break; }
+                else { if (fd !== 1) break; }
+                attacks |= 1n << BigInt(next);
+                current = next;
+            }
+            RAY_TABLE[dirIdx][sq] = attacks;
         }
-
-        const bit = 1n << BigInt(next);
-        attacks |= bit;
-
-        // Stop if we hit a piece
-        if (occupied & bit) break;
-
-        current = next;
     }
+}
+initRayTables();
 
-    return attacks;
+// Positive direction rays: first blocker = lowest set bit
+// Negative direction rays: first blocker = highest set bit
+function positiveRay(dirIdx: number, square: SquareIndex, occupied: Bitboard): Bitboard {
+    const ray = RAY_TABLE[dirIdx][square];
+    const blockers = ray & occupied;
+    if (blockers === 0n) return ray;
+    const first = getLowestSetBit(blockers);
+    return ray ^ RAY_TABLE[dirIdx][first];
 }
 
-/**
- * Generate all rook attacks from a square (classical approach)
- */
+function negativeRay(dirIdx: number, square: SquareIndex, occupied: Bitboard): Bitboard {
+    const ray = RAY_TABLE[dirIdx][square];
+    const blockers = ray & occupied;
+    if (blockers === 0n) return ray;
+    const first = getHighestSetBit(blockers);
+    return ray ^ RAY_TABLE[dirIdx][first];
+}
+
 export function getRookAttacks(square: SquareIndex, occupied: Bitboard): Bitboard {
     return (
-        rayAttacks(square, occupied, 8) |  // North
-        rayAttacks(square, occupied, -8) | // South
-        rayAttacks(square, occupied, 1) |  // East
-        rayAttacks(square, occupied, -1)   // West
+        positiveRay(0, square, occupied) | // North
+        negativeRay(1, square, occupied) | // South
+        positiveRay(2, square, occupied) | // East
+        negativeRay(3, square, occupied)   // West
     );
 }
 
-/**
- * Generate all bishop attacks from a square (classical approach)
- */
 export function getBishopAttacks(square: SquareIndex, occupied: Bitboard): Bitboard {
     return (
-        rayAttacks(square, occupied, 9) |  // North-East
-        rayAttacks(square, occupied, 7) |  // North-West
-        rayAttacks(square, occupied, -7) | // South-East
-        rayAttacks(square, occupied, -9)   // South-West
+        positiveRay(4, square, occupied) | // NE
+        positiveRay(5, square, occupied) | // NW
+        negativeRay(6, square, occupied) | // SE
+        negativeRay(7, square, occupied)   // SW
     );
 }
 
-/**
- * Generate all queen attacks from a square (classical approach)
- */
 export function getQueenAttacks(square: SquareIndex, occupied: Bitboard): Bitboard {
     return getRookAttacks(square, occupied) | getBishopAttacks(square, occupied);
 }

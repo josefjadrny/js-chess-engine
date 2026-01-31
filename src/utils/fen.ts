@@ -7,6 +7,7 @@
 
 import { InternalBoard, Piece, InternalColor, SquareIndex } from '../types';
 import { createEmptyBoard, setPiece } from '../core/Board';
+import { computeZobristHash } from '../core/zobrist';
 import { squareToIndex, indexToSquare } from './conversion';
 
 const FEN_CASTLING_RE = /^(-|[KQkq]{1,4})$/;
@@ -127,6 +128,9 @@ export function parseFEN(fen: string): InternalBoard {
     if (board.fullMoveNumber < 1) {
         throw new Error(`Invalid FEN: full move number must be >= 1`);
     }
+
+    // Keep zobristHash consistent for TT caching.
+    board.zobristHash = computeZobristHash(board);
 
     return board;
 }

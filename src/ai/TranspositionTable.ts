@@ -7,6 +7,30 @@
 
 import { InternalMove } from '../types';
 import { Score } from '../types/ai.types';
+import { SCORE_MAX, SCORE_MIN } from './Evaluator';
+
+/** Threshold for detecting mate scores. */
+const MATE_THRESHOLD = 500;
+
+/**
+ * Normalize a mate score for TT storage by removing the current ply component.
+ * Mate scores use SCORE_MIN + ply (mated) or SCORE_MAX - ply (mating).
+ * We store the distance-from-this-node instead.
+ */
+function adjustMateScoreForStorage(score: Score, ply: number): Score {
+    if (score > SCORE_MAX - MATE_THRESHOLD) return score + ply;
+    if (score < SCORE_MIN + MATE_THRESHOLD) return score - ply;
+    return score;
+}
+
+/**
+ * Denormalize a mate score retrieved from TT by adding the current ply.
+ */
+function adjustMateScoreForRetrieval(score: Score, ply: number): Score {
+    if (score > SCORE_MAX - MATE_THRESHOLD) return score - ply;
+    if (score < SCORE_MIN + MATE_THRESHOLD) return score + ply;
+    return score;
+}
 
 /**
  * Types of transposition table entries
@@ -72,7 +96,8 @@ export class TranspositionTable {
         depth: number,
         score: Score,
         type: TTEntryType,
-        bestMove: InternalMove | null
+        bestMove: InternalMove | null,
+        ply: number = 0
     ): void {
         const index = this.getIndex(zobristHash);
         const existingEntry = this.table[index];
@@ -92,7 +117,7 @@ export class TranspositionTable {
             this.table[index] = {
                 zobristHash,
                 depth,
-                score,
+                score: adjustMateScoreForStorage(score, ply),
                 type,
                 bestMove,
                 age: this.currentAge,
@@ -113,7 +138,8 @@ export class TranspositionTable {
         zobristHash: bigint,
         depth: number,
         alpha: Score,
-        beta: Score
+        beta: Score,
+        ply: number = 0
     ): TTEntry | null {
         const index = this.getIndex(zobristHash);
         const entry = this.table[index];
@@ -130,30 +156,34 @@ export class TranspositionTable {
             return null;
         }
 
-        this.hits++;
+        // Adjust mate scores for the current ply
+        const adjustedScore = adjustMateScoreForRetrieval(entry.score, ply);
 
-        // Check if we can use this score
+        // Count hits only when usable for pruning / exact score.
         switch (entry.type) {
             case TTEntryType.EXACT:
-                return entry;
+                this.hits++;
+                return { ...entry, score: adjustedScore };
 
             case TTEntryType.LOWER_BOUND:
                 // Fail-high (score >= beta)
-                if (entry.score >= beta) {
-                    return entry;
+                if (adjustedScore >= beta) {
+                    this.hits++;
+                    return { ...entry, score: adjustedScore };
                 }
                 break;
 
             case TTEntryType.UPPER_BOUND:
                 // Fail-low (score <= alpha)
-                if (entry.score <= alpha) {
-                    return entry;
+                if (adjustedScore <= alpha) {
+                    this.hits++;
+                    return { ...entry, score: adjustedScore };
                 }
                 break;
         }
 
-        // Can't use score, but return entry for move ordering
-        return entry;
+        // Not usable for pruning, but still return for move ordering.
+        return { ...entry, score: adjustedScore };
     }
 
     /**

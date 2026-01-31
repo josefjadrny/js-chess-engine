@@ -699,7 +699,7 @@ ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 ### 4. AI Difficulty Levels Changed
 
 - **v1:** Levels 0-4 (0=easiest, 4=hardest)
-- **v2:** Levels 1-6 (1=easiest, 6=hardest)
+- **v2:** Levels 1-5 (1=easiest, 5=hardest)
 
 **Migration:**
 - Level 0 → Level 1 (Beginner)
@@ -707,7 +707,7 @@ ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 - Level 2 → Level 3 (Intermediate, default)
 - Level 3 → Level 4 (Advanced)
 - Level 4 → Level 5 (Expert)
-- New: Level 6 (Master)
+- Level 4 → Level 5 (Expert)
 
 The default level has changed from `2` to `3` to maintain similar difficulty in the middle range.
 
