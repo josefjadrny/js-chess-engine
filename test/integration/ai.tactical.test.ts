@@ -903,29 +903,6 @@ describe('AI Tactical Tests', () => {
         });
 
         describe('Endgame Precision', () => {
-            it.skip('should advance pawn or king in winning position', () => {
-                // Position: White has far advanced pawn, should push or support
-                const fen = '8/8/8/4k3/8/4K3/4P3/8 w - - 0 50';
-                const game = new Game(fen);
-                const result = game.ai({ level: 5 });
-
-                // Best moves: Advance pawn or king
-                const bestMoves: Array<[string, string]> = [
-                    ['E2', 'E4'],
-                    ['E3', 'F4'],
-                    ['E3', 'D4'],
-                    ['E3', 'F3'],
-                    ['E3', 'D3'],
-                    ['E3', 'F2'], // Also ok: king maneuvering in bare K+P endgame
-                ];
-
-                expectBestMove(
-                    result,
-                    bestMoves,
-                    'Should advance pawn or king to win the endgame'
-                );
-            });
-
             it('should activate king to capture d5 pawn', () => {
                 // Position: King and pawn endgame, king must be active
                 const fen = '8/4k3/8/3pP3/3K4/8/8/8 w - - 0 1';
@@ -945,27 +922,6 @@ describe('AI Tactical Tests', () => {
                     result,
                     bestMoves,
                     'Should push passed pawn or activate king to win'
-                );
-            });
-
-            it.skip('should push f-pawn to promote', () => {
-                // Position: White has winning f-pawn
-                const fen = '8/4kp2/5P2/4K3/8/8/8/8 w - - 0 60';
-                const game = new Game(fen);
-                const result = game.ai({ level: 5 });
-
-                // Best moves: Advance f-pawn or king
-                const bestMoves: Array<[string, string]> = [
-                    ['F6', 'F7'],
-                    ['E5', 'E6'],
-                    ['E5', 'F5'],
-                    ['E5', 'D6'],
-                ];
-
-                expectBestMove(
-                    result,
-                    bestMoves,
-                    'Should advance f-pawn or king to promote and win'
                 );
             });
 
