@@ -17,13 +17,15 @@
     "build:watch": "tsc --watch",
     "benchmark": "npm run build && node scripts/benchmark-levels.mjs",
     "clean": "rm -rf dist",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix",
     "prebuild": "npm run clean",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "play": "node example/play.mjs",
-    "preversion": "npm test && npm run build",
+    "preversion": "npm run lint && npm test && npm run build",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "author": "bc.josefjadrny@gmail.com",
@@ -37,12 +39,17 @@
     "node": ">=24"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.9",
     "conventional-changelog-cli": "^5.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "^29.12.1",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
   }
 }
