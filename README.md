@@ -3,7 +3,7 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/josefjadrny/js-chess-engine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Complete TypeScript chess engine without dependencies for Node.js >=24 and browsers. Includes configurable AI with difficulty levels 1-6.
+Complete TypeScript chess engine without dependencies for Node.js >=24 and browsers. Includes configurable AI with difficulty levels 1-5.
 
 **⚠️ Upgrading from v1?** See [Breaking Changes](#breaking-changes-from-v1) section at the end of this document
 
@@ -174,7 +174,7 @@ game.removePiece('E5')
 `game.aiMove(level)` - Calculate and perform the best move for the current player using AI. **Returns only the move** (v1 API compatible).
 
 Params:
-- `level` AILevel (_optional_) - AI difficulty level (1-6). See [Computer AI](#computer-ai) section. Default: 3
+- `level` AILevel (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: 3
 
 Returns: `HistoryEntry` - The played move (e.g., `{"E2": "E4"}`)
 
@@ -195,7 +195,7 @@ const board = game.exportJson()
 
 Params:
 - `options` object (_optional_) - Configuration options:
-  - `level` number (_optional_) - AI difficulty level (1-6). See [Computer AI](#computer-ai) section. Default: `3`
+  - `level` number (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
 
@@ -382,7 +382,7 @@ const config2: BoardConfig = move(config1, 'E7', 'E5')
 
 Params:
 - `boardConfiguration` BoardConfig | string (_mandatory_) - Board [configuration](#board-configuration)
-- `level` AILevel (_optional_) - AI difficulty level (1-6). Default: 3
+- `level` AILevel (_optional_) - AI difficulty level (1-5). Default: 3
 
 Returns: `HistoryEntry` - The played move (e.g., `{"E2": "E4"}`)
 
@@ -403,7 +403,7 @@ console.log(move) // {"E2": "E4"}
 Params:
 - `boardConfiguration` BoardConfig | string (_mandatory_) - Board [configuration](#board-configuration)
 - `options` object (_optional_) - Configuration options:
-  - `level` number (_optional_) - AI difficulty level (1-6). Default: `3`
+  - `level` number (_optional_) - AI difficulty level (1-5). Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the board. Default: `true`. If `false`, returns the move without modifying the board state, and `board` will contain the current state (before the move).
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
 
@@ -521,18 +521,17 @@ console.log(newConfig)
 
 ### Computer AI
 
-The engine includes a sophisticated AI based on the Minimax algorithm with alpha-beta pruning, enhanced with advanced performance optimizations. There are six difficulty levels:
+The engine includes a sophisticated AI based on the Minimax algorithm with alpha-beta pruning, enhanced with advanced performance optimizations. There are five difficulty levels:
 
 | Level | Alias             | Description                          | Search Depth |
 | :---: | :---------------- | :----------------------------------- | :----------: |
 |   1   | Beginner          | Very weak play, minimal lookahead    | 1-2 ply      |
 |   2   | Easy              | Suitable for new chess players       | 2-3 ply      |
-|   3   | Intermediate      | Balanced difficulty (default)        | 3-4 ply      |
-|   4   | Advanced          | Strong play with deeper search       | 4-5 ply      |
-|   5   | Expert            | Very strong play, deep search        | 5-6 ply      |
-|   6   | Master            | Maximum difficulty and search depth  | 6-7 ply      |
+|   3   | Intermediate      | Balanced difficulty (default)        | 3-5 ply      |
+|   4   | Advanced          | Strong play with deeper search       | 3-6 ply      |
+|   5   | Expert            | Very strong play, deep search        | 4-6 ply (max) |
 
-**Performance:** Response time increases exponentially with level. Benchmarked on modern hardware (Linux x64, Node.js v24): levels 1-2 ~30ms, level 3 ~50ms, levels 4-6 ~60-90ms. Actual performance varies based on hardware, position complexity, and cache size. Run `npm run benchmark` to measure performance on your system.
+**Performance:** Response time increases with level (deeper search + larger transposition table). Exact timings vary a lot by CPU, position complexity, and cache size, so the repo includes a benchmark script—run `npm run benchmark` to measure performance on your machine.
 
 ```typescript
 import { Game } from 'js-chess-engine'
@@ -546,7 +545,6 @@ game.aiMove(2)  // Easy
 game.aiMove(3)  // Intermediate (default)
 game.aiMove(4)  // Advanced
 game.aiMove(5)  // Expert
-game.aiMove(6)  // Master
 ```
 
 **Implementation Highlights:**
@@ -568,7 +566,6 @@ The engine automatically adjusts cache size based on AI level and environment:
 |    3     |     8 MB      |     4 MB      | Balanced (default)           |
 |    4     |    16 MB      |     8 MB      | Strong tactical play         |
 |    5     |    32 MB      |    16 MB      | Very strong play             |
-|    6     |    64 MB      |    32 MB      | Maximum strength             |
 
 Lower levels use less memory for faster responses, higher levels use more for better move quality. Browser cache sizes are appropriate for modern devices (2024+). Override with `ttSizeMB` option if needed.
 
@@ -699,7 +696,7 @@ ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 ### 4. AI Difficulty Levels Changed
 
 - **v1:** Levels 0-4 (0=easiest, 4=hardest)
-- **v2:** Levels 1-6 (1=easiest, 6=hardest)
+- **v2:** Levels 1-5 (1=easiest, 5=hardest)
 
 **Migration:**
 - Level 0 → Level 1 (Beginner)
@@ -707,7 +704,6 @@ ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 - Level 2 → Level 3 (Intermediate, default)
 - Level 3 → Level 4 (Advanced)
 - Level 4 → Level 5 (Expert)
-- New: Level 6 (Master)
 
 The default level has changed from `2` to `3` to maintain similar difficulty in the middle range.
 

@@ -9,7 +9,7 @@ import { InternalMove } from './move.types';
 /**
  * AI difficulty level (1-6)
  */
-export type AILevel = 1 | 2 | 3 | 4 | 5 | 6;
+export type AILevel = 1 | 2 | 3 | 4 | 5;
 
 /**
  * Search depth

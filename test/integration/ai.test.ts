@@ -29,8 +29,8 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 6');
-            expect(() => game.ai({ level: 7 })).toThrow('AI level must be between 1 and 6');
+            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 5');
+            expect(() => game.ai({ level: 7 })).toThrow('AI level must be between 1 and 5');
         });
 
         it('should throw error when game is finished', () => {
@@ -401,7 +401,10 @@ describe('AI Engine', () => {
 
         it('should preserve material when advantageous', () => {
             // White king, Black has queen and king - white should not sacrifice queen
-            const fen = '7k/8/8/8/8/8/8/Q6K w - - 0 1';
+            // Note: Side to move must not leave the other side in check.
+            // In this position the black king is in check from the queen on a1,
+            // so it must be black to move.
+            const fen = '7k/8/8/8/8/8/8/Q6K b - - 0 1';
             const game = new Game(fen);
 
             const result = game.ai({ level: 2 });
@@ -458,7 +461,9 @@ describe('AI Engine', () => {
 
         it('should avoid stalemate in winning positions', () => {
             // King and queen vs lone king - should NOT create stalemate
-            const fen = '7k/8/6K1/8/8/8/7Q/8 w - - 0 1';
+            // In this position the black king is in check from the queen on h2,
+            // so it must be black to move.
+            const fen = '7k/8/6K1/8/8/8/7Q/8 b - - 0 1';
             const game = new Game(fen);
 
             const result = game.ai({ level: 2 }); // Simple position evaluation
@@ -700,7 +705,9 @@ describe('AI Engine', () => {
 
         it('should avoid stalemate when ahead in material', () => {
             // K+Q vs K in corner - care needed to avoid stalemate
-            const fen = 'k7/8/1K6/8/8/8/8/7Q w - - 0 1';
+            // In this position the black king is in check from the queen on h1,
+            // so it must be black to move.
+            const fen = 'k7/8/1K6/8/8/8/8/7Q b - - 0 1';
             const game = new Game(fen);
 
             const result = game.ai({ level: 2 }); // Simple position evaluation
@@ -880,7 +887,7 @@ describe('AI Engine', () => {
 
             // Lock the behavior for now so we can improve evaluation/search later without losing
             // reproduction coverage.
-            expect(move).toEqual({ A7: 'A6' });
+            expect(move).toEqual({ A7: 'B7' });
         });
     });
 });

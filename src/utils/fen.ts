@@ -7,6 +7,8 @@
 
 import { InternalBoard, Piece, InternalColor, SquareIndex } from '../types';
 import { createEmptyBoard, setPiece } from '../core/Board';
+import { isKingInCheck } from '../core/AttackDetector';
+import { computeZobristHash } from '../core/zobrist';
 import { squareToIndex, indexToSquare } from './conversion';
 
 const FEN_CASTLING_RE = /^(-|[KQkq]{1,4})$/;
@@ -126,6 +128,25 @@ export function parseFEN(fen: string): InternalBoard {
     }
     if (board.fullMoveNumber < 1) {
         throw new Error(`Invalid FEN: full move number must be >= 1`);
+    }
+
+    // Keep zobristHash consistent for TT caching.
+    board.zobristHash = computeZobristHash(board);
+
+    // Basic legality: it cannot be the case that the side who is NOT to move is in check.
+    // Example: a FEN that has "w" to move while black is already in check is not a reachable
+    // game state in standard chess.
+    // (The side in check must be the side to move.)
+    const notToMove = board.turn === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
+    const originalTurn = board.turn;
+    try {
+        board.turn = notToMove;
+        if (isKingInCheck(board)) {
+            const side = notToMove === InternalColor.WHITE ? 'white' : 'black';
+            throw new Error(`Invalid FEN: ${side} is in check but it is not ${side}'s turn`);
+        }
+    } finally {
+        board.turn = originalTurn;
     }
 
     return board;

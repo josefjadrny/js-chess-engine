@@ -28,9 +28,18 @@ import {
     shiftSouthWest,
 } from './Position';
 import { isSquareAttacked } from './AttackDetector';
-import { getLowestSetBit, bitboardToIndices, getRankIndex } from '../utils/conversion';
+import { getLowestSetBit, getRankIndex } from '../utils/conversion';
 import { getPiece, isSquareEmpty, copyBoard, setPiece, removePiece } from './Board';
 import { CASTLING } from '../utils/constants';
+import {
+    updateHashMove,
+    updateHashCapture,
+    toggleSide,
+    updateHashCastling,
+    updateHashEnPassant,
+    addPieceToHash,
+    removePieceFromHash,
+} from './zobrist';
 
 /**
  * Generate all legal moves for the current position
@@ -196,10 +205,11 @@ function generatePawnMoves(
 
     if (color === InternalColor.WHITE) {
         // Single push
-        const singlePush = shiftNorth(pawns) & empty;
-        const singlePushIndices = bitboardToIndices(singlePush);
+        let singlePushBB = shiftNorth(pawns) & empty;
 
-        for (const to of singlePushIndices) {
+        while (singlePushBB !== 0n) {
+            const to = getLowestSetBit(singlePushBB) as SquareIndex;
+            singlePushBB &= singlePushBB - 1n;
             const from = (to - 8) as SquareIndex;
             const toRank = getRankIndex(to);
 
@@ -217,19 +227,21 @@ function generatePawnMoves(
 
         // Double push
         const doublePushSource = pawns & 0x000000000000FF00n; // Rank 2
-        const doublePush = shiftNorth(shiftNorth(doublePushSource) & empty) & empty;
-        const doublePushIndices = bitboardToIndices(doublePush);
+        let doublePushBB = shiftNorth(shiftNorth(doublePushSource) & empty) & empty;
 
-        for (const to of doublePushIndices) {
+        while (doublePushBB !== 0n) {
+            const to = getLowestSetBit(doublePushBB) as SquareIndex;
+            doublePushBB &= doublePushBB - 1n;
             const from = (to - 16) as SquareIndex;
             moves.push(createMove(from, to, pawnPiece, Piece.EMPTY, MoveFlag.PAWN_DOUBLE_PUSH));
         }
 
         // Captures north-east
-        const capturesNE = shiftNorthEast(pawns) & enemyPieces;
-        const capturesNEIndices = bitboardToIndices(capturesNE);
+        let capturesNEBB = shiftNorthEast(pawns) & enemyPieces;
 
-        for (const to of capturesNEIndices) {
+        while (capturesNEBB !== 0n) {
+            const to = getLowestSetBit(capturesNEBB) as SquareIndex;
+            capturesNEBB &= capturesNEBB - 1n;
             const from = (to - 9) as SquareIndex;
             const capturedPiece = getPiece(board, to);
             const toRank = getRankIndex(to);
@@ -246,10 +258,11 @@ function generatePawnMoves(
         }
 
         // Captures north-west
-        const capturesNW = shiftNorthWest(pawns) & enemyPieces;
-        const capturesNWIndices = bitboardToIndices(capturesNW);
+        let capturesNWBB = shiftNorthWest(pawns) & enemyPieces;
 
-        for (const to of capturesNWIndices) {
+        while (capturesNWBB !== 0n) {
+            const to = getLowestSetBit(capturesNWBB) as SquareIndex;
+            capturesNWBB &= capturesNWBB - 1n;
             const from = (to - 7) as SquareIndex;
             const capturedPiece = getPiece(board, to);
             const toRank = getRankIndex(to);
@@ -273,22 +286,23 @@ function generatePawnMoves(
             // Check if any pawn can capture en passant
             const canCaptureEP = (shiftSouthWest(epTarget) | shiftSouthEast(epTarget)) & pawns;
 
-            if (canCaptureEP !== 0n) {
-                const attackerIndices = bitboardToIndices(canCaptureEP);
-                for (const from of attackerIndices) {
-                    const capturedPiece = Piece.BLACK_PAWN;
-                    moves.push(createMove(from, epSquare, pawnPiece, capturedPiece, MoveFlag.EN_PASSANT | MoveFlag.CAPTURE));
-                }
+            let epBB = canCaptureEP;
+            while (epBB !== 0n) {
+                const from = getLowestSetBit(epBB) as SquareIndex;
+                epBB &= epBB - 1n;
+                const capturedPiece = Piece.BLACK_PAWN;
+                moves.push(createMove(from, epSquare, pawnPiece, capturedPiece, MoveFlag.EN_PASSANT | MoveFlag.CAPTURE));
             }
         }
     } else {
         // Black pawns (move south)
 
         // Single push
-        const singlePush = shiftSouth(pawns) & empty;
-        const singlePushIndices = bitboardToIndices(singlePush);
+        let singlePushBB = shiftSouth(pawns) & empty;
 
-        for (const to of singlePushIndices) {
+        while (singlePushBB !== 0n) {
+            const to = getLowestSetBit(singlePushBB) as SquareIndex;
+            singlePushBB &= singlePushBB - 1n;
             const from = (to + 8) as SquareIndex;
             const toRank = getRankIndex(to);
 
@@ -306,19 +320,21 @@ function generatePawnMoves(
 
         // Double push
         const doublePushSource = pawns & 0x00FF000000000000n; // Rank 7
-        const doublePush = shiftSouth(shiftSouth(doublePushSource) & empty) & empty;
-        const doublePushIndices = bitboardToIndices(doublePush);
+        let doublePushBB = shiftSouth(shiftSouth(doublePushSource) & empty) & empty;
 
-        for (const to of doublePushIndices) {
+        while (doublePushBB !== 0n) {
+            const to = getLowestSetBit(doublePushBB) as SquareIndex;
+            doublePushBB &= doublePushBB - 1n;
             const from = (to + 16) as SquareIndex;
             moves.push(createMove(from, to, pawnPiece, Piece.EMPTY, MoveFlag.PAWN_DOUBLE_PUSH));
         }
 
         // Captures south-east
-        const capturesSE = shiftSouthEast(pawns) & enemyPieces;
-        const capturesSEIndices = bitboardToIndices(capturesSE);
+        let capturesSEBB = shiftSouthEast(pawns) & enemyPieces;
 
-        for (const to of capturesSEIndices) {
+        while (capturesSEBB !== 0n) {
+            const to = getLowestSetBit(capturesSEBB) as SquareIndex;
+            capturesSEBB &= capturesSEBB - 1n;
             const from = (to + 7) as SquareIndex;
             const capturedPiece = getPiece(board, to);
             const toRank = getRankIndex(to);
@@ -335,10 +351,11 @@ function generatePawnMoves(
         }
 
         // Captures south-west
-        const capturesSW = shiftSouthWest(pawns) & enemyPieces;
-        const capturesSWIndices = bitboardToIndices(capturesSW);
+        let capturesSWBB = shiftSouthWest(pawns) & enemyPieces;
 
-        for (const to of capturesSWIndices) {
+        while (capturesSWBB !== 0n) {
+            const to = getLowestSetBit(capturesSWBB) as SquareIndex;
+            capturesSWBB &= capturesSWBB - 1n;
             const from = (to + 9) as SquareIndex;
             const capturedPiece = getPiece(board, to);
             const toRank = getRankIndex(to);
@@ -362,12 +379,12 @@ function generatePawnMoves(
             // Check if any pawn can capture en passant
             const canCaptureEP = (shiftNorthWest(epTarget) | shiftNorthEast(epTarget)) & pawns;
 
-            if (canCaptureEP !== 0n) {
-                const attackerIndices = bitboardToIndices(canCaptureEP);
-                for (const from of attackerIndices) {
-                    const capturedPiece = Piece.WHITE_PAWN;
-                    moves.push(createMove(from, epSquare, pawnPiece, capturedPiece, MoveFlag.EN_PASSANT | MoveFlag.CAPTURE));
-                }
+            let epBB = canCaptureEP;
+            while (epBB !== 0n) {
+                const from = getLowestSetBit(epBB) as SquareIndex;
+                epBB &= epBB - 1n;
+                const capturedPiece = Piece.WHITE_PAWN;
+                moves.push(createMove(from, epSquare, pawnPiece, capturedPiece, MoveFlag.EN_PASSANT | MoveFlag.CAPTURE));
             }
         }
     }
@@ -390,8 +407,10 @@ function generateKnightMoves(
         const from = getLowestSetBit(knightsBB);
         const attacks = getKnightAttacks(from) & ~friendlyPieces;
 
-        const attackIndices = bitboardToIndices(attacks);
-        for (const to of attackIndices) {
+        let attacksBB = attacks;
+        while (attacksBB !== 0n) {
+            const to = getLowestSetBit(attacksBB) as SquareIndex;
+            attacksBB &= attacksBB - 1n;
             const capturedPiece = getPiece(board, to);
             const flags = capturedPiece !== Piece.EMPTY ? MoveFlag.CAPTURE : MoveFlag.NONE;
             moves.push(createMove(from, to, knightPiece, capturedPiece, flags));
@@ -418,8 +437,10 @@ function generateBishopMoves(
         const from = getLowestSetBit(bishopsBB);
         const attacks = getBishopAttacks(from, board.allPieces) & ~friendlyPieces;
 
-        const attackIndices = bitboardToIndices(attacks);
-        for (const to of attackIndices) {
+        let attacksBB = attacks;
+        while (attacksBB !== 0n) {
+            const to = getLowestSetBit(attacksBB) as SquareIndex;
+            attacksBB &= attacksBB - 1n;
             const capturedPiece = getPiece(board, to);
             const flags = capturedPiece !== Piece.EMPTY ? MoveFlag.CAPTURE : MoveFlag.NONE;
             moves.push(createMove(from, to, bishopPiece, capturedPiece, flags));
@@ -446,8 +467,10 @@ function generateRookMoves(
         const from = getLowestSetBit(rooksBB);
         const attacks = getRookAttacks(from, board.allPieces) & ~friendlyPieces;
 
-        const attackIndices = bitboardToIndices(attacks);
-        for (const to of attackIndices) {
+        let attacksBB = attacks;
+        while (attacksBB !== 0n) {
+            const to = getLowestSetBit(attacksBB) as SquareIndex;
+            attacksBB &= attacksBB - 1n;
             const capturedPiece = getPiece(board, to);
             const flags = capturedPiece !== Piece.EMPTY ? MoveFlag.CAPTURE : MoveFlag.NONE;
             moves.push(createMove(from, to, rookPiece, capturedPiece, flags));
@@ -474,8 +497,10 @@ function generateQueenMoves(
         const from = getLowestSetBit(queensBB);
         const attacks = getQueenAttacks(from, board.allPieces) & ~friendlyPieces;
 
-        const attackIndices = bitboardToIndices(attacks);
-        for (const to of attackIndices) {
+        let attacksBB = attacks;
+        while (attacksBB !== 0n) {
+            const to = getLowestSetBit(attacksBB) as SquareIndex;
+            attacksBB &= attacksBB - 1n;
             const capturedPiece = getPiece(board, to);
             const flags = capturedPiece !== Piece.EMPTY ? MoveFlag.CAPTURE : MoveFlag.NONE;
             moves.push(createMove(from, to, queenPiece, capturedPiece, flags));
@@ -502,8 +527,10 @@ function generateKingMoves(
     const from = getLowestSetBit(king);
     const attacks = getKingAttacks(from) & ~friendlyPieces;
 
-    const attackIndices = bitboardToIndices(attacks);
-    for (const to of attackIndices) {
+    let attacksBB = attacks;
+    while (attacksBB !== 0n) {
+        const to = getLowestSetBit(attacksBB) as SquareIndex;
+        attacksBB &= attacksBB - 1n;
         const capturedPiece = getPiece(board, to);
         const flags = capturedPiece !== Piece.EMPTY ? MoveFlag.CAPTURE : MoveFlag.NONE;
         moves.push(createMove(from, to, kingPiece, capturedPiece, flags));
@@ -662,51 +689,82 @@ export function isMoveLegal(board: InternalBoard, from: SquareIndex, to: SquareI
 export function applyMoveComplete(board: InternalBoard, move: InternalMove): InternalMove {
     const { from, to, piece, capturedPiece, flags, promotionPiece } = move;
 
+    // Snapshot state needed for incremental hash updates
+    const oldEnPassant = board.enPassantSquare;
+    const oldCastling = { ...board.castlingRights };
+
     // Reset en passant square (will be set if this is a double pawn push)
     board.enPassantSquare = null;
 
-    // Handle captures
+    // Handle captures (+hash)
     if (capturedPiece !== Piece.EMPTY) {
+        // Remove captured piece from board and hash
         removePiece(board, to);
+        board.zobristHash = updateHashCapture(board.zobristHash, capturedPiece, to);
         board.halfMoveClock = 0;
     } else {
         board.halfMoveClock++;
     }
 
-    // Handle en passant capture
+    // Handle en passant capture (+hash)
     if (flags & MoveFlag.EN_PASSANT) {
         const captureSquare = board.turn === InternalColor.WHITE ? to - 8 : to + 8;
+        const capturedPawn = board.turn === InternalColor.WHITE ? Piece.BLACK_PAWN : Piece.WHITE_PAWN;
         removePiece(board, captureSquare as SquareIndex);
+        board.zobristHash = updateHashCapture(board.zobristHash, capturedPawn, captureSquare as SquareIndex);
         board.halfMoveClock = 0;
     }
 
-    // Handle castling
+    // Handle castling rook move (+hash)
     if (flags & MoveFlag.CASTLING) {
-        // Move the rook
         if (to === CASTLING.WHITE_SHORT.kingTo) {
-            // White kingside
             removePiece(board, CASTLING.WHITE_SHORT.rookFrom as SquareIndex);
             setPiece(board, CASTLING.WHITE_SHORT.rookTo as SquareIndex, Piece.WHITE_ROOK);
+            board.zobristHash = updateHashMove(
+                board.zobristHash,
+                Piece.WHITE_ROOK,
+                CASTLING.WHITE_SHORT.rookFrom as SquareIndex,
+                CASTLING.WHITE_SHORT.rookTo as SquareIndex
+            );
         } else if (to === CASTLING.WHITE_LONG.kingTo) {
-            // White queenside
             removePiece(board, CASTLING.WHITE_LONG.rookFrom as SquareIndex);
             setPiece(board, CASTLING.WHITE_LONG.rookTo as SquareIndex, Piece.WHITE_ROOK);
+            board.zobristHash = updateHashMove(
+                board.zobristHash,
+                Piece.WHITE_ROOK,
+                CASTLING.WHITE_LONG.rookFrom as SquareIndex,
+                CASTLING.WHITE_LONG.rookTo as SquareIndex
+            );
         } else if (to === CASTLING.BLACK_SHORT.kingTo) {
-            // Black kingside
             removePiece(board, CASTLING.BLACK_SHORT.rookFrom as SquareIndex);
             setPiece(board, CASTLING.BLACK_SHORT.rookTo as SquareIndex, Piece.BLACK_ROOK);
+            board.zobristHash = updateHashMove(
+                board.zobristHash,
+                Piece.BLACK_ROOK,
+                CASTLING.BLACK_SHORT.rookFrom as SquareIndex,
+                CASTLING.BLACK_SHORT.rookTo as SquareIndex
+            );
         } else if (to === CASTLING.BLACK_LONG.kingTo) {
-            // Black queenside
             removePiece(board, CASTLING.BLACK_LONG.rookFrom as SquareIndex);
             setPiece(board, CASTLING.BLACK_LONG.rookTo as SquareIndex, Piece.BLACK_ROOK);
+            board.zobristHash = updateHashMove(
+                board.zobristHash,
+                Piece.BLACK_ROOK,
+                CASTLING.BLACK_LONG.rookFrom as SquareIndex,
+                CASTLING.BLACK_LONG.rookTo as SquareIndex
+            );
         }
     }
 
-    // Move the piece
+    // Move the piece (+hash)
     removePiece(board, from);
+    board.zobristHash = updateHashMove(board.zobristHash, piece, from, to);
 
-    // Handle promotion
+    // Handle promotion (piece identity at destination changes)
     if (flags & MoveFlag.PROMOTION && promotionPiece) {
+        // updateHashMove added the pawn at `to`, swap it with promotion piece.
+        board.zobristHash = removePieceFromHash(board.zobristHash, piece, to);
+        board.zobristHash = addPieceToHash(board.zobristHash, promotionPiece, to);
         setPiece(board, to, promotionPiece);
     } else {
         setPiece(board, to, piece);
@@ -726,8 +784,23 @@ export function applyMoveComplete(board: InternalBoard, move: InternalMove): Int
     // Update castling rights
     updateCastlingRights(board, from, to, piece);
 
-    // Switch turn
+    // Update hash for castling/en-passant state
+    board.zobristHash = updateHashEnPassant(board.zobristHash, oldEnPassant, board.enPassantSquare);
+    board.zobristHash = updateHashCastling(
+        board.zobristHash,
+        oldCastling.whiteShort,
+        board.castlingRights.whiteShort,
+        oldCastling.whiteLong,
+        board.castlingRights.whiteLong,
+        oldCastling.blackShort,
+        board.castlingRights.blackShort,
+        oldCastling.blackLong,
+        board.castlingRights.blackLong
+    );
+
+    // Switch turn (+hash)
     board.turn = board.turn === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
+    board.zobristHash = toggleSide(board.zobristHash);
 
     // Increment full move number after black's move
     if (board.turn === InternalColor.WHITE) {
@@ -811,22 +884,12 @@ function updateGameStatus(board: InternalBoard): void {
     const opponentColor = currentColor === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
     const inCheck = isSquareAttacked(board, kingSquare, opponentColor);
 
+    // Fast status update — only sets isCheck.
+    // IMPORTANT: isCheckmate and isStalemate are NOT set here to avoid recursive
+    // generateLegalMoves() calls (applyMoveComplete -> updateGameStatus -> generateLegalMoves).
+    // The search detects mate/stalemate via moves.length === 0.
+    // The public API (Game class) patches these flags via updateConfigStatusFromBoard().
     board.isCheck = inCheck;
-
-    // Check if there are any legal moves
-    const legalMoves = generateLegalMoves(board);
-    const hasLegalMoves = legalMoves.length > 0;
-
-    if (!hasLegalMoves) {
-        if (inCheck) {
-            board.isCheckmate = true;
-            board.isStalemate = false;
-        } else {
-            board.isCheckmate = false;
-            board.isStalemate = true;
-        }
-    } else {
-        board.isCheckmate = false;
-        board.isStalemate = false;
-    }
+    board.isCheckmate = false;
+    board.isStalemate = false;
 }

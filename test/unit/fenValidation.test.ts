@@ -85,4 +85,11 @@ describe('FEN validation (user input)', () => {
         const fen = 'rnbq1bnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1';
         expect(() => new Game(fen)).toThrow(/one white king and one black king/i);
     });
+
+    it('should reject FEN where the side not to move is in check (illegal state)', () => {
+        // White to move, but black king on E7 is already in check from the white pawn on F6.
+        // This cannot occur in a legal game state: if black is in check, it must be black to move.
+        const fen = '8/4kp2/5P2/4K3/8/8/8/8 w - - 0 60';
+        expect(() => new Game(fen)).toThrow(/in check but it is not/i);
+    });
 });
