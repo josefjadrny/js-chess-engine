@@ -622,7 +622,7 @@ describe('AI Tactical Tests', () => {
                 );
             });
 
-            it.skip('should improve rook activity or prepare tactical strikes', () => {
+            it('should improve rook activity or prepare tactical strikes', () => {
                 // Position: White should activate rooks and create threats
                 // NOTE: A-file is blocked by pawn on A2, so rook needs to find other squares
                 const fen = 'r4rk1/pppq1ppp/3p1n2/8/8/2NP4/PPP2PPP/R4RK1 w - - 0 12';
@@ -648,7 +648,7 @@ describe('AI Tactical Tests', () => {
                 );
             });
 
-            it.skip('should push winning passed d-pawn', () => {
+            it('should push winning passed d-pawn', () => {
                 // Position: White has winning passed pawn on d5 in endgame
                 const fen = '8/5pk1/6p1/3P4/8/6P1/5PK1/8 w - - 0 40';
                 const game = new Game(fen);
@@ -691,7 +691,7 @@ describe('AI Tactical Tests', () => {
                 );
             });
 
-            it.skip('should play strong developing moves in Italian Game', () => {
+            it('should play strong developing moves in Italian Game', () => {
                 // Position: Italian Game - multiple good developing options
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
                 const game = new Game(fen);
@@ -760,7 +760,7 @@ describe('AI Tactical Tests', () => {
                 );
             });
 
-            it.skip('should convert advantage when up a queen vs knight', () => {
+            it('should convert advantage when up a queen vs knight', () => {
                 // Position: Simple endgame conversion. White has queen vs knight.
                 // Goal: improve queen activity / win the knight / simplify.
                 const fen = '4k3/8/4n3/8/8/4N3/4Q3/4K3 w - - 0 40';
@@ -970,32 +970,6 @@ describe('AI Tactical Tests', () => {
         });
 
         describe('Performance and Correctness', () => {
-            it.skip('should complete search within reasonable time', () => {
-                const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-                const game = new Game(fen);
-
-                const startTime = Date.now();
-                const result = game.ai({ level: 5 });
-                const duration = Date.now() - startTime;
-
-                // Should make one of the best opening moves
-                const bestMoves: Array<[string, string]> = [
-                    ['E2', 'E4'],
-                    ['D2', 'D4'],
-                    ['G1', 'F3'],
-                    ['C2', 'C4'],
-                    ['B1', 'C3'], // Also common and principled
-                ];
-
-                expectBestMove(
-                    result,
-                    bestMoves,
-                    'Should play a principled opening move'
-                );
-
-                expect(duration).toBeLessThan(30000); // Should complete within 30 seconds
-            });
-
             it('should play consistently (deterministic)', () => {
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
 
