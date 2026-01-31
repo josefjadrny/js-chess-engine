@@ -29,8 +29,18 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 6');
-            expect(() => game.ai({ level: 7 })).toThrow('AI level must be between 1 and 6');
+            expect(() => game.ai({ level: 0 })).toThrow('AI level must be between 1 and 5');
+            expect(() => game.ai({ level: 7 })).toThrow('AI level must be between 1 and 5');
+        });
+
+        it('should accept level 6 for backward compatibility (treated as level 5)', () => {
+            const game1 = new Game();
+            const game2 = new Game();
+
+            const r5 = game1.ai({ level: 5, play: false });
+            const r6 = game2.ai({ level: 6, play: false });
+
+            expect(r6.move).toEqual(r5.move);
         });
 
         it('should throw error when game is finished', () => {

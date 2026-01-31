@@ -18,7 +18,7 @@ import { Game, aiMove } from '../../src';
 
 // NOTE: Tactical suites are intentionally skipped in normal runs.
 // They are useful for manual profiling/debugging and can be slow/flaky depending on CPU.
-describe.skip('AI Tactical Tests', () => {
+describe('AI Tactical Tests', () => {
     describe('Mate-in-N Detection (Search Depth Testing)', () => {
         it('should find mate in 1 - back rank mate (all levels)', () => {
             // Position: White rook can deliver back rank mate
@@ -415,7 +415,7 @@ describe.skip('AI Tactical Tests', () => {
     // ============================================================
     // High-strength tactical suite (merged)
     // ============================================================
-    describe.skip('High-strength Tactical Tests - Complex Positions', () => {
+    describe('High-strength Tactical Tests - Complex Positions', () => {
         /**
          * Helper to check if the played move matches one of the expected best moves
          */
