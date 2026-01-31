@@ -25,7 +25,8 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 - Advanced move ordering (PV moves, MVV-LVA, killer moves)
 - Iterative deepening
 - Quiescence search for tactical stability
-- Configurable difficulty levels (1-6)
+- Configurable difficulty levels (1-5)
+- Adaptive depth (position-dependent, capped per level)
 - Memory-efficient with tunable cache size (browser and mobile-friendly)
 
 **Performance:** 65% faster than baseline implementation (16.3s → 5.6s on test suite)
@@ -61,7 +62,7 @@ Search (Alpha-Beta + Optimizations)
 ### Data Flow
 
 1. **API Call**: User calls `game.ai()` or `game.aiMove()`
-2. **Configuration**: AIEngine maps level (1-6) to search depths
+2. **Configuration**: AIEngine maps level (1-5) to base depth + max adaptive extension
 3. **Search**: Iterative deepening progressively searches deeper
 4. **Ordering**: Moves ordered by PV → Captures → Killers → Quiet
 5. **Evaluation**: Positions scored by material + piece-square tables
@@ -72,7 +73,7 @@ Search (Alpha-Beta + Optimizations)
 
 ### Minimax with Alpha-Beta Pruning
 
-**Location:** `src/ai/Search.ts` - `alphaBeta()` method
+**Location:** `src/ai/Search.ts` - `negamax()` method
 
 **Description:** Classical minimax algorithm that explores the game tree to find the best move, enhanced with alpha-beta pruning to eliminate branches that cannot affect the final decision.
 
@@ -112,23 +113,23 @@ function alphaBeta(board, depth, alpha, beta, maximizing):
 **Check Extension:**
 - When king is in check, search 1 ply deeper
 - Prevents horizon effect in tactical positions
-- Location: `Search.ts` lines 158-173
+- Location: `Search.ts` (look for `const extension = child.isCheck ? 1 : 0;`)
 
 **Quiescence Search:**
-- Continue searching captures/checks at leaf nodes
+- Continue searching forcing moves (captures/promotions) at leaf nodes
 - Prevents missing tactical sequences at search boundary
-- Controlled by `extendedDepth` parameter
+- Controlled by a small fixed maximum `qMaxDepth` inside `Search`
 
-**Implementation Detail:**
+**Implementation Detail (current):**
 ```typescript
-// Extend search if in check (always search deeper)
-if (depth < extendedDepth && inCheck) {
-    shouldSearch = true;
+// When depth reaches 0, switch to quiescence.
+if (depth <= 0) {
+    return quiescence(board, alpha, beta, ply, 0);
 }
-// Continue base search or extend on captures
-else if (depth < baseDepth || (wasCapture && depth < extendedDepth)) {
-    shouldSearch = true;
-}
+
+// Small search extension when giving check.
+const extension = child.isCheck ? 1 : 0;
+const score = -negamax(child, depth - 1 + extension, -beta, -alpha, ply + 1);
 ```
 
 ## Performance Optimizations
@@ -282,7 +283,7 @@ score = victimValue * 10 - attackerValue
 
 **Impact:**
 - 2-3x reduction in nodes searched
-- Critical for deep searches (levels 4-6)
+- Critical for deep searches (levels 4-5)
 - Most effective with PV moves from transposition table
 
 ### 4. Iterative Deepening
@@ -527,16 +528,28 @@ enum MoveFlag {
 
 ```typescript
 const LEVEL_CONFIG: Record<AILevel, LevelConfig> = {
-    1: { baseDepth: 1, extendedDepth: 2 },  // Beginner
-    2: { baseDepth: 2, extendedDepth: 3 },  // Easy
-    3: { baseDepth: 3, extendedDepth: 4 },  // Intermediate (default)
-    4: { baseDepth: 4, extendedDepth: 5 },  // Advanced
-    5: { baseDepth: 5, extendedDepth: 6 },  // Expert
-    6: { baseDepth: 6, extendedDepth: 7 },  // Master
+    1: { baseDepth: 1, extendedDepth: 1 },  // Beginner
+    2: { baseDepth: 2, extendedDepth: 1 },  // Easy
+    3: { baseDepth: 3, extendedDepth: 2 },  // Intermediate (default)
+    4: { baseDepth: 3, extendedDepth: 3 },  // Advanced
+    5: { baseDepth: 4, extendedDepth: 2 },  // Expert
 };
 ```
 
-**Performance:** Response time increases exponentially with search depth. Benchmarked on modern hardware (Linux x64, Node.js v24): levels 1-2 ~30ms, level 3 ~50ms, levels 4-6 ~60-90ms. Actual performance varies significantly by hardware (CPU, RAM), position complexity, and transposition table size. Use the benchmark script (`npm run benchmark`) to measure performance on your specific system.
+**Adaptive Depth:**
+
+The engine uses a simple position-dependent heuristic to pick an effective depth:
+
+- Compute root legal move count (branching factor proxy)
+- Count remaining pieces (simplification proxy)
+- Start at `baseDepth` and add small increments
+- Clamp the result to:
+
+$$\text{baseDepth} \le \text{effectiveDepth} \le \text{baseDepth} + \text{extendedDepth}$$
+
+This allows deeper searches in endgames (where search is fast) while keeping opening/middlegame computation bounded.
+
+**Performance:** Response time increases exponentially with search depth. Actual performance varies significantly by hardware (CPU, RAM), position complexity, and transposition table size. Use the benchmark script (`npm run benchmark`) to measure performance on your specific system.
 
 ### Performance Comparison
 
