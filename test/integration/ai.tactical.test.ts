@@ -787,7 +787,7 @@ describe('AI Tactical Tests', () => {
         });
 
         describe('Complex Middlegame Positions', () => {
-            it.skip('should play principled moves in Ruy Lopez', () => {
+            it('should play principled moves in Ruy Lopez', () => {
                 // Position: Ruy Lopez closed - typical middlegame
                 const fen = 'r1bq1rk1/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 w - - 0 9';
                 const game = new Game(fen);
@@ -811,7 +811,7 @@ describe('AI Tactical Tests', () => {
                 );
             });
 
-            it.skip('should attack actively in Sicilian Dragon', () => {
+            it('should attack actively in Sicilian Dragon', () => {
                 // Position: Sicilian Dragon - white should attack
                 const fen = 'r1bq1rk1/pp2ppbp/2np1np1/8/3NP3/2N1BP2/PPPQ2PP/R3KB1R w KQ - 0 10';
                 const game = new Game(fen);
