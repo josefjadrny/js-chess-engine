@@ -53,7 +53,6 @@ export function getRecommendedTTSize(level: number): number {
             3: 8,   // Level 3: 8 MB (default)
             4: 16,  // Level 4: 16 MB
             5: 32,  // Level 5: 32 MB
-            6: 64,  // Level 6: 64 MB (maximum strength)
         };
         return nodeSizes[level] ?? 8;
     } else {
@@ -64,7 +63,6 @@ export function getRecommendedTTSize(level: number): number {
             3: 4,    // Level 3: 4 MB (balanced default - appropriate for modern browsers)
             4: 8,    // Level 4: 8 MB (strong performance)
             5: 16,   // Level 5: 16 MB (very strong play)
-            6: 32,   // Level 6: 32 MB (maximum strength)
         };
         return browserSizes[level] ?? 4;
     }

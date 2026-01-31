@@ -42,7 +42,6 @@ describe('Environment Detection', () => {
             expect(getRecommendedTTSize(3)).toBe(8);
             expect(getRecommendedTTSize(4)).toBe(16);
             expect(getRecommendedTTSize(5)).toBe(32);
-            expect(getRecommendedTTSize(6)).toBe(64);
         });
 
         it('should return default for unknown levels', () => {
@@ -50,7 +49,7 @@ describe('Environment Detection', () => {
         });
 
         it('should return positive numbers for all levels', () => {
-            for (let level = 1; level <= 6; level++) {
+            for (let level = 1; level <= 5; level++) {
                 expect(getRecommendedTTSize(level)).toBeGreaterThan(0);
             }
         });

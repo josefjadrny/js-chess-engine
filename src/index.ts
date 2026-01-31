@@ -247,16 +247,14 @@ export class Game {
      * Make an AI move and return both move and board state
      *
      * @param options - Optional configuration object
-    * @param options.level - AI difficulty level (1-5, default: 3). Values > 5 are clamped to 5.
+     * @param options.level - AI difficulty level (1-5, default: 3). Values > 5 are clamped to 5.
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
      * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
     ai(options: { level?: number; play?: boolean; ttSizeMB?: number } = {}): { move: HistoryEntry; board: BoardConfig } {
-    const requestedLevel = options.level ?? 3;
-    // Backward compatibility: older clients may send level=6.
-    // Level 6 no longer exists, so we silently map it to level 5.
-    const level = Math.max(1, Math.min(5, requestedLevel));
+        const requestedLevel = options.level ?? 3;
+        const level = Math.max(1, Math.min(5, requestedLevel));
         const play = options.play ?? true;
         // Allow 0 to disable TT, or 0.25-256 MB range
         // Default: auto-scaled by AI level (lower levels use less memory, higher levels use more)
@@ -264,9 +262,7 @@ export class Game {
         const ttSizeMB = options.ttSizeMB === 0 ? 0 : Math.max(0.25, Math.min(256, options.ttSizeMB ?? defaultSize));
 
         // Validate level (requested value)
-        if (requestedLevel < 1 || requestedLevel > 6) {
-            // Keep error message aligned with the new public contract.
-            // (We accept 6 for backward compatibility but clamp it to 5.)
+        if (requestedLevel < 1 || requestedLevel > 5) {
             throw new Error('AI level must be between 1 and 5');
         }
 

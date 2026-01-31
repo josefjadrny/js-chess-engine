@@ -529,9 +529,9 @@ The engine includes a sophisticated AI based on the Minimax algorithm with alpha
 |   2   | Easy              | Suitable for new chess players       | 2-3 ply      |
 |   3   | Intermediate      | Balanced difficulty (default)        | 3-5 ply      |
 |   4   | Advanced          | Strong play with deeper search       | 3-6 ply      |
-|   5   | Expert            | Very strong play, deep search        | 4-6 ply      |
+|   5   | Expert            | Very strong play, deep search        | 4-6 ply (max) |
 
-**Performance:** Response time increases exponentially with level. Benchmarked on modern hardware (Linux x64, Node.js v24): levels 1-2 ~30ms, level 3 ~50ms, levels 4-6 ~60-90ms. Actual performance varies based on hardware, position complexity, and cache size. Run `npm run benchmark` to measure performance on your system.
+**Performance:** Response time increases with level (deeper search + larger transposition table). Exact timings vary a lot by CPU, position complexity, and cache size, so the repo includes a benchmark script—run `npm run benchmark` to measure performance on your machine.
 
 ```typescript
 import { Game } from 'js-chess-engine'

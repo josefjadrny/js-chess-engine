@@ -69,14 +69,15 @@ describe('AI Tactical Tests', () => {
 
     describe('Tactical Combinations', () => {
         it('should find knight fork (family fork)', () => {
-            // Position: White knight on f3 can capture e5 pawn, forking king and c6 knight
+            // Position: White knight on f3 can capture e5 pawn, attacking c6 and improving placement.
+            // (Note: this is NOT a check on the king; the tactical point is pressure on c6/f7 and centralization.)
             const fen = 'r1bqkb1r/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w kq - 0 5';
             const game = new Game(fen);
 
             const result = game.ai({ level: 3 });
 
-            // Verify: Knight should capture e5 (fork) or make another strong move
-            // After Nxe5, white attacks both king and c6 knight
+            // Verify: Knight may capture e5 (common tactical/positional idea), or make another strong move
+            // After Nxe5, white attacks c6 and f7 (and centralizes the knight)
             const move = result.move;
             const [from, to] = Object.entries(move)[0];
 
@@ -413,7 +414,7 @@ describe('AI Tactical Tests', () => {
     });
 
     // ============================================================
-    // High-strength tactical suite (migrated from former level-6 file)
+    // High-strength tactical suite (migrated from a previous high-level suite)
     // ============================================================
     describe('High-strength Tactical Tests - Complex Positions', () => {
         /**
@@ -771,7 +772,6 @@ describe('AI Tactical Tests', () => {
                 const bestMoves: Array<[string, string]> = [
                     ['E3', 'F5'],
                     ['E3', 'G4'],
-                    ['E2', 'E6'],
                     ['E2', 'A6'],
                     ['E2', 'B5'],
                     ['E2', 'D3'],
