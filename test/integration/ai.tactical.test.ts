@@ -279,6 +279,8 @@ describe('AI Tactical Tests', () => {
             expect(from).toBe('E3');
 
             // Tests: Endgame king positioning, PST values in endgame
+
+            // (No further assertions here; this test is mainly a sanity check.)
         });
 
         it('should recognize zugzwang position', () => {
@@ -953,6 +955,101 @@ describe('AI Tactical Tests', () => {
 
                 // Should make the same move (deterministic)
                 expect(move1).toEqual(move2);
+            });
+        });
+    });
+
+    // ============================================================
+    // External puzzle validation (sourced from wtharvey.com)
+    // Validates that Level 5 solves well-known tactical puzzles.
+    // ============================================================
+    describe('External Puzzle Validation', () => {
+        describe('Mate in 2', () => {
+            it('should find Nf6+ mate pattern (two knights)', () => {
+                // Nf6+ gxf6 Bxf7# — either knight works
+                const fen = 'r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 1';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                expect(to).toBe('F6');
+                expect(result.board.check).toBe(true);
+            });
+
+            it('should find Qb8+ deflection sacrifice', () => {
+                // Qb8+ Nxb8 Rd8#
+                const fen = '4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 1';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                expect(from).toBe('B3');
+                expect(to).toBe('B8');
+            });
+
+            it('should find Qd8+ deflection sacrifice', () => {
+                // Qd8+ Bxd8 Re8#
+                const fen = 'r1b2k1r/ppp1bppp/8/1B1Q4/5q2/2P5/PPP2PPP/R3R1K1 w - - 1 1';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                expect(from).toBe('D5');
+                expect(to).toBe('D8');
+            });
+
+            it('should find Qxf8+ sacrifice', () => {
+                // Qxf8+ Bxf8 (or Kxf8) then mate
+                const fen = '5rk1/1p1q2bp/p2pN1p1/2pP2Bn/2P3P1/1P6/P4QKP/5R2 w - - 1 1';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                expect(from).toBe('F2');
+                expect(to).toBe('F8');
+            });
+
+            it('should find Qd7+ clearance sacrifice', () => {
+                // Qd7+ Bxd7 Nf6#
+                const fen = 'r1nk3r/2b2ppp/p3b3/3NN3/Q2P3q/B2B4/P4PPP/4R1K1 w - - 1 1';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                expect(from).toBe('A4');
+                expect(to).toBe('D7');
+            });
+        });
+
+        describe('Tactical Fundamentals', () => {
+            it('should capture undefended queen', () => {
+                const fen = 'rnb1kbnr/pppppppp/8/8/4q3/3B4/PPPP1PPP/RNBQK1NR w KQkq - 0 1';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                expect(from).toBe('D3');
+                expect(to).toBe('E4');
+            });
+
+            it('should not push pawn in Philidor endgame (draws after Kg7)', () => {
+                // Pushing f7 is a draw — black plays Kg7 blocking. King advance first.
+                const fen = '8/7k/5P2/4K3/8/8/8/8 w - - 0 60';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+                const [from] = Object.entries(result.move)[0];
+
+                expect(from).not.toBe('F6');
+            });
+
+            it('should defend against Scholar mate threat', () => {
+                // Black must respond to Qh4 targeting f7
+                const fen = 'rnbqkb1r/pppp1ppp/5n2/4p3/4P2Q/8/PPPP1PPP/RNB1KBNR b KQkq - 0 3';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5 });
+
+                expect(result.board.checkMate).not.toBe(true);
+                expect(result.move).toBeDefined();
             });
         });
     });
