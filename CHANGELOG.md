@@ -1,3 +1,12 @@
+# [2.2.0](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.5...v2.2.0) (2026-01-31)
+
+
+### Features
+
+* Refactor engine to target major bugs ([#34](https://github.com/josefjadrny/js-chess-engine/issues/34)) ([a981395](https://github.com/josefjadrny/js-chess-engine/commit/a981395b57c19110e42f44d5e2be4ad87927d424))
+
+
+
 ## [2.1.5](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.4...v2.1.5) (2026-01-30)
 
 
