@@ -1,3 +1,12 @@
+## [2.2.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.1...v2.2.2) (2026-02-01)
+
+
+### Bug Fixes
+
+* Use TT default for depracated aiMove ([0967e52](https://github.com/josefjadrny/js-chess-engine/commit/0967e528391543505891be09400a17b77ad10de1))
+
+
+
 ## [2.2.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.0...v2.2.1) (2026-02-01)
 
 
