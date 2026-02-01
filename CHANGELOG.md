@@ -1,3 +1,7 @@
+## [2.2.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.2...v2.2.3) (2026-02-01)
+
+
+
 ## [2.2.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.1...v2.2.2) (2026-02-01)
 
 
