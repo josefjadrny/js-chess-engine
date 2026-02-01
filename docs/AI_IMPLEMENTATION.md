@@ -255,25 +255,25 @@ hash ^= pieceKeys[piece][toSquare];    // Add to new square
 
 **Purpose:** Order moves to maximize alpha-beta pruning efficiency. Better moves searched first = more cutoffs = less computation.
 
+**Implementation:** Uses incremental selection sort via `MoveSelector` class — scores all moves upfront into a parallel `Int32Array`, then picks the best remaining move on demand. On beta cutoffs, remaining moves are never sorted.
+
 **Ordering Priority:**
 
-| Priority | Move Type | Score | Explanation |
-|----------|-----------|-------|-------------|
-| 1 | PV Move | 1,000,000 | Best move from previous iteration/TT |
-| 2 | Queen Promotion | 800,000 | Almost always winning |
-| 3 | Winning Capture | 900,000+ | MVV-LVA score added |
-| 4 | Killer Move | 700,000 | Non-capture that caused cutoff |
-| 5 | Equal Capture | 900,000 | Same piece value exchange |
-| 6 | Quiet Move | 0 | Normal moves |
-| 7 | Losing Capture | -100,000 | Capturing less valuable piece |
+| Priority | Move Type | Score Bonus | Explanation |
+|----------|-----------|-------------|-------------|
+| 1 | TT/PV Move | +10,000,000 | Best move from previous iteration/TT |
+| 2 | Queen Promotion | +9,000,000 | Almost always winning |
+| 3 | Capture | +5,000,000 + MVV-LVA | Winning captures scored highest |
+| 4 | Killer Move | +3,000,000 | Non-capture that caused cutoff |
+| 5 | Quiet Move | 0 | Normal moves |
 
 **MVV-LVA (Most Valuable Victim - Least Valuable Attacker):**
 ```typescript
-score = victimValue * 10 - attackerValue
+score = victimValue * 16 - attackerValue
 
 // Example:
-// Pawn takes Queen: 9*10 - 1 = 89 (excellent)
-// Queen takes Pawn: 1*10 - 9 = 1 (poor)
+// Pawn takes Queen: 900*16 - 100 = 14300 (excellent)
+// Queen takes Pawn: 100*16 - 900 = 700 (poor)
 ```
 
 **Killer Moves:**
@@ -318,11 +318,9 @@ Total overhead: (20 + 400 + 8,000) / 160,000 ≈ 5%
 
 **Implementation:**
 ```typescript
-// Only use iterative deepening for depths > 2
-if (baseDepth > 2) {
-    for (let depth = 1; depth < baseDepth; depth++) {
-        searchDepth(board, depth, depth + 1, moves);
-    }
+// Always iterate from depth 1 up to target
+for (let d = 1; d <= baseDepth; d++) {
+    // Search at depth d, populating TT for next iteration
 }
 ```
 

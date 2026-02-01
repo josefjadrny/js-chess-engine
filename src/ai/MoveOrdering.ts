@@ -66,36 +66,76 @@ function mvvLvaScore(move: InternalMove): number {
     return victim * 16 - attacker;
 }
 
-export function orderMoves(
-    moves: InternalMove[],
-    ttMove: InternalMove | null,
-    killers: KillerMoves | null,
-    ply: number
-): InternalMove[] {
-    if (moves.length <= 1) return moves;
+/**
+ * Incremental move ordering via selection sort.
+ * Scores all moves upfront, then picks the best remaining move on demand.
+ * On beta cutoffs, the remaining unsorted moves are never touched.
+ */
+export class MoveSelector {
+    private readonly moves: InternalMove[];
+    private readonly scores: Int32Array;
+    private readonly n: number;
+    private cursor: number = 0;
 
-    const scored = moves.map(m => {
-        let score = 0;
+    constructor(
+        moves: InternalMove[],
+        ttMove: InternalMove | null,
+        killers: KillerMoves | null,
+        ply: number,
+    ) {
+        this.moves = moves;
+        this.n = moves.length;
+        const scores = new Int32Array(this.n);
 
-        if (ttMove && m.from === ttMove.from && m.to === ttMove.to) {
-            score += 10_000_000;
+        for (let i = 0; i < this.n; i++) {
+            const m = moves[i];
+            let score = 0;
+
+            if (ttMove && m.from === ttMove.from && m.to === ttMove.to) {
+                score += 10_000_000;
+            }
+
+            if ((m.flags & MoveFlag.PROMOTION) && (m.promotionPiece === Piece.WHITE_QUEEN || m.promotionPiece === Piece.BLACK_QUEEN)) {
+                score += 9_000_000;
+            }
+
+            if (m.flags & MoveFlag.CAPTURE) {
+                score += 5_000_000 + mvvLvaScore(m);
+            }
+
+            if (killers && killers.isKiller(m, ply)) {
+                score += 3_000_000;
+            }
+
+            scores[i] = score;
+        }
+        this.scores = scores;
+    }
+
+    /** Return the next best move, or null when exhausted. */
+    pickNext(): InternalMove | null {
+        const { cursor, n, scores, moves } = this;
+        if (cursor >= n) return null;
+
+        // Find best in [cursor..n)
+        let bestIdx = cursor;
+        let bestScore = scores[cursor];
+        for (let j = cursor + 1; j < n; j++) {
+            if (scores[j] > bestScore) {
+                bestScore = scores[j];
+                bestIdx = j;
+            }
         }
 
-        if ((m.flags & MoveFlag.PROMOTION) && (m.promotionPiece === Piece.WHITE_QUEEN || m.promotionPiece === Piece.BLACK_QUEEN)) {
-            score += 9_000_000;
+        // Swap to cursor position
+        if (bestIdx !== cursor) {
+            const tmpMove = moves[cursor];
+            moves[cursor] = moves[bestIdx];
+            moves[bestIdx] = tmpMove;
+            scores[bestIdx] = scores[cursor];
         }
 
-        if (m.flags & MoveFlag.CAPTURE) {
-            score += 5_000_000 + mvvLvaScore(m);
-        }
-
-        if (killers && killers.isKiller(m, ply)) {
-            score += 3_000_000;
-        }
-
-        return { m, score };
-    });
-
-    scored.sort((a, b) => b.score - a.score);
-    return scored.map(s => s.m);
+        this.cursor++;
+        return moves[cursor];
+    }
 }

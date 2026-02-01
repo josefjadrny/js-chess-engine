@@ -15,7 +15,7 @@ import { getLowestSetBit } from '../utils/conversion';
 import { Evaluator, SCORE_MAX, SCORE_MIN } from './Evaluator';
 import { Score, SearchResult } from '../types/ai.types';
 import { TranspositionTable, TTEntryType } from './TranspositionTable';
-import { KillerMoves, orderMoves } from './MoveOrdering';
+import { KillerMoves, MoveSelector } from './MoveOrdering';
 
 // Keep within evaluator bounds.
 const INF: Score = SCORE_MAX;
@@ -59,13 +59,14 @@ export class Search {
             // Populates TT progressively for better move ordering at deeper levels.
             for (let d = 1; d <= baseDepth; d++) {
                 const pvMove = this.transpositionTable?.getBestMove(board.zobristHash) ?? null;
-                const ordered = orderMoves(moves, pvMove, this.killerMoves, 0);
+                const selector = new MoveSelector(moves, pvMove, this.killerMoves, 0);
 
                 let iterBestMove: InternalMove | null = null;
                 let iterBestScore: Score = SCORE_MIN;
                 let alpha: Score = SCORE_MIN;
                 const beta: Score = SCORE_MAX;
-                for (const move of ordered) {
+                let move: InternalMove | null;
+                while ((move = selector.pickNext()) !== null) {
                     if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
                         const isQueenPromotion =
                             move.promotionPiece === Piece.WHITE_QUEEN ||
@@ -128,14 +129,15 @@ export class Search {
             }
 
             const moves = generatePseudoLegalMoves(board);
-            const ordered = orderMoves(moves, ttMove, this.killerMoves, ply);
+            const selector = new MoveSelector(moves, ttMove, this.killerMoves, ply);
 
             const startAlpha = alpha;
             let bestScore: Score = -INF;
             let bestMove: InternalMove | null = null;
             let legalMoveCount = 0;
+            let move: InternalMove | null;
 
-            for (const move of ordered) {
+            while ((move = selector.pickNext()) !== null) {
                 if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
                     const isQueenPromotion =
                         move.promotionPiece === Piece.WHITE_QUEEN ||
@@ -223,12 +225,13 @@ export class Search {
 
             const tt = this.transpositionTable;
             const ttMove = tt ? tt.getBestMove(board.zobristHash) : null;
-            const ordered = orderMoves(forcing, ttMove, this.killerMoves, ply);
+            const selector = new MoveSelector(forcing, ttMove, this.killerMoves, ply);
 
             let bestScore = standPat;
             let anyLegalForcing = false;
+            let move: InternalMove | null;
 
-            for (const move of ordered) {
+            while ((move = selector.pickNext()) !== null) {
                 if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
                     const isQueenPromotion =
                         move.promotionPiece === Piece.WHITE_QUEEN ||
