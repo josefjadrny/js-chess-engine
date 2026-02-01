@@ -1,3 +1,12 @@
+## [2.2.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.0...v2.2.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* Fen export fix ([7dc835b](https://github.com/josefjadrny/js-chess-engine/commit/7dc835bc4b1dc83cbc7f8c6c0c67702fd57024f8))
+
+
+
 # [2.2.0](https://github.com/josefjadrny/js-chess-engine/compare/v2.1.5...v2.2.0) (2026-01-31)
 
 
