@@ -217,7 +217,8 @@ export class Game {
     /**
      * Make an AI move (v1 compatible - returns only the move)
      *
-    * @param level - AI level (1-5, default 3)
+     * @deprecated Use `ai()` instead. This method will be removed in v3.0.0.
+     * @param level - AI level (1-5, default 3)
      * @returns The played move object (e.g., {"E2": "E4"})
      */
     aiMove(level: number = 3): HistoryEntry {
@@ -395,6 +396,7 @@ export function move(config: BoardConfig | string, from: string, to: string): Bo
 /**
  * Make an AI move (v1 compatible - returns only the move)
  *
+ * @deprecated Use `ai()` instead. This function will be removed in v3.0.0.
  * @param config - Board configuration or FEN string
  * @param level - AI level (1-5, default 3)
  * @returns The played move object (e.g., {"E2": "E4"})

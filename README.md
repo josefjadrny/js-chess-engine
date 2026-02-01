@@ -171,6 +171,8 @@ game.removePiece('E5')
 
 **aiMove**
 
+> ⚠️ **DEPRECATED:** This method will be removed in v3.0.0. Use [`ai()`](#ai) instead, which returns both the move and board state.
+
 `game.aiMove(level)` - Calculate and perform the best move for the current player using AI. **Returns only the move** (v1 API compatible).
 
 Params:
@@ -187,6 +189,11 @@ console.log(move) // {"E2": "E4"}
 
 // To get board state after move, use exportJson()
 const board = game.exportJson()
+
+// RECOMMENDED: Use ai() instead
+const result = game.ai({ level: 4 })
+console.log(result.move)  // {"E2": "E4"}
+console.log(result.board) // Full board state
 ```
 
 **ai**
@@ -378,6 +385,8 @@ const config2: BoardConfig = move(config1, 'E7', 'E5')
 
 **aiMove**
 
+> ⚠️ **DEPRECATED:** This function will be removed in v3.0.0. Use [`ai()`](#ai-1) instead, which returns both the move and board state.
+
 `aiMove(boardConfiguration, level)` - Calculate and return the best move using AI. **Returns only the move** (v1 API compatible).
 
 Params:
@@ -394,6 +403,12 @@ const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 const level: AILevel = 4
 const move: HistoryEntry = aiMove(fen, level)
 console.log(move) // {"E2": "E4"}
+
+// RECOMMENDED: Use ai() instead
+import { ai } from 'js-chess-engine'
+const result = ai(fen, { level: 4 })
+console.log(result.move)  // {"E2": "E4"}
+console.log(result.board) // Full board state
 ```
 
 **ai**
@@ -692,6 +707,20 @@ aiMove(config, 3)  // Returns move object: {"E2": "E4"} ✅ v1 compatible
 ```typescript
 ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 ```
+
+> ⚠️ **DEPRECATION NOTICE:** `aiMove()` is deprecated and will be removed in **v3.0.0**. Migrate to `ai()` for better functionality.
+>
+> **Migration:**
+> ```typescript
+> // Old (deprecated)
+> const move = game.aiMove(3)
+> const board = game.exportJson()
+>
+> // New (recommended)
+> const result = game.ai({ level: 3 })
+> console.log(result.move)  // Same move object
+> console.log(result.board) // Board state included
+> ```
 
 ### 4. AI Difficulty Levels Changed
 
