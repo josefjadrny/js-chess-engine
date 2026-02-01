@@ -8,9 +8,40 @@
 import { InternalMove } from '../types';
 import { Score } from '../types/ai.types';
 import { SCORE_MAX, SCORE_MIN } from './Evaluator';
+import { isNodeEnvironment } from '../utils/environment';
 
 /** Threshold for detecting mate scores. */
 const MATE_THRESHOLD = 500;
+
+/**
+ * Get recommended TT size for a given AI level and environment
+ *
+ * @param level - AI difficulty level (1-5)
+ * @returns Recommended TT size in MB
+ */
+export function getRecommendedTTSize(level: number): number {
+    if (isNodeEnvironment()) {
+        // Node.js - more generous memory allocation
+        const nodeSizes: Record<number, number> = {
+            1: 1,   // Level 1: 1 MB
+            2: 2,   // Level 2: 2 MB
+            3: 8,   // Level 3: 8 MB (default)
+            4: 16,  // Level 4: 16 MB
+            5: 32,  // Level 5: 32 MB
+        };
+        return nodeSizes[level] ?? 8;
+    } else {
+        // Browser - modern-device-friendly allocation (reasonable for 2024+ devices)
+        const browserSizes: Record<number, number> = {
+            1: 0.5,  // Level 1: 0.5 MB (lightweight, older devices)
+            2: 1,    // Level 2: 1 MB (mobile-friendly)
+            3: 4,    // Level 3: 4 MB (balanced default - appropriate for modern browsers)
+            4: 8,    // Level 4: 8 MB (strong performance)
+            5: 16,   // Level 5: 16 MB (very strong play)
+        };
+        return browserSizes[level] ?? 4;
+    }
+}
 
 /**
  * Normalize a mate score for TT storage by removing the current ply component.

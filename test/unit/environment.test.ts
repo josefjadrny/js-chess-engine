@@ -2,7 +2,8 @@
  * Environment detection tests
  */
 
-import { isNodeEnvironment, isBrowserEnvironment, getDefaultTTSize, getRecommendedTTSize } from '../../src/utils/environment';
+import { isNodeEnvironment, isBrowserEnvironment, getDefaultTTSize } from '../../src/utils/environment';
+import { getRecommendedTTSize } from '../../src/ai/TranspositionTable';
 
 describe('Environment Detection', () => {
     describe('isNodeEnvironment', () => {

@@ -17,7 +17,8 @@ import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/
 import { isKingInCheck } from './core/AttackDetector';
 import { parseFEN, toFEN, getStartingFEN, validateFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
-import { getDefaultTTSize, getRecommendedTTSize } from './utils/environment';
+import { getDefaultTTSize } from './utils/environment';
+import { getRecommendedTTSize } from './ai/TranspositionTable';
 import {
     boardToConfig,
     configToBoard,
@@ -225,8 +226,11 @@ export class Game {
             throw new Error('AI level must be between 1 and 6');
         }
 
+        // Use recommended TT size for the level (browser-safe defaults)
+        const ttSizeMB = getRecommendedTTSize(level);
+
         // Find best move
-        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel);
+        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB);
 
         if (!bestMove) {
             // No legal moves available - game must be finished (checkmate or stalemate)
