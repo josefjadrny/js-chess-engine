@@ -175,7 +175,9 @@ export class Game {
      * @returns Board configuration object
      */
     exportJson(): BoardConfig {
-        return boardToConfig(this.board);
+        const cfg = boardToConfig(this.board);
+        this.updateConfigStatusFromBoard(this.board, cfg);
+        return cfg;
     }
 
     /**

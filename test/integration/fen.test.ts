@@ -175,6 +175,81 @@ describe('FEN Import', () => {
         expect(Object.keys(config.pieces).length).toBe(22);
     });
 
+    it('should recognize stalemate when importing a stalemate position via FEN', () => {
+        // Black king on A8, white queen on B6, white king on D6 — black to move, no legal moves, not in check
+        const fen = 'k7/8/1Q1K4/8/8/8/8/8 b - - 0 1';
+        const game = new Game(fen);
+        const config = game.exportJson();
+
+        expect(config.check).toBe(false);
+        expect(config.checkMate).toBe(false);
+        expect(config.isFinished).toBe(true);
+        expect(config.turn).toBe('black');
+        expect(config.castling.whiteShort).toBe(false);
+        expect(config.castling.whiteLong).toBe(false);
+        expect(config.castling.blackShort).toBe(false);
+        expect(config.castling.blackLong).toBe(false);
+        expect(config.enPassant).toBeNull();
+        expect(config.halfMove).toBe(0);
+        expect(config.fullMove).toBe(1);
+        expect(Object.keys(config.pieces).length).toBe(3);
+        expect(game.exportFEN()).toEqual(fen);
+
+        // No legal moves in stalemate
+        const legalMoves = game.moves();
+        expect(Object.keys(legalMoves).length).toBe(0);
+    });
+
+    it('should recognize check when importing a check position via FEN', () => {
+        // White queen on E7 checking black king on E8
+        const fen = 'rnbqkbnr/ppppQppp/8/8/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 0 2';
+        const game = new Game(fen);
+        const config = game.exportJson();
+
+        expect(config.check).toBe(true);
+        expect(config.checkMate).toBe(false);
+        expect(config.isFinished).toBe(false);
+        expect(config.turn).toBe('black');
+        expect(config.castling.whiteShort).toBe(true);
+        expect(config.castling.whiteLong).toBe(true);
+        expect(config.castling.blackShort).toBe(true);
+        expect(config.castling.blackLong).toBe(true);
+        expect(config.enPassant).toBeNull();
+        expect(config.halfMove).toBe(0);
+        expect(config.fullMove).toBe(2);
+        expect(Object.keys(config.pieces).length).toBe(31);
+        expect(game.exportFEN()).toEqual(fen);
+
+        // Must have legal moves (not checkmate)
+        const legalMoves = game.moves();
+        expect(Object.keys(legalMoves).length).toBeGreaterThan(0);
+    });
+
+    it('should recognize checkmate when importing a checkmate position via FEN', () => {
+        // Scholar's Mate final position: 1.e4 e5 2.Bc4 Nc6 3.Qh5 Nf6?? 4.Qxf7#
+        const fen = 'r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4';
+        const game = new Game(fen);
+        const config = game.exportJson();
+
+        expect(config.check).toBe(true);
+        expect(config.checkMate).toBe(true);
+        expect(config.isFinished).toBe(true);
+        expect(config.turn).toBe('black');
+        expect(config.castling.whiteShort).toBe(true);
+        expect(config.castling.whiteLong).toBe(true);
+        expect(config.castling.blackShort).toBe(true);
+        expect(config.castling.blackLong).toBe(true);
+        expect(config.enPassant).toBeNull();
+        expect(config.halfMove).toBe(0);
+        expect(config.fullMove).toBe(4);
+        expect(Object.keys(config.pieces).length).toBe(31);
+        expect(game.exportFEN()).toEqual(fen);
+
+        // No legal moves in checkmate
+        const legalMoves = game.moves();
+        expect(Object.keys(legalMoves).length).toBe(0);
+    });
+
     it('should import position with high move counters and match entire board state', () => {
         const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 50 100';
         const game = new Game(fen);
