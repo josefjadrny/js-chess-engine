@@ -39,6 +39,7 @@ describe('Game API', () => {
                 fullMove: 1,
                 check: false,
                 checkMate: false,
+                staleMate: false,
                 isFinished: false,
             };
 

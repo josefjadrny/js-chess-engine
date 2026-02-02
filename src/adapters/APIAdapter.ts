@@ -53,6 +53,7 @@ export function boardToConfig(board: InternalBoard): BoardConfig {
         isFinished: board.isCheckmate || board.isStalemate,
         check: board.isCheck,
         checkMate: board.isCheckmate,
+        staleMate: board.isStalemate,
         castling: { ...board.castlingRights },
         enPassant: board.enPassantSquare !== null ? indexToSquare(board.enPassantSquare) : null,
         halfMove: board.halfMoveClock,

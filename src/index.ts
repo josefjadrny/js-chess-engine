@@ -223,8 +223,8 @@ export class Game {
      */
     aiMove(level: number = 3): HistoryEntry {
         // Validate level
-        if (level < 1 || level > 6) {
-            throw new Error('AI level must be between 1 and 6');
+        if (level < 1 || level > 5) {
+            throw new Error('AI level must be between 1 and 5');
         }
 
         // Use recommended TT size for the level (browser-safe defaults)

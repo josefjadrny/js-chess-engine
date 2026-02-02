@@ -55,6 +55,7 @@ export interface BoardConfig {
     isFinished: boolean;
     check: boolean;
     checkMate: boolean;
+    staleMate: boolean;
     castling: CastlingRights;
     enPassant: Square | null;
     halfMove: number;

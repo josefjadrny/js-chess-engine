@@ -227,7 +227,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = game.ai({ level: 5 })
-console.log(result4.move) // Level 5: 64 MB Node.js / 32 MB browser (auto)
+console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = game.ai({ level: 3, ttSizeMB: 128 })
@@ -446,7 +446,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = ai(fen, { level: 5 })
-console.log(result4.move) // Level 5: 64 MB Node.js / 32 MB browser (auto)
+console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = ai(fen, { level: 3, ttSizeMB: 128 })
@@ -478,6 +478,7 @@ const config: BoardConfig = {
   "isFinished": false,
   "check": false,
   "checkMate": false,
+  "staleMate": false,
   "castling": {
     "whiteLong": true,
     "whiteShort": true,
@@ -497,6 +498,8 @@ const config: BoardConfig = {
 **check** - `true` when the current player is in check. Default: `false`
 
 **checkMate** - `true` when the current player is checkmated. Default: `false`
+
+**staleMate** - `true` when the current player is stalemated (no legal moves but not in check). Default: `false`
 
 **castling** - Castling availability for each side. `true` means castling is still possible. Default: all `true`
 - `whiteLong` (queenside) - White king moves from E1 to C1
@@ -736,7 +739,11 @@ ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
 
 The default level has changed from `2` to `3` to maintain similar difficulty in the middle range.
 
-### 5. Node.js Version Requirement
+### 5. New `staleMate` Field
+
+**v2 adds explicit `staleMate: boolean` field** to `BoardConfig`. In v1, stalemate was inferred from `isFinished && !checkMate`. `isFinished` remains for backward compatibility but can be removed in future versions.
+
+### 6. Node.js Version Requirement
 
 - **v1:** Node.js >=20 <21
 - **v2:** Node.js >=24

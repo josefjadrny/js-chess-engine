@@ -142,8 +142,8 @@ describe('AI Engine', () => {
         it('should throw error for invalid AI level', () => {
             const game = new Game();
 
-            expect(() => game.aiMove(0)).toThrow('AI level must be between 1 and 6');
-            expect(() => game.aiMove(7)).toThrow('AI level must be between 1 and 6');
+            expect(() => game.aiMove(0)).toThrow('AI level must be between 1 and 5');
+            expect(() => game.aiMove(6)).toThrow('AI level must be between 1 and 5');
         });
 
         it('should throw error when game is finished', () => {
@@ -473,6 +473,7 @@ describe('AI Engine', () => {
             // Should either be checkmate or continue game, not stalemate
             if (result.board.isFinished) {
                 expect(result.board.checkMate).toBe(true);
+                expect(result.board.staleMate).toBe(false);
             }
         });
 
@@ -718,9 +719,11 @@ describe('AI Engine', () => {
             if (result.board.isFinished) {
                 // If finishing, must be checkmate not stalemate
                 expect(result.board.checkMate).toBe(true);
+                expect(result.board.staleMate).toBe(false);
             } else {
                 // If not finishing, opponent should have legal moves (not stalemate)
                 expect(result.board.isFinished).toBe(false);
+                expect(result.board.staleMate).toBe(false);
             }
         });
 

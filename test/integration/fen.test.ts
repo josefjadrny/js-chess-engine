@@ -2,7 +2,7 @@
  * FEN import/export integration tests (ported from v1)
  */
 
-import { Game } from '../../src';
+import { Game, status, moves } from '../../src';
 
 describe('FEN Export', () => {
     it('should export FEN for new board', () => {
@@ -183,6 +183,7 @@ describe('FEN Import', () => {
 
         expect(config.check).toBe(false);
         expect(config.checkMate).toBe(false);
+        expect(config.staleMate).toBe(true);
         expect(config.isFinished).toBe(true);
         expect(config.turn).toBe('black');
         expect(config.castling.whiteShort).toBe(false);
@@ -198,6 +199,98 @@ describe('FEN Import', () => {
         // No legal moves in stalemate
         const legalMoves = game.moves();
         expect(Object.keys(legalMoves).length).toBe(0);
+    });
+
+    describe('Stalemate detection - comprehensive tests', () => {
+        const stalemateFen = 'k7/8/1Q1K4/8/8/8/8/8 b - - 0 1'; // Black king on A8, white queen on B6, white king on D6
+
+        it('should detect stalemate using Game.exportJson()', () => {
+            const game = new Game(stalemateFen);
+            const config = game.exportJson();
+
+            expect(config.isFinished).toBe(true);
+            expect(config.check).toBe(false);
+            expect(config.checkMate).toBe(false);
+            expect(config.staleMate).toBe(true);
+        });
+
+        it('should detect stalemate using status() function', () => {
+            const config = status(stalemateFen);
+
+            expect(config.isFinished).toBe(true);
+            expect(config.check).toBe(false);
+            expect(config.checkMate).toBe(false);
+            expect(config.staleMate).toBe(true);
+        });
+
+        it('should detect stalemate when using Game.move()', () => {
+            // Use Game class to make a move and check the returned config
+            const game = new Game(stalemateFen);
+
+            // First verify the position is already stalemate (black to move, no legal moves)
+            const movesMap = game.moves();
+            expect(Object.keys(movesMap).length).toBe(0);
+
+            // Get the config after constructing from stalemate position
+            const config = game.exportJson();
+
+            expect(config.isFinished).toBe(true);
+            expect(config.check).toBe(false);
+            expect(config.checkMate).toBe(false);
+            expect(config.staleMate).toBe(true);
+        });
+
+        it('should have staleMate field consistently across all methods', () => {
+            // Test that all API methods include the staleMate field
+            const game = new Game(stalemateFen);
+
+            // Using exportJson()
+            const config1 = game.exportJson();
+            expect(config1.staleMate).toBeDefined();
+            expect(config1.staleMate).toBe(true);
+
+            // Using status()
+            const config2 = status(stalemateFen);
+            expect(config2.staleMate).toBeDefined();
+            expect(config2.staleMate).toBe(true);
+
+            // Using moves() which internally uses status
+            const movesMap = moves(stalemateFen);
+            expect(Object.keys(movesMap).length).toBe(0); // No legal moves in stalemate
+        });
+
+        it('should distinguish stalemate from checkmate', () => {
+            // Checkmate position
+            const checkmateFen = 'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 1';
+            const checkmateConfig = status(checkmateFen);
+
+            expect(checkmateConfig.isFinished).toBe(true);
+            expect(checkmateConfig.check).toBe(true);
+            expect(checkmateConfig.checkMate).toBe(true);
+            expect(checkmateConfig.staleMate).toBe(false);
+
+            // Stalemate position
+            const stalemateConfig = status(stalemateFen);
+
+            expect(stalemateConfig.isFinished).toBe(true);
+            expect(stalemateConfig.check).toBe(false);
+            expect(stalemateConfig.checkMate).toBe(false);
+            expect(stalemateConfig.staleMate).toBe(true);
+
+            // Verify relationship: isFinished = checkMate || staleMate
+            expect(checkmateConfig.isFinished).toBe(checkmateConfig.checkMate || checkmateConfig.staleMate);
+            expect(stalemateConfig.isFinished).toBe(stalemateConfig.checkMate || stalemateConfig.staleMate);
+        });
+
+        it('should set staleMate to false in normal positions', () => {
+            const normalFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+            const config = status(normalFen);
+
+            expect(config.isFinished).toBe(false);
+            expect(config.check).toBe(false);
+            expect(config.checkMate).toBe(false);
+            expect(config.staleMate).toBe(false);
+        });
     });
 
     it('should recognize check when importing a check position via FEN', () => {
