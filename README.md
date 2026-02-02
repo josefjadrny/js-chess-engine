@@ -541,13 +541,20 @@ console.log(newConfig)
 
 The engine includes a sophisticated AI based on the Minimax algorithm with alpha-beta pruning, enhanced with advanced performance optimizations. There are five difficulty levels:
 
-| Level | Alias             | Description                          | Search Depth |
-| :---: | :---------------- | :----------------------------------- | :----------: |
-|   1   | Beginner          | Very weak play, minimal lookahead    | 1-2 ply      |
-|   2   | Easy              | Suitable for new chess players       | 2-3 ply      |
-|   3   | Intermediate      | Balanced difficulty (default)        | 3-5 ply      |
-|   4   | Advanced          | Strong play with deeper search       | 3-6 ply      |
-|   5   | Expert            | Very strong play, deep search        | 4-6 ply (max) |
+| Level | Alias             | Description                          | Base Depth | Extended Depth | Check Ext. | Quiescence | Total Max |
+| :---: | :---------------- | :----------------------------------- | :--------: | :------------: | :--------: | :--------: | :-------: |
+|   1   | Beginner          | Very weak play, minimal lookahead    | 1 ply      | +1 ply         | +1 ply     | +4 ply     | 7 ply     |
+|   2   | Easy              | Suitable for new chess players       | 2 ply      | +1 ply         | +1 ply     | +4 ply     | 8 ply     |
+|   3   | Intermediate      | Balanced difficulty (default)        | 3 ply      | +2 ply         | +1 ply     | +4 ply     | 10 ply    |
+|   4   | Advanced          | Strong play with deeper search       | 3 ply      | +3 ply         | +1 ply     | +4 ply     | 11 ply    |
+|   5   | Expert            | Very strong play, deep search        | 4 ply      | +2 ply         | +1 ply     | +4 ply     | 11 ply    |
+
+**Depth Components:**
+- **Base Depth**: Minimum search depth for the AI level
+- **Extended Depth**: Additional adaptive depth added in simplified positions (endgames, constrained moves)
+- **Check Extension**: Extra ply when a move gives check (prevents tactical oversights)
+- **Quiescence Search**: Additional plies to evaluate forcing moves (captures/promotions) at leaf nodes, preventing horizon effect blunders
+- **Total Max**: Maximum possible search depth in tactical positions (all extensions combined)
 
 **Performance:** Response time increases with level (deeper search + larger transposition table). Exact timings vary a lot by CPU, position complexity, and cache size, so the repo includes a benchmark script—run `npm run benchmark` to measure performance on your machine.
 
