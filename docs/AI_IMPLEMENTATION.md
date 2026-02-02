@@ -62,7 +62,7 @@ Search (Alpha-Beta + Optimizations)
 ### Data Flow
 
 1. **API Call**: User calls `game.ai()` or `game.aiMove()`
-2. **Configuration**: AIEngine maps level (1-5) to base depth + max adaptive extension + quiescence depth
+2. **Configuration**: AIEngine maps level (1-5) to base depth + max adaptive extension + quiescence depth (overridable via `depth` option)
 3. **Search**: Iterative deepening progressively searches deeper
 4. **Ordering**: Moves ordered by PV → Captures → Killers → Quiet
 5. **Evaluation**: Positions scored by material + piece-square tables
@@ -173,6 +173,10 @@ game.ai({ level: 2, ttSizeMB: 2 });      // Standard mobile: 2MB
 game.ai({ level: 1, ttSizeMB: 0.5 });    // Low-end mobile: 512KB
 game.ai({ level: 1, ttSizeMB: 0.25 });   // Ultra-lightweight: 256KB
 game.ai({ level: 1, ttSizeMB: 0 });      // Disabled: ~16KB base memory
+
+// Custom depth overrides (values not provided fall back to level defaults)
+game.ai({ level: 3, depth: { base: 5 } });                    // Deeper base search
+game.ai({ level: 1, depth: { base: 2, extended: 0, check: false, quiescence: 0 } }); // Full control
 ```
 
 **Environment Detection:**

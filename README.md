@@ -205,6 +205,11 @@ Params:
   - `level` number (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
+  - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
+    - `base` number (_optional_) - Base search depth. Integer > 0.
+    - `extended` number (_optional_) - Max adaptive extension depth. Integer 0-3.
+    - `check` boolean (_optional_) - Enable check extensions.
+    - `quiescence` number (_optional_) - Quiescence search depth. Integer >= 0.
 
 Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`)
 
@@ -236,6 +241,12 @@ console.log(result5.move) // Force 128MB cache
 // Ultra-lightweight mode for low-end devices
 const result6 = game.ai({ level: 2, ttSizeMB: 0.5 })
 console.log(result6.move) // Force 512KB cache
+
+// Custom depth overrides (use level 3 defaults, but increase base depth)
+const result7 = game.ai({ level: 3, depth: { base: 5 } })
+
+// Full depth control: deep search, no extensions, no quiescence
+const result8 = game.ai({ level: 1, depth: { base: 4, extended: 0, check: false, quiescence: 0 } })
 ```
 
 **getHistory**
@@ -421,6 +432,11 @@ Params:
   - `level` number (_optional_) - AI difficulty level (1-5). Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the board. Default: `true`. If `false`, returns the move without modifying the board state, and `board` will contain the current state (before the move).
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
+  - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
+    - `base` number (_optional_) - Base search depth. Integer > 0.
+    - `extended` number (_optional_) - Max adaptive extension depth. Integer 0-3.
+    - `check` boolean (_optional_) - Enable check extensions.
+    - `quiescence` number (_optional_) - Quiescence search depth. Integer >= 0.
 
 Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`)
 
@@ -455,6 +471,9 @@ console.log(result5.move) // Force 128MB cache
 // Ultra-lightweight mode for low-end devices
 const result6 = ai(fen, { level: 2, ttSizeMB: 0.5 })
 console.log(result6.move) // Force 512KB cache
+
+// Custom depth overrides
+const result7 = ai(fen, { level: 3, depth: { base: 5, quiescence: 3 } })
 ```
 
 ### Board Configuration

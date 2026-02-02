@@ -24,6 +24,7 @@ export class Search {
     private nodesSearched = 0;
 
     private qMaxDepth = 4;
+    private checkExtension = true;
 
     private transpositionTable: TranspositionTable | null;
     private killerMoves: KillerMoves;
@@ -38,8 +39,9 @@ export class Search {
         this.killerMoves.clear();
     }
 
-        findBestMove(board: InternalBoard, baseDepth: number, qMaxDepth: number = 4): SearchResult | null {
+        findBestMove(board: InternalBoard, baseDepth: number, qMaxDepth: number = 4, checkExtension: boolean = true): SearchResult | null {
             this.qMaxDepth = qMaxDepth;
+            this.checkExtension = checkExtension;
             this.nodesSearched = 0;
             this.transpositionTable?.newSearch();
             this.killerMoves.clear();
@@ -76,7 +78,7 @@ export class Search {
                     const child = copyBoard(board);
                     applyMoveComplete(child, move);
 
-                    const extension = child.isCheck ? 1 : 0;
+                    const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
                     const score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
 
                     if (score > iterBestScore || iterBestMove === null) {
@@ -151,7 +153,7 @@ export class Search {
                 if (this.isIllegalMove(child)) continue;
 
                 legalMoveCount++;
-                const extension = child.isCheck ? 1 : 0;
+                const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
                 const score = -this.negamax(child, depth - 1 + extension, -beta, -alpha, ply + 1);
 
                 if (score > bestScore || bestMove === null) {

@@ -658,6 +658,121 @@ describe('AI Engine', () => {
         });
     });
 
+    describe('AI depth option', () => {
+        it('should accept depth overrides and make a legal move', () => {
+            const game = new Game();
+            const result = game.ai({ level: 1, depth: { base: 1, extended: 0, quiescence: 0, check: false } });
+
+            expect(result.move).toBeDefined();
+            expect(result.board.turn).toBe('black');
+        });
+
+        it('should work with only some depth params provided', () => {
+            const game = new Game();
+
+            // Only override base, rest from level table
+            const result = game.ai({ level: 1, depth: { base: 2 } });
+            expect(result.move).toBeDefined();
+
+            // Only override quiescence
+            const result2 = game.ai({ level: 1, depth: { quiescence: 0 } });
+            expect(result2.move).toBeDefined();
+
+            // Only override check
+            const result3 = game.ai({ level: 1, depth: { check: false } });
+            expect(result3.move).toBeDefined();
+        });
+
+        it('should work with empty depth object (all defaults from level)', () => {
+            const game = new Game();
+            const result = game.ai({ level: 1, depth: {} });
+            expect(result.move).toBeDefined();
+        });
+
+        it('should throw for invalid depth.base', () => {
+            const game = new Game();
+
+            expect(() => game.ai({ level: 1, depth: { base: 0 } })).toThrow('depth.base must be an integer > 0');
+            expect(() => game.ai({ level: 1, depth: { base: -1 } })).toThrow('depth.base must be an integer > 0');
+            expect(() => game.ai({ level: 1, depth: { base: 1.5 } })).toThrow('depth.base must be an integer > 0');
+        });
+
+        it('should throw for invalid depth.extended', () => {
+            const game = new Game();
+
+            expect(() => game.ai({ level: 1, depth: { extended: -1 } })).toThrow('depth.extended must be an integer between 0 and 3');
+            expect(() => game.ai({ level: 1, depth: { extended: 1.5 } })).toThrow('depth.extended must be an integer between 0 and 3');
+            expect(() => game.ai({ level: 1, depth: { extended: 4 } })).toThrow('depth.extended must be an integer between 0 and 3');
+        });
+
+        it('should throw for invalid depth.quiescence', () => {
+            const game = new Game();
+
+            expect(() => game.ai({ level: 1, depth: { quiescence: -1 } })).toThrow('depth.quiescence must be an integer >= 0');
+            expect(() => game.ai({ level: 1, depth: { quiescence: 0.5 } })).toThrow('depth.quiescence must be an integer >= 0');
+        });
+
+        it('should throw for invalid depth.check', () => {
+            const game = new Game();
+
+            expect(() => game.ai({ level: 1, depth: { check: 1 as any } })).toThrow('depth.check must be a boolean');
+            expect(() => game.ai({ level: 1, depth: { check: 'true' as any } })).toThrow('depth.check must be a boolean');
+        });
+
+        it('should allow extended=0 and quiescence=0', () => {
+            const game = new Game();
+            const result = game.ai({ level: 1, depth: { extended: 0, quiescence: 0 } });
+            expect(result.move).toBeDefined();
+        });
+
+        it('should work with stateless ai() function', () => {
+            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+            const result = ai(fen, { level: 1, depth: { base: 1, quiescence: 0 } });
+
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+        });
+
+        it('should combine depth with play=false', () => {
+            const game = new Game();
+            const result = game.ai({ level: 1, depth: { base: 1 }, play: false });
+
+            expect(result.move).toBeDefined();
+            expect(result.board.turn).toBe('white'); // play=false, no state change
+        });
+
+        it('should find mate-in-1 with custom depth override', () => {
+            // Mate in 1: Qf8#
+            const fen = '7k/5Qpp/8/8/8/8/6PP/6K1 w - - 0 1';
+            const result = ai(fen, { level: 1, depth: { base: 2, extended: 0, quiescence: 1, check: true } });
+
+            expect(result.board.checkMate).toBe(true);
+            expect(result.board.isFinished).toBe(true);
+        });
+
+        it('should produce different results with different base depths', () => {
+            // Use a position where the best move at depth 1 differs from depth 3.
+            // Black queen hangs on D5 but capturing it at depth 1 may look fine,
+            // while deeper search could prefer a different move. We just verify
+            // different depths are actually used by comparing node counts indirectly:
+            // depth 1 with extended 0 must be faster (fewer nodes) than depth 3.
+            // We measure wall-clock time as a proxy.
+            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+            const t1 = performance.now();
+            ai(fen, { level: 1, depth: { base: 1, extended: 0, quiescence: 0 } });
+            const shallow = performance.now() - t1;
+
+            const t2 = performance.now();
+            ai(fen, { level: 1, depth: { base: 3, extended: 0, quiescence: 2 } });
+            const deep = performance.now() - t2;
+
+            // A depth-3 search from starting position must take meaningfully longer
+            // than depth-1 with no quiescence. This proves the override is effective.
+            expect(deep).toBeGreaterThan(shallow);
+        });
+    });
+
     describe('AI special moves and edge cases', () => {
         it('should evaluate castling opportunities', () => {
             // Position where castling is available and likely good

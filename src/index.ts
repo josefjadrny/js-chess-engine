@@ -259,7 +259,7 @@ export class Game {
      * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
-    ai(options: { level?: number; play?: boolean; ttSizeMB?: number } = {}): { move: HistoryEntry; board: BoardConfig } {
+    ai(options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number } } = {}): { move: HistoryEntry; board: BoardConfig } {
         const requestedLevel = options.level ?? 3;
         const level = Math.max(1, Math.min(5, requestedLevel));
         const play = options.play ?? true;
@@ -273,8 +273,25 @@ export class Game {
             throw new Error('AI level must be between 1 and 5');
         }
 
+        // Validate depth overrides
+        if (options.depth) {
+            const d = options.depth;
+            if (d.base !== undefined && (!Number.isInteger(d.base) || d.base < 1)) {
+                throw new Error('depth.base must be an integer > 0');
+            }
+            if (d.extended !== undefined && (!Number.isInteger(d.extended) || d.extended < 0 || d.extended > 3)) {
+                throw new Error('depth.extended must be an integer between 0 and 3');
+            }
+            if (d.quiescence !== undefined && (!Number.isInteger(d.quiescence) || d.quiescence < 0)) {
+                throw new Error('depth.quiescence must be an integer >= 0');
+            }
+            if (d.check !== undefined && typeof d.check !== 'boolean') {
+                throw new Error('depth.check must be a boolean');
+            }
+        }
+
         // Find best move
-        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB);
+        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB, options.depth);
 
         if (!bestMove) {
             // No legal moves available - game must be finished (checkmate or stalemate)
@@ -418,7 +435,7 @@ export function aiMove(config: BoardConfig | string, level: number = 3): History
  */
 export function ai(
     config: BoardConfig | string,
-    options: { level?: number; play?: boolean; ttSizeMB?: number } = {}
+    options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number } } = {}
 ): { move: HistoryEntry; board: BoardConfig } {
     const game = new Game(config);
     return game.ai(options);
