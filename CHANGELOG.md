@@ -1,3 +1,19 @@
+# [2.3.0](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.3...v2.3.0) (2026-02-02)
+
+
+### Bug Fixes
+
+* Interal AI engine params updated ([756a1f6](https://github.com/josefjadrny/js-chess-engine/commit/756a1f6f023bd0a5e1e49b767d03960c2def8d24))
+* Sync isFinished & staleMate, update docs ([8c836f3](https://github.com/josefjadrny/js-chess-engine/commit/8c836f3680340777377d0b634638f95049356342))
+
+
+### Features
+
+* Add analysis option to AI ([af8cd52](https://github.com/josefjadrny/js-chess-engine/commit/af8cd52cdd23c913aaa8e434aa4b40dc3b0a0c82))
+* Add depth option to AI to make it fully customizable ([228e1c0](https://github.com/josefjadrny/js-chess-engine/commit/228e1c00e25e6834f8d4897ff7a913406df106de))
+
+
+
 ## [2.2.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.2.2...v2.2.3) (2026-02-01)
 
 
