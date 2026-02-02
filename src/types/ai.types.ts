@@ -2,7 +2,8 @@
  * AI and search-related types for js-chess-engine
  */
 
-import { InternalMove } from './move.types';
+import { InternalMove, ScoredMove as InternalScoredMove } from './move.types';
+import { BoardConfig, HistoryEntry, Square } from './board.types';
 
 // ==================== AI Types ====================
 
@@ -23,6 +24,28 @@ export type Depth = number;
 export type Score = number;
 
 /**
+ * User-facing scored move (API format).
+ */
+export interface ScoredHistoryMove {
+    move: HistoryEntry;
+    score: Score;
+}
+
+/**
+ * Result of `ai()`.
+ *
+ * When `analysis: true` is passed, extra fields are included directly on the result.
+ */
+export interface AIResult {
+    move: HistoryEntry;
+    board: BoardConfig;
+    analysis?: ScoredHistoryMove[];
+    depth?: Depth;
+    nodesSearched?: number;
+    bestScore?: Score;
+}
+
+/**
  * Search result
  */
 export interface SearchResult {
@@ -30,6 +53,7 @@ export interface SearchResult {
     score: Score;
     depth: Depth;
     nodesSearched: number;
+    scoredMoves?: InternalScoredMove[];
 }
 
 /**

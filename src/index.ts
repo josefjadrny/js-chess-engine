@@ -11,6 +11,7 @@ import {
     Square,
     PieceSymbol,
     HistoryEntry,
+    AIResult,
 } from './types';
 import { createStartingBoard, setPiece as setBoardPiece, removePiece as removeBoardPiece, copyBoard } from './core/Board';
 import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/MoveGenerator';
@@ -259,10 +260,11 @@ export class Game {
      * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 8 MB Node.js, 4 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
-    ai(options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number } } = {}): { move: HistoryEntry; board: BoardConfig } {
+    ai(options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean } = {}): AIResult {
         const requestedLevel = options.level ?? 3;
         const level = Math.max(1, Math.min(5, requestedLevel));
         const play = options.play ?? true;
+        const analysis = options.analysis ?? false;
         // Allow 0 to disable TT, or 0.25-256 MB range
         // Default: auto-scaled by AI level (lower levels use less memory, higher levels use more)
         const defaultSize = getRecommendedTTSize(level);
@@ -290,8 +292,11 @@ export class Game {
             }
         }
 
-        // Find best move
-        const bestMove = this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB, options.depth);
+        // Find best move (optionally with analysis)
+        const searchResult = analysis
+            ? this.aiEngine.findBestMoveDetailed(this.board, { level: level as AILevel, ttSizeMB, depth: options.depth, analysis: true })
+            : null;
+        const bestMove = searchResult ? searchResult.move : this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB, options.depth);
 
         if (!bestMove) {
             // No legal moves available - game must be finished (checkmate or stalemate)
@@ -303,12 +308,26 @@ export class Game {
         const toSquare = indexToSquare(bestMove.to);
         const historyEntry: HistoryEntry = { [fromSquare]: toSquare };
 
+        const analysisFields = (analysis && searchResult?.scoredMoves)
+            ? {
+                analysis: searchResult.scoredMoves.map(({ move, score }) => {
+                    const from = indexToSquare(move.from);
+                    const to = indexToSquare(move.to);
+                    const historyMove: HistoryEntry = { [from]: to };
+                    return { move: historyMove, score };
+                }),
+                depth: searchResult.depth,
+                nodesSearched: searchResult.nodesSearched,
+                bestScore: searchResult.score,
+            }
+            : undefined;
+
         if (!play) {
             // Return move without applying it, with current board state.
             // Still return a consistent status snapshot.
             const cfg = boardToConfig(this.board);
             this.updateConfigStatusFromBoard(this.board, cfg);
-            return { move: historyEntry, board: cfg };
+            return { move: historyEntry, board: cfg, ...(analysisFields ?? {}) };
         }
 
         // Record move in history and apply it
@@ -321,6 +340,7 @@ export class Game {
         return {
             move: historyEntry,
             board: cfg,
+            ...(analysisFields ?? {}),
         };
     }
 
@@ -435,8 +455,8 @@ export function aiMove(config: BoardConfig | string, level: number = 3): History
  */
 export function ai(
     config: BoardConfig | string,
-    options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number } } = {}
-): { move: HistoryEntry; board: BoardConfig } {
+    options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean } = {}
+): AIResult {
     const game = new Game(config);
     return game.ai(options);
 }

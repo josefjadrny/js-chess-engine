@@ -204,6 +204,7 @@ Params:
 - `options` object (_optional_) - Configuration options:
   - `level` number (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
+  - `analysis` boolean (_optional_) - If `true`, also returns an `analysis` payload containing all root legal moves scored by the engine's search (sorted best → worst). Default: `false`.
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
   - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
     - `base` number (_optional_) - Base search depth. Integer > 0.
@@ -211,7 +212,7 @@ Params:
     - `check` boolean (_optional_) - Enable check extensions.
     - `quiescence` number (_optional_) - Quiescence search depth. Integer >= 0.
 
-Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`)
+Returns: `{ move: HistoryEntry, board: BoardConfig, analysis?: Array<{ move: HistoryEntry, score: number }>, depth?: number, nodesSearched?: number, bestScore?: number }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`). Extra fields are returned only when `analysis: true`.
 
 ```typescript
 import type { HistoryEntry, BoardConfig } from 'js-chess-engine'
@@ -225,6 +226,13 @@ console.log(result1.board.turn) // "black" (updated after move)
 const result2 = game.ai({ level: 4, play: false })
 console.log(result2.move)       // {"E2": "E4"}
 console.log(result2.board.turn) // "white" (current state, before move)
+
+// Root move scoring (debug/inspection)
+const result2b = game.ai({ level: 4, play: false, analysis: true })
+console.log(result2b.analysis?.slice(0, 5)) // [{ move: {"E2": "E4"}, score: 12 }, ...]
+console.log(result2b.bestScore)
+console.log(result2b.depth)
+console.log(result2b.nodesSearched)
 
 // Use default level 3
 const result3 = game.ai()
@@ -431,6 +439,7 @@ Params:
 - `options` object (_optional_) - Configuration options:
   - `level` number (_optional_) - AI difficulty level (1-5). Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the board. Default: `true`. If `false`, returns the move without modifying the board state, and `board` will contain the current state (before the move).
+  - `analysis` boolean (_optional_) - If `true`, also returns an `analysis` payload containing all root legal moves scored by the engine's search (sorted best → worst). Default: `false`.
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
   - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
     - `base` number (_optional_) - Base search depth. Integer > 0.
@@ -438,7 +447,7 @@ Params:
     - `check` boolean (_optional_) - Enable check extensions.
     - `quiescence` number (_optional_) - Quiescence search depth. Integer >= 0.
 
-Returns: `{ move: HistoryEntry, board: BoardConfig }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`)
+Returns: `{ move: HistoryEntry, board: BoardConfig, analysis?: Array<{ move: HistoryEntry, score: number }>, depth?: number, nodesSearched?: number, bestScore?: number }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`). Extra fields are returned only when `analysis: true`.
 
 ```typescript
 import { ai } from 'js-chess-engine'
@@ -455,6 +464,13 @@ console.log(result1.board.turn) // "black" (updated after move)
 const result2 = ai(fen, { level: 4, play: false })
 console.log(result2.move)       // {"E2": "E4"}
 console.log(result2.board.turn) // "white" (current state, before move)
+
+// Root move scoring (debug/inspection)
+const result2b = ai(fen, { level: 4, play: false, analysis: true })
+console.log(result2b.analysis?.slice(0, 5)) // [{ move: {"E2": "E4"}, score: 12 }, ...]
+console.log(result2b.bestScore)
+console.log(result2b.depth)
+console.log(result2b.nodesSearched)
 
 // Use default level 3
 const result3 = ai(fen)

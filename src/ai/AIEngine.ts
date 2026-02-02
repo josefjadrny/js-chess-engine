@@ -5,7 +5,7 @@
  */
 
 import { InternalBoard, InternalMove } from '../types';
-import { AILevel } from '../types/ai.types';
+import { AILevel, SearchResult } from '../types/ai.types';
 import { Search } from './Search';
 import { generateLegalMoves } from '../core/MoveGenerator';
 import { Piece } from '../types';
@@ -56,6 +56,27 @@ export class AIEngine {
      * @returns Best move found by the AI
      */
     findBestMove(board: InternalBoard, level: AILevel = 3, ttSizeMB: number = 16, depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }): InternalMove | null {
+        const result = this.findBestMoveDetailed(board, { level, ttSizeMB, depth, analysis: false });
+        return result ? result.move : null;
+    }
+
+    /**
+     * Find the best move, including optional analysis (root move scores).
+     *
+     * Used by the public `ai(..., { analysis: true })` API.
+     */
+    findBestMoveDetailed(
+        board: InternalBoard,
+        options: {
+            level?: AILevel;
+            ttSizeMB?: number;
+            depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number };
+            analysis?: boolean;
+        } = {}
+    ): SearchResult | null {
+        const level = options.level ?? 3;
+        const ttSizeMB = options.ttSizeMB ?? 16;
+
         // Recreate search if TT size changed
         if (ttSizeMB !== this.currentTTSize) {
             this.currentTTSize = ttSizeMB;
@@ -64,24 +85,19 @@ export class AIEngine {
 
         // Get depth configuration for this level, then apply overrides
         const config = LEVEL_CONFIG[level];
-        const baseDepth = depth?.base ?? config.baseDepth;
-        const extendedDepth = depth?.extended ?? config.extendedDepth;
-        const qMaxDepth = depth?.quiescence ?? config.qMaxDepth;
-        const checkExtension = depth?.check ?? config.checkExtension;
+        const baseDepth = options.depth?.base ?? config.baseDepth;
+        const extendedDepth = options.depth?.extended ?? config.extendedDepth;
+        const qMaxDepth = options.depth?.quiescence ?? config.qMaxDepth;
+        const checkExtension = options.depth?.check ?? config.checkExtension;
 
         // Pick an effective depth based on current position complexity.
         // This keeps early/midgame conservative, but lets endgames search deeper.
-    const effectiveDepth = this.getAdaptiveDepth(board, baseDepth, extendedDepth);
+        const effectiveDepth = this.getAdaptiveDepth(board, baseDepth, extendedDepth);
 
         // Perform search
-        const result = this.search.findBestMove(
-            board,
-            effectiveDepth,
-            qMaxDepth,
-            checkExtension
-        );
-
-        return result ? result.move : null;
+        return this.search.findBestMove(board, effectiveDepth, qMaxDepth, checkExtension, {
+            analysis: options.analysis ?? false,
+        });
     }
 
     /**

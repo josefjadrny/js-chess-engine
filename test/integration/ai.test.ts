@@ -527,6 +527,41 @@ describe('AI Engine', () => {
             expect(currentBoard.pieces).toEqual(initialBoard.pieces);
         });
 
+        it('should include scored root moves when analysis=true', () => {
+            const game = new Game();
+
+            const result = game.ai({ level: 2, play: false, analysis: true });
+
+            expect(result.move).toBeDefined();
+            expect(result.board).toBeDefined();
+            expect(result.analysis).toBeDefined();
+            expect(result.bestScore).toBeDefined();
+            expect(result.depth).toBeDefined();
+            expect(result.nodesSearched).toBeDefined();
+
+            expect(Array.isArray(result.analysis!)).toBe(true);
+            expect(result.analysis!.length).toBeGreaterThan(0);
+            expect(typeof result.bestScore).toBe('number');
+            expect(typeof result.depth).toBe('number');
+            expect(typeof result.nodesSearched).toBe('number');
+
+            // The played move should be present in the scored list.
+            const [[playedFrom, playedTo]] = Object.entries(result.move);
+            const played = `${playedFrom}-${playedTo}`;
+            const found = result.analysis!.some(sm => {
+                const [[from, to]] = Object.entries(sm.move);
+                return `${from}-${to}` === played;
+            });
+            expect(found).toBe(true);
+
+            // Default behavior: no analysis payload.
+            const resultNoAnalysis = game.ai({ level: 2, play: false });
+            expect((resultNoAnalysis as any).analysis).toBeUndefined();
+            expect((resultNoAnalysis as any).bestScore).toBeUndefined();
+            expect((resultNoAnalysis as any).depth).toBeUndefined();
+            expect((resultNoAnalysis as any).nodesSearched).toBeUndefined();
+        });
+
         it('should apply move by default when play option not specified', () => {
             const game = new Game();
 
@@ -548,6 +583,78 @@ describe('AI Engine', () => {
             // Board should be the same as input (before move)
             expect(result.board.turn).toBe('white');
             expect(result.board.fullMove).toBe(1);
+        });
+
+        it('should support analysis scores in stateless ai()', () => {
+            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+            const result = ai(fen, { play: false, analysis: true, level: 2 });
+
+            expect(result.analysis).toBeDefined();
+            expect(Array.isArray(result.analysis!)).toBe(true);
+            expect(result.analysis!.length).toBeGreaterThan(0);
+        });
+
+        it('should return consistent exact scored move values (deterministic)', () => {
+            // Deterministic scoring snapshot for a very small material position.
+            // White: Kf6, Qf7; Black: Kh8
+            const fen = '7k/5Q2/5K2/8/8/8/8/8 w - - 0 1';
+
+            const options = {
+                play: false,
+                analysis: true,
+                ttSizeMB: 0,
+                // Make depth deterministic and avoid adaptive extension.
+                depth: { base: 1, extended: 0, check: false, quiescence: 1 },
+                level: 1,
+            } as const;
+
+            const r1 = ai(fen, options);
+            const r2 = ai(fen, options);
+
+            expect(r1.analysis).toBeDefined();
+            expect(r2.analysis).toBeDefined();
+
+            const toMap = (scored: Array<{ move: any; score: number }>) => {
+                const m: Record<string, number> = {};
+                for (const sm of scored) {
+                    const [[from, to]] = Object.entries(sm.move);
+                    m[`${from}-${to}`] = sm.score;
+                }
+                return m;
+            };
+
+            const map1 = toMap(r1.analysis!);
+            const map2 = toMap(r2.analysis!);
+
+            // Exact numeric scores should be stable, but the ordering of equal-score moves
+            // is intentionally not enforced (debugging convenience).
+            expect(map2).toEqual(map1);
+
+            // Ensure scores are sorted descending (allowing equal scores).
+            const scores = r1.analysis!.map(sm => sm.score);
+            for (let i = 1; i < scores.length; i++) {
+                expect(scores[i]).toBeLessThanOrEqual(scores[i - 1]);
+            }
+
+            // High score and low score sanity (helps debugging without freezing exact values).
+            const high = scores[0];
+            const low = scores[scores.length - 1];
+            expect(r1.bestScore).toBe(high);
+            expect(high).toBeGreaterThan(low);
+            expect(high - low).toBeGreaterThanOrEqual(1);
+
+            // Best move should be one of the moves with the top score.
+            const [[bestFrom, bestTo]] = Object.entries(r1.move);
+            const bestStr = `${bestFrom}-${bestTo}`;
+            const topScore = high;
+            const isBestAmongTops = r1.analysis!
+                .filter(sm => sm.score === topScore)
+                .some(sm => {
+                    const [[from, to]] = Object.entries(sm.move);
+                    return `${from}-${to}` === bestStr;
+                });
+            expect(isBestAmongTops).toBe(true);
         });
 
         it('should return different board states for play true vs false', () => {

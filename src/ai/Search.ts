@@ -39,12 +39,20 @@ export class Search {
         this.killerMoves.clear();
     }
 
-        findBestMove(board: InternalBoard, baseDepth: number, qMaxDepth: number = 4, checkExtension: boolean = true): SearchResult | null {
+        findBestMove(
+            board: InternalBoard,
+            baseDepth: number,
+            qMaxDepth: number = 4,
+            checkExtension: boolean = true,
+            options: { analysis?: boolean } = {}
+        ): SearchResult | null {
             this.qMaxDepth = qMaxDepth;
             this.checkExtension = checkExtension;
             this.nodesSearched = 0;
             this.transpositionTable?.newSearch();
             this.killerMoves.clear();
+
+            const analysis = options.analysis ?? false;
 
             const moves = generateLegalMoves(board);
             if (moves.length === 0) {
@@ -55,12 +63,16 @@ export class Search {
 
             let bestMove: InternalMove | null = null;
             let bestScore: Score = SCORE_MIN;
+            let scoredMoves: Array<{ move: InternalMove; score: Score }> | undefined;
 
             // Iterative deepening: search depth 1..baseDepth.
             // Populates TT progressively for better move ordering at deeper levels.
             for (let d = 1; d <= baseDepth; d++) {
                 const pvMove = this.transpositionTable?.getBestMove(board.zobristHash) ?? null;
                 const selector = new MoveSelector(moves, pvMove, this.killerMoves, 0);
+
+                const collectScores = analysis && d === baseDepth;
+                const iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = collectScores ? [] : null;
 
                 let iterBestMove: InternalMove | null = null;
                 let iterBestScore: Score = SCORE_MIN;
@@ -81,6 +93,10 @@ export class Search {
                     const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
                     const score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
 
+                    if (iterScoredMoves) {
+                        iterScoredMoves.push({ move, score });
+                    }
+
                     if (score > iterBestScore || iterBestMove === null) {
                         iterBestScore = score;
                         iterBestMove = move;
@@ -94,10 +110,15 @@ export class Search {
                     bestMove = iterBestMove;
                     bestScore = iterBestScore;
                 }
+
+                if (iterScoredMoves) {
+                    iterScoredMoves.sort((a, b) => b.score - a.score);
+                    scoredMoves = iterScoredMoves;
+                }
             }
 
             return bestMove
-                ? { move: bestMove, score: bestScore, depth: baseDepth, nodesSearched: this.nodesSearched }
+                ? { move: bestMove, score: bestScore, depth: baseDepth, nodesSearched: this.nodesSearched, scoredMoves }
                 : null;
         }
 
