@@ -62,7 +62,7 @@ Search (Alpha-Beta + Optimizations)
 ### Data Flow
 
 1. **API Call**: User calls `game.ai()` or `game.aiMove()`
-2. **Configuration**: AIEngine maps level (1-5) to base depth + max adaptive extension
+2. **Configuration**: AIEngine maps level (1-5) to base depth + max adaptive extension + quiescence depth
 3. **Search**: Iterative deepening progressively searches deeper
 4. **Ordering**: Moves ordered by PV → Captures → Killers → Quiet
 5. **Evaluation**: Positions scored by material + piece-square tables
@@ -118,7 +118,7 @@ function alphaBeta(board, depth, alpha, beta, maximizing):
 **Quiescence Search:**
 - Continue searching forcing moves (captures/promotions) at leaf nodes
 - Prevents missing tactical sequences at search boundary
-- Controlled by a small fixed maximum `qMaxDepth` inside `Search`
+- `qMaxDepth` scales by AI level: 1 (levels 1-2), 2 (level 3), 3 (level 4), 4 (level 5)
 
 **Implementation Detail (current):**
 ```typescript

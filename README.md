@@ -543,11 +543,11 @@ The engine includes a sophisticated AI based on the Minimax algorithm with alpha
 
 | Level | Alias             | Description                          | Base Depth | Extended Depth | Check Ext. | Quiescence | Total Max |
 | :---: | :---------------- | :----------------------------------- | :--------: | :------------: | :--------: | :--------: | :-------: |
-|   1   | Beginner          | Very weak play, minimal lookahead    | 1 ply      | +1 ply         | +1 ply     | +4 ply     | 7 ply     |
-|   2   | Easy              | Suitable for new chess players       | 2 ply      | +1 ply         | +1 ply     | +4 ply     | 8 ply     |
-|   3   | Intermediate      | Balanced difficulty (default)        | 3 ply      | +2 ply         | +1 ply     | +4 ply     | 10 ply    |
-|   4   | Advanced          | Strong play with deeper search       | 3 ply      | +3 ply         | +1 ply     | +4 ply     | 11 ply    |
-|   5   | Expert            | Very strong play, deep search        | 4 ply      | +2 ply         | +1 ply     | +4 ply     | 11 ply    |
+|   1   | Beginner          | Very weak play, minimal lookahead    | 1 ply      | +1 ply         | +1 ply     | +1 ply     | 4 ply     |
+|   2   | Easy              | Suitable for new chess players       | 2 ply      | +1 ply         | +1 ply     | +1 ply     | 5 ply     |
+|   3   | Intermediate      | Balanced difficulty (default)        | 3 ply      | +2 ply         | +1 ply     | +2 ply     | 8 ply     |
+|   4   | Advanced          | Strong play with deeper search       | 3 ply      | +3 ply         | +1 ply     | +3 ply     | 10 ply    |
+|   5   | Expert            | Very strong play, deep search        | 4 ply      | +3 ply         | +1 ply     | +4 ply     | 12 ply    |
 
 **Depth Components:**
 - **Base Depth**: Minimum search depth for the AI level

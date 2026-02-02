@@ -23,9 +23,7 @@ const INF: Score = SCORE_MAX;
 export class Search {
     private nodesSearched = 0;
 
-    // Quiescence is extremely important for tactical stability, but must stay cheap.
-    // Small depth is enough to prevent the worst horizon blunders.
-    private readonly qMaxDepth = 4;
+    private qMaxDepth = 4;
 
     private transpositionTable: TranspositionTable | null;
     private killerMoves: KillerMoves;
@@ -40,7 +38,8 @@ export class Search {
         this.killerMoves.clear();
     }
 
-        findBestMove(board: InternalBoard, baseDepth: number): SearchResult | null {
+        findBestMove(board: InternalBoard, baseDepth: number, qMaxDepth: number = 4): SearchResult | null {
+            this.qMaxDepth = qMaxDepth;
             this.nodesSearched = 0;
             this.transpositionTable?.newSearch();
             this.killerMoves.clear();
