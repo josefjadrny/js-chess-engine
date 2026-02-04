@@ -1,3 +1,12 @@
+## [2.3.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.1...v2.3.2) (2026-02-04)
+
+
+### Bug Fixes
+
+* Lower levels AI eased and memory consumption lowered based on tests ([d671c17](https://github.com/josefjadrny/js-chess-engine/commit/d671c17ab95d23a953b6c3bbb9a560edb75fd725))
+
+
+
 ## [2.3.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.0...v2.3.1) (2026-02-04)
 
 
