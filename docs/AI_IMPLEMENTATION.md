@@ -430,11 +430,11 @@ function evaluate(board, playerColor, depth = 0):
 **Benefit:** More cutoffs in stable positions
 **Future Enhancement:** Use previous iteration's score ± margin
 
-### Principal Variation Search (Not Implemented)
+### Principal Variation Search (Implemented)
 
-**Concept:** Search first move with full window, rest with null window
-**Benefit:** Faster search if first move is best
-**Future Enhancement:** After iterative deepening orders moves
+**Concept:** Search first move with full window, rest with null window (zero-window)
+**Benefit:** Faster search if the first move is best (good move ordering)
+**Implementation:** Implemented in `src/ai/Search.ts` in the `negamax()` inner loop (and at root when not collecting per-move analysis scores)
 
 ### Null Move Pruning (Not Implemented)
 
@@ -606,10 +606,9 @@ This allows deeper searches in endgames (where search is fast) while keeping ope
 
 ### Medium Priority
 
-4. **Principal Variation Search (PVS)**
-   - Search PV with full window, rest with null window
-   - Location: `Search.ts` enhancement
-   - Benefit: 10-20% speedup
+4. **Principal Variation Search (PVS)** — Implemented
+    - Search PV with full window, rest with null window
+    - Location: `src/ai/Search.ts`
 
 5. **Null Move Pruning**
    - Skip move and verify position still good

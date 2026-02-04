@@ -609,10 +609,10 @@ game.aiMove(5)  // Expert
 
 **Implementation Highlights:**
 - Alpha-beta pruning with transposition table (auto-scales by AI level for optimal memory usage)
+- Principal Variation Search (PVS) for faster node pruning
 - Advanced move ordering (PV moves, MVV-LVA captures, killer moves)
 - Iterative deepening for optimal move ordering
 - Position evaluation with material balance and piece-square tables
-- 65% performance improvement over baseline implementation
 - Smart environment detection and level-based memory scaling for optimal performance across platforms
 
 #### Auto-Scaling Transposition Table (Smart Memory Management) {#transposition-table}

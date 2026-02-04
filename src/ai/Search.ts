@@ -39,97 +39,111 @@ export class Search {
         this.killerMoves.clear();
     }
 
-        findBestMove(
-            board: InternalBoard,
-            baseDepth: number,
-            qMaxDepth: number = 4,
-            checkExtension: boolean = true,
-            options: { analysis?: boolean } = {}
-        ): SearchResult | null {
-            this.qMaxDepth = qMaxDepth;
-            this.checkExtension = checkExtension;
-            this.nodesSearched = 0;
-            this.transpositionTable?.newSearch();
-            this.killerMoves.clear();
+    findBestMove(
+        board: InternalBoard,
+        baseDepth: number,
+        qMaxDepth: number = 4,
+        checkExtension: boolean = true,
+        options: { analysis?: boolean } = {}
+    ): SearchResult | null {
+        this.qMaxDepth = qMaxDepth;
+        this.checkExtension = checkExtension;
+        this.nodesSearched = 0;
+        this.transpositionTable?.newSearch();
+        this.killerMoves.clear();
 
-            const analysis = options.analysis ?? false;
+        const analysis = options.analysis ?? false;
 
-            const moves = generateLegalMoves(board);
-            if (moves.length === 0) {
-                const inCheck = isKingInCheck(board);
-                const score = inCheck ? (SCORE_MIN + 0) : 0;
-                return { move: null as any, score, depth: 0, nodesSearched: this.nodesSearched };
-            }
-
-            let bestMove: InternalMove | null = null;
-            let bestScore: Score = SCORE_MIN;
-            let scoredMoves: Array<{ move: InternalMove; score: Score }> | undefined;
-
-            // Iterative deepening: search depth 1..baseDepth.
-            // Populates TT progressively for better move ordering at deeper levels.
-            for (let d = 1; d <= baseDepth; d++) {
-                const pvMove = this.transpositionTable?.getBestMove(board.zobristHash) ?? null;
-                const selector = new MoveSelector(moves, pvMove, this.killerMoves, 0);
-
-                const collectScores = analysis && d === baseDepth;
-                const iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = collectScores ? [] : null;
-
-                let iterBestMove: InternalMove | null = null;
-                let iterBestScore: Score = SCORE_MIN;
-                let alpha: Score = SCORE_MIN;
-                const beta: Score = SCORE_MAX;
-                let move: InternalMove | null;
-                while ((move = selector.pickNext()) !== null) {
-                    if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
-                        const isQueenPromotion =
-                            move.promotionPiece === Piece.WHITE_QUEEN ||
-                            move.promotionPiece === Piece.BLACK_QUEEN;
-                        if (!isQueenPromotion) continue;
-                    }
-
-                    const child = copyBoard(board);
-                    applyMoveComplete(child, move);
-
-                    const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
-                    const score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
-
-                    if (iterScoredMoves) {
-                        iterScoredMoves.push({ move, score });
-                    }
-
-                    if (score > iterBestScore || iterBestMove === null) {
-                        iterBestScore = score;
-                        iterBestMove = move;
-                    }
-
-                    if (score > alpha) alpha = score;
-                    if (alpha >= beta) break;
-                }
-
-                if (iterBestMove) {
-                    bestMove = iterBestMove;
-                    bestScore = iterBestScore;
-                }
-
-                if (iterScoredMoves) {
-                    iterScoredMoves.sort((a, b) => b.score - a.score);
-                    scoredMoves = iterScoredMoves;
-                }
-            }
-
-            return bestMove
-                ? { move: bestMove, score: bestScore, depth: baseDepth, nodesSearched: this.nodesSearched, scoredMoves }
-                : null;
+        const moves = generateLegalMoves(board);
+        if (moves.length === 0) {
+            const inCheck = isKingInCheck(board);
+            const score = inCheck ? (SCORE_MIN + 0) : 0;
+            return { move: null as any, score, depth: 0, nodesSearched: this.nodesSearched };
         }
 
-        private negamax(
-            board: InternalBoard,
-            depth: number,
-            alpha: Score,
-            beta: Score,
-            ply: number
-        ): Score {
-            this.nodesSearched++;
+        let bestMove: InternalMove | null = null;
+        let bestScore: Score = SCORE_MIN;
+        let scoredMoves: Array<{ move: InternalMove; score: Score }> | undefined;
+
+        // Iterative deepening: search depth 1..baseDepth.
+        // Populates TT progressively for better move ordering at deeper levels.
+        for (let d = 1; d <= baseDepth; d++) {
+            const pvMove = this.transpositionTable?.getBestMove(board.zobristHash) ?? null;
+            const selector = new MoveSelector(moves, pvMove, this.killerMoves, 0);
+
+            const collectScores = analysis && d === baseDepth;
+            const iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = collectScores ? [] : null;
+
+            let iterBestMove: InternalMove | null = null;
+            let iterBestScore: Score = SCORE_MIN;
+            let alpha: Score = SCORE_MIN;
+            const beta: Score = SCORE_MAX;
+            let move: InternalMove | null;
+            let moveIndex = 0;
+            while ((move = selector.pickNext()) !== null) {
+                if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
+                    const isQueenPromotion =
+                        move.promotionPiece === Piece.WHITE_QUEEN ||
+                        move.promotionPiece === Piece.BLACK_QUEEN;
+                    if (!isQueenPromotion) continue;
+                }
+
+                const child = copyBoard(board);
+                applyMoveComplete(child, move);
+
+                const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
+
+                let score: Score;
+                // Use PVS at root (but not when collecting analysis scores - need accurate values)
+                if (moveIndex === 0 || collectScores) {
+                    score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
+                } else {
+                    // PVS: zero window search first
+                    score = -this.negamax(child, d - 1 + extension, -alpha - 1, -alpha, 1);
+                    // Re-search with full window if it beats alpha
+                    if (score > alpha && score < beta) {
+                        score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
+                    }
+                }
+                moveIndex++;
+
+                if (iterScoredMoves) {
+                    iterScoredMoves.push({ move, score });
+                }
+
+                if (score > iterBestScore || iterBestMove === null) {
+                    iterBestScore = score;
+                    iterBestMove = move;
+                }
+
+                if (score > alpha) alpha = score;
+                if (alpha >= beta) break;
+            }
+
+            if (iterBestMove) {
+                bestMove = iterBestMove;
+                bestScore = iterBestScore;
+            }
+
+            if (iterScoredMoves) {
+                iterScoredMoves.sort((a, b) => b.score - a.score);
+                scoredMoves = iterScoredMoves;
+            }
+        }
+
+        return bestMove
+            ? { move: bestMove, score: bestScore, depth: baseDepth, nodesSearched: this.nodesSearched, scoredMoves }
+            : null;
+    }
+
+    private negamax(
+        board: InternalBoard,
+        depth: number,
+        alpha: Score,
+        beta: Score,
+        ply: number
+    ): Score {
+        this.nodesSearched++;
 
             if (depth <= 0) {
                 return this.quiescence(board, alpha, beta, ply, 0);
@@ -175,7 +189,19 @@ export class Search {
 
                 legalMoveCount++;
                 const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
-                const score = -this.negamax(child, depth - 1 + extension, -beta, -alpha, ply + 1);
+
+                let score: Score;
+                if (legalMoveCount === 1) {
+                    // First move (PV move): search with full window
+                    score = -this.negamax(child, depth - 1 + extension, -beta, -alpha, ply + 1);
+                } else {
+                    // PVS: search with zero window first
+                    score = -this.negamax(child, depth - 1 + extension, -alpha - 1, -alpha, ply + 1);
+                    // Re-search with full window if it beats alpha
+                    if (score > alpha && score < beta) {
+                        score = -this.negamax(child, depth - 1 + extension, -beta, -alpha, ply + 1);
+                    }
+                }
 
                 if (score > bestScore || bestMove === null) {
                     bestScore = score;
@@ -207,14 +233,14 @@ export class Search {
             return bestScore;
         }
 
-        private quiescence(
-            board: InternalBoard,
-            alpha: Score,
-            beta: Score,
-            ply: number,
-            qDepth: number
-        ): Score {
-            this.nodesSearched++;
+    private quiescence(
+        board: InternalBoard,
+        alpha: Score,
+        beta: Score,
+        ply: number,
+        qDepth: number
+    ): Score {
+        this.nodesSearched++;
 
             // Stand-pat: evaluate before expensive move generation.
             const standPat = Evaluator.evaluate(board, board.turn, ply);
@@ -294,19 +320,19 @@ export class Search {
             return bestScore;
         }
 
-        /**
-         * Check if a move was illegal (left own king in check) after applyMoveComplete.
-         * After applyMoveComplete, board.turn has switched, so the "previous" side
-         * is the opponent of board.turn.
-         */
-        private isIllegalMove(child: InternalBoard): boolean {
-            const prevColor = child.turn === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
-            const prevKingBB = prevColor === InternalColor.WHITE ? child.whiteKing : child.blackKing;
-            if (prevKingBB === 0n) return false;
-            const prevKingSq = getLowestSetBit(prevKingBB);
-            return isSquareAttacked(child, prevKingSq, child.turn);
-        }
+    /**
+     * Check if a move was illegal (left own king in check) after applyMoveComplete.
+     * After applyMoveComplete, board.turn has switched, so the "previous" side
+     * is the opponent of board.turn.
+     */
+    private isIllegalMove(child: InternalBoard): boolean {
+        const prevColor = child.turn === InternalColor.WHITE ? InternalColor.BLACK : InternalColor.WHITE;
+        const prevKingBB = prevColor === InternalColor.WHITE ? child.whiteKing : child.blackKing;
+        if (prevKingBB === 0n) return false;
+        const prevKingSq = getLowestSetBit(prevKingBB);
+        return isSquareAttacked(child, prevKingSq, child.turn);
+    }
 
-        // NOTE: Board cloning must preserve bitboards/mailbox/game flags.
-        // Use the engine's canonical copier to avoid subtle corruption.
+    // NOTE: Board cloning must preserve bitboards/mailbox/game flags.
+    // Use the engine's canonical copier to avoid subtle corruption.
 }

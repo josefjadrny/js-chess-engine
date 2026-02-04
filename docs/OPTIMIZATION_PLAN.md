@@ -125,10 +125,12 @@ These produce mathematically identical results — same moves, same scores. Impl
 
 Replaced `orderMoves()` with `MoveSelector` class using pick-best-on-demand via selection sort. Scores into parallel `Int32Array`, swaps best to front on each `pickNext()` call. Measured ~5% speedup — less than estimated because sorting was a small fraction of per-node cost.
 
-### A2. Principal Variation Search (PVS) (~10-20% speedup)
+### A2. ~~Principal Variation Search (PVS) (~10-20% speedup)~~ — DONE (~24% speedup)
 **File:** `src/ai/Search.ts` — negamax inner loop
 
 After the first (PV) move, search remaining moves with zero-window `(-alpha-1, -alpha)`. Re-search with full window only if it beats alpha. Mathematically equivalent — just proves non-PV moves inferior more cheaply.
+
+**Result:** Implemented in `negamax()` inner loop. Tactical test suite improved from 83s to 63s (~24% speedup). No re-search overhead issues — move ordering (TT + killers) is good enough that most zero-window searches don't need re-search.
 
 ### A3. Quiescence Cleanup (~5% speedup)
 **File:** `src/ai/Search.ts` — `quiescence()` method
