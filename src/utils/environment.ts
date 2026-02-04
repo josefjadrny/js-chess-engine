@@ -29,11 +29,11 @@ export function isBrowserEnvironment(): boolean {
 /**
  * Get default transposition table size based on environment
  *
- * Node.js: 8 MB (ample memory available)
- * Browser: 4 MB (more conservative for web/mobile)
+ * Node.js: 2 MB (level 3 default)
+ * Browser: 1 MB (level 3 default)
  *
  * @returns Recommended TT size in MB
  */
 export function getDefaultTTSize(): number {
-    return isNodeEnvironment() ? 8 : 4;
+    return isNodeEnvironment() ? 2 : 1;
 }

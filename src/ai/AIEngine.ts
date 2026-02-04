@@ -28,11 +28,13 @@ interface LevelConfig {
 const LEVEL_CONFIG: Record<AILevel, LevelConfig> = {
     // NOTE: Depth is the single biggest speed lever.
     // These values are intentionally conservative for browser-friendliness.
-    1: { baseDepth: 1, extendedDepth: 1, checkExtension: true, qMaxDepth: 1 },   // Beginner
-    2: { baseDepth: 2, extendedDepth: 1, checkExtension: true, qMaxDepth: 1 },   // Easy
-    3: { baseDepth: 3, extendedDepth: 2, checkExtension: true, qMaxDepth: 2 },   // Intermediate (default)
-    4: { baseDepth: 3, extendedDepth: 3, checkExtension: true, qMaxDepth: 3 },   // Advanced
-    5: { baseDepth: 4, extendedDepth: 3, checkExtension: true, qMaxDepth: 4 },   // Expert
+    // Tuning note (2026-02): lower levels intentionally omit tactical extensions
+    // (check extensions + deep quiescence) so they're easier to beat.
+    1: { baseDepth: 1, extendedDepth: 0, checkExtension: false, qMaxDepth: 0 },  // Beginner
+    2: { baseDepth: 2, extendedDepth: 0, checkExtension: true, qMaxDepth: 0 },  // Easy
+    3: { baseDepth: 2, extendedDepth: 1, checkExtension: true, qMaxDepth: 1 },  // Intermediate (default)
+    4: { baseDepth: 3, extendedDepth: 2, checkExtension: true, qMaxDepth: 2 },  // Advanced
+    5: { baseDepth: 4, extendedDepth: 3, checkExtension: true, qMaxDepth: 4 },  // Expert (unchanged)
 };
 
 /**

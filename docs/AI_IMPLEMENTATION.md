@@ -118,7 +118,7 @@ function alphaBeta(board, depth, alpha, beta, maximizing):
 **Quiescence Search:**
 - Continue searching forcing moves (captures/promotions) at leaf nodes
 - Prevents missing tactical sequences at search boundary
-- `qMaxDepth` scales by AI level: 1 (levels 1-2), 2 (level 3), 3 (level 4), 4 (level 5)
+- `qMaxDepth` scales by AI level (defaults): 0 (levels 1-2), 1 (level 3), 2 (level 4), 4 (level 5)
 
 **Implementation Detail (current):**
 ```typescript
@@ -156,16 +156,16 @@ interface TTEntry {
 **Configuration:**
 
 The transposition table size is **auto-configured** based on the runtime environment:
-- **Node.js**: 8 MB (default for level 3) - ample memory available
-- **Browser**: 4 MB (default for level 3) - mobile-friendly
+- **Node.js**: 2 MB (default for level 3) - ample memory available
+- **Browser**: 1 MB (default for level 3) - mobile-friendly
 
 You can override the default through AI options:
 
 ```typescript
 // Use auto-detected default (recommended)
 game.ai({ level: 3 });
-// → Node.js: 8 MB cache
-// → Browser: 4 MB cache
+// → Node.js: 2 MB cache
+// → Browser: 1 MB cache
 
 // Override for specific requirements
 game.ai({ level: 4, ttSizeMB: 64 });     // High-performance: 64MB
@@ -187,7 +187,7 @@ The engine automatically detects the runtime environment using:
 - See `src/utils/environment.ts` for implementation
 
 **Key Features:**
-- **Size**: Configurable 0-256 MB (0 to disable, 0.25-256 MB range, default: auto-detected - 8 MB in Node.js ~200,000 entries, 4 MB in browser ~100,000 entries)
+- **Size**: Configurable 0-256 MB (0 to disable, 0.25-256 MB range, default: auto-detected - 2 MB in Node.js ~50,000 entries, 1 MB in browser ~25,000 entries)
 - **Hash Function**: Zobrist hashing (see below)
 - **Replacement Strategy**: Always replace if:
   - Slot is empty
@@ -530,11 +530,11 @@ enum MoveFlag {
 
 ```typescript
 const LEVEL_CONFIG: Record<AILevel, LevelConfig> = {
-    1: { baseDepth: 1, extendedDepth: 1 },  // Beginner
-    2: { baseDepth: 2, extendedDepth: 1 },  // Easy
-    3: { baseDepth: 3, extendedDepth: 2 },  // Intermediate (default)
-    4: { baseDepth: 3, extendedDepth: 3 },  // Advanced
-    5: { baseDepth: 4, extendedDepth: 2 },  // Expert
+    1: { baseDepth: 1, extendedDepth: 0, checkExtension: false, qMaxDepth: 0 },  // Beginner
+    2: { baseDepth: 2, extendedDepth: 0, checkExtension: true, qMaxDepth: 0 },   // Easy
+    3: { baseDepth: 2, extendedDepth: 1, checkExtension: true, qMaxDepth: 1 },   // Intermediate (default)
+    4: { baseDepth: 3, extendedDepth: 2, checkExtension: true, qMaxDepth: 2 },   // Advanced
+    5: { baseDepth: 4, extendedDepth: 3, checkExtension: true, qMaxDepth: 4 },   // Expert
 };
 ```
 

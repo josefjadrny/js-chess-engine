@@ -23,23 +23,23 @@ export function getRecommendedTTSize(level: number): number {
     if (isNodeEnvironment()) {
         // Node.js - more generous memory allocation
         const nodeSizes: Record<number, number> = {
-            1: 1,   // Level 1: 1 MB
-            2: 2,   // Level 2: 2 MB
-            3: 8,   // Level 3: 8 MB (default)
-            4: 16,  // Level 4: 16 MB
-            5: 32,  // Level 5: 32 MB
+            1: 0.5, // Level 1: 0.5 MB
+            2: 1,   // Level 2: 1 MB
+            3: 2,   // Level 3: 2 MB (default)
+            4: 8,   // Level 4: 8 MB
+            5: 16,  // Level 5: 16 MB
         };
-        return nodeSizes[level] ?? 8;
+        return nodeSizes[level] ?? 2;
     } else {
         // Browser - modern-device-friendly allocation (reasonable for 2024+ devices)
         const browserSizes: Record<number, number> = {
-            1: 0.5,  // Level 1: 0.5 MB (lightweight, older devices)
-            2: 1,    // Level 2: 1 MB (mobile-friendly)
-            3: 4,    // Level 3: 4 MB (balanced default - appropriate for modern browsers)
-            4: 8,    // Level 4: 8 MB (strong performance)
-            5: 16,   // Level 5: 16 MB (very strong play)
+            1: 0.25, // Level 1: 0.25 MB (ultra-lightweight)
+            2: 0.5,  // Level 2: 0.5 MB (mobile-friendly)
+            3: 1,    // Level 3: 1 MB (balanced default)
+            4: 4,    // Level 4: 4 MB (strong performance)
+            5: 8,    // Level 5: 8 MB (very strong play)
         };
-        return browserSizes[level] ?? 4;
+        return browserSizes[level] ?? 1;
     }
 }
 

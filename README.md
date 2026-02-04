@@ -240,7 +240,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = game.ai({ level: 5 })
-console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
+console.log(result4.move) // Level 5: 16 MB Node.js / 8 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = game.ai({ level: 3, ttSizeMB: 128 })
@@ -478,7 +478,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = ai(fen, { level: 5 })
-console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
+console.log(result4.move) // Level 5: 16 MB Node.js / 8 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = ai(fen, { level: 3, ttSizeMB: 128 })
@@ -578,10 +578,10 @@ The engine includes a sophisticated AI based on the Minimax algorithm with alpha
 
 | Level | Alias             | Description                          | Base Depth | Extended Depth | Check Ext. | Quiescence | Total Max |
 | :---: | :---------------- | :----------------------------------- | :--------: | :------------: | :--------: | :--------: | :-------: |
-|   1   | Beginner          | Very weak play, minimal lookahead    | 1 ply      | +1 ply         | +1 ply     | +1 ply     | 4 ply     |
-|   2   | Easy              | Suitable for new chess players       | 2 ply      | +1 ply         | +1 ply     | +1 ply     | 5 ply     |
-|   3   | Intermediate      | Balanced difficulty (default)        | 3 ply      | +2 ply         | +1 ply     | +2 ply     | 8 ply     |
-|   4   | Advanced          | Strong play with deeper search       | 3 ply      | +3 ply         | +1 ply     | +3 ply     | 10 ply    |
+|   1   | Beginner          | Very weak play, minimal lookahead    | 1 ply      | +0 ply         | +0 ply     | +0 ply     | 1 ply     |
+|   2   | Easy              | Suitable for new chess players       | 2 ply      | +0 ply         | +1 ply     | +0 ply     | 3 ply     |
+|   3   | Intermediate      | Balanced difficulty (default)        | 2 ply      | +1 ply         | +1 ply     | +1 ply     | 5 ply     |
+|   4   | Advanced          | Strong play with deeper search       | 3 ply      | +2 ply         | +1 ply     | +2 ply     | 8 ply     |
 |   5   | Expert            | Very strong play, deep search        | 4 ply      | +3 ply         | +1 ply     | +4 ply     | 12 ply    |
 
 **Depth Components:**
@@ -621,11 +621,11 @@ The engine automatically adjusts cache size based on AI level and environment:
 
 | AI Level | Node.js Cache | Browser Cache | Use Case                     |
 | :------: | :-----------: | :-----------: | :--------------------------- |
-|    1     |     1 MB      |    0.5 MB     | Lightweight, fast responses  |
-|    2     |     2 MB      |     1 MB      | Mobile-friendly performance  |
-|    3     |     8 MB      |     4 MB      | Balanced (default)           |
-|    4     |    16 MB      |     8 MB      | Strong tactical play         |
-|    5     |    32 MB      |    16 MB      | Very strong play             |
+|    1     |    0.5 MB     |   0.25 MB     | Lightweight, fast responses  |
+|    2     |     1 MB      |    0.5 MB     | Mobile-friendly performance  |
+|    3     |     2 MB      |     1 MB      | Balanced (default)           |
+|    4     |     8 MB      |     4 MB      | Strong tactical play         |
+|    5     |    16 MB      |     8 MB      | Very strong play             |
 
 Lower levels use less memory for faster responses, higher levels use more for better move quality. Browser cache sizes are appropriate for modern devices (2024+). Override with `ttSizeMB` option if needed.
 
