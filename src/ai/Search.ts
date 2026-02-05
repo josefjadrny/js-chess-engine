@@ -242,83 +242,60 @@ export class Search {
     ): Score {
         this.nodesSearched++;
 
-            // Stand-pat: evaluate before expensive move generation.
-            const standPat = Evaluator.evaluate(board, board.turn, ply);
-            if (standPat >= beta) return standPat;
-            if (standPat > alpha) alpha = standPat;
+        // Stand-pat: evaluate before move generation
+        const standPat = Evaluator.evaluate(board, board.turn, ply);
+        if (standPat >= beta) return standPat;
+        if (standPat > alpha) alpha = standPat;
+        if (qDepth >= this.qMaxDepth) return standPat;
 
-            if (qDepth >= this.qMaxDepth) return standPat;
+        // Generate pseudo-legal moves, filter to forcing (captures + promotions)
+        const allMoves = generatePseudoLegalMoves(board);
+        const forcing = allMoves.filter(m => (m.flags & MoveFlag.CAPTURE) || (m.flags & MoveFlag.PROMOTION));
 
-            // Generate pseudo-legal moves, filter to forcing (captures + promotions).
-            const allMoves = generatePseudoLegalMoves(board);
-            const forcing = allMoves.filter(m => (m.flags & MoveFlag.CAPTURE) || (m.flags & MoveFlag.PROMOTION));
+        const tt = this.transpositionTable;
+        const ttMove = tt ? tt.getBestMove(board.zobristHash) : null;
+        const selector = new MoveSelector(forcing, ttMove, this.killerMoves, ply);
 
-            if (forcing.length === 0) {
-                // No forcing moves. Check if there are ANY legal moves (for mate/stalemate).
-                // We can cheaply check: if in check and no forcing moves, we need to check
-                // if any quiet move is legal. But that's expensive. Instead, if in check,
-                // generate all moves and check legality.
-                if (isKingInCheck(board)) {
-                    // Must check if any move is legal (could be checkmate)
-                    let hasLegal = false;
-                    for (const move of allMoves) {
-                        const child = copyBoard(board);
-                        applyMoveComplete(child, move);
-                        if (!this.isIllegalMove(child)) { hasLegal = true; break; }
-                    }
-                    if (!hasLegal) return SCORE_MIN + ply;
-                }
-                return standPat;
+        let bestScore = standPat;
+        let legalForcingFound = false;
+        let move: InternalMove | null;
+
+        while ((move = selector.pickNext()) !== null) {
+            if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
+                const isQueenPromotion =
+                    move.promotionPiece === Piece.WHITE_QUEEN ||
+                    move.promotionPiece === Piece.BLACK_QUEEN;
+                if (!isQueenPromotion) continue;
             }
 
-            const tt = this.transpositionTable;
-            const ttMove = tt ? tt.getBestMove(board.zobristHash) : null;
-            const selector = new MoveSelector(forcing, ttMove, this.killerMoves, ply);
+            const child = copyBoard(board);
+            applyMoveComplete(child, move);
 
-            let bestScore = standPat;
-            let anyLegalForcing = false;
-            let move: InternalMove | null;
+            // Skip illegal moves
+            if (this.isIllegalMove(child)) continue;
 
-            while ((move = selector.pickNext()) !== null) {
-                if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
-                    const isQueenPromotion =
-                        move.promotionPiece === Piece.WHITE_QUEEN ||
-                        move.promotionPiece === Piece.BLACK_QUEEN;
-                    if (!isQueenPromotion) continue;
-                }
+            legalForcingFound = true;
+            const score = -this.quiescence(child, -beta, -alpha, ply + 1, qDepth + 1);
 
-                const child = copyBoard(board);
-                applyMoveComplete(child, move);
-
-                // Skip illegal moves
-                if (this.isIllegalMove(child)) continue;
-
-                anyLegalForcing = true;
-                const score = -this.quiescence(child, -beta, -alpha, ply + 1, qDepth + 1);
-                if (score > bestScore) {
-                    bestScore = score;
-                }
-                if (score >= beta) {
-                    return bestScore;
-                }
-                if (score > alpha) alpha = score;
-            }
-
-            // If in check and no legal forcing move was found, check for mate
-            if (!anyLegalForcing && isKingInCheck(board)) {
-                // Check if any non-forcing move is legal
-                const quiet = allMoves.filter(m => !((m.flags & MoveFlag.CAPTURE) || (m.flags & MoveFlag.PROMOTION)));
-                let hasLegal = false;
-                for (const move of quiet) {
-                    const child = copyBoard(board);
-                    applyMoveComplete(child, move);
-                    if (!this.isIllegalMove(child)) { hasLegal = true; break; }
-                }
-                if (!hasLegal) return SCORE_MIN + ply;
-            }
-
-            return bestScore;
+            if (score > bestScore) bestScore = score;
+            if (score >= beta) return score;
+            if (score > alpha) alpha = score;
         }
+
+        // Mate detection: if in check and no legal forcing move, check for any legal escape
+        if (!legalForcingFound && isKingInCheck(board)) {
+            for (const m of allMoves) {
+                // Skip forcing moves (already checked above)
+                if ((m.flags & MoveFlag.CAPTURE) || (m.flags & MoveFlag.PROMOTION)) continue;
+                const child = copyBoard(board);
+                applyMoveComplete(child, m);
+                if (!this.isIllegalMove(child)) return standPat; // Has legal quiet escape
+            }
+            return SCORE_MIN + ply; // Checkmate
+        }
+
+        return bestScore;
+    }
 
     /**
      * Check if a move was illegal (left own king in check) after applyMoveComplete.

@@ -132,10 +132,12 @@ After the first (PV) move, search remaining moves with zero-window `(-alpha-1, -
 
 **Result:** Implemented in `negamax()` inner loop. Tactical test suite improved from 83s to 63s (~24% speedup). No re-search overhead issues — move ordering (TT + killers) is good enough that most zero-window searches don't need re-search.
 
-### A3. Quiescence Cleanup (~5% speedup)
+### A3. ~~Quiescence Cleanup (~5% speedup)~~ — DONE (no measurable gain)
 **File:** `src/ai/Search.ts` — `quiescence()` method
 
-When in check during quiescence, search ALL moves (not just captures). Eliminates double move generation and redundant mate-check fallback code. Same positions searched, just restructured.
+Consolidated the two redundant mate-check fallback blocks into a single cleaner block at the end of `quiescence()`. The original had separate checks for (1) `forcing.length === 0 && inCheck` and (2) `!anyLegalForcing && inCheck` — now unified into one `!legalForcingFound && isKingInCheck(board)` block.
+
+**Result:** Code is cleaner but no measurable speedup. The mate-check fallback code runs rarely (only when in check AND no legal forcing moves exist), so optimizing it doesn't affect total runtime. The original plan's suggestion to "search ALL moves when in check" was tested but caused ~36% slowdown due to recursive searching of quiet escape moves — reverted to match original behavior (only legality-check quiet moves, don't recursively search them).
 
 ### A4. Aspiration Windows (~5-10% speedup)
 **File:** `src/ai/Search.ts` — iterative deepening loop

@@ -880,6 +880,69 @@ describe('AI Engine', () => {
         });
     });
 
+    describe('Quiescence search check handling', () => {
+        it('should find quiet escape when in check with no captures', () => {
+            // Black king on g8, White rook on a8 giving check
+            // Black can only escape with Kf7 or Kg7 (quiet moves, no captures)
+            // This exercises the quiescence mate-check fallback for non-mate
+            const fen = 'R5k1/8/8/8/8/8/8/K7 b - - 0 1';
+            const game = new Game(fen);
+
+            // Use low depth so we enter quiescence immediately
+            const result = game.ai({ level: 1, depth: { base: 1, quiescence: 2 } });
+
+            // Should NOT be checkmate - black can escape with Kf7 or Kg7
+            expect(result.board.checkMate).toBe(false);
+            expect(result.move).toBeDefined();
+
+            // The move should be a king escape
+            const [from, to] = Object.entries(result.move)[0];
+            expect(from).toBe('G8');
+            expect(['F7', 'G7', 'H7']).toContain(to);
+        });
+
+        it('should detect checkmate in quiescence when no escape exists', () => {
+            // Back rank mate: Black king on g8, pawns on f7/g7/h7, White rook on a8
+            // No captures available, no quiet escapes - it's checkmate
+            const fen = 'R5k1/5ppp/8/8/8/8/8/K7 b - - 0 1';
+
+            // This position is already checkmate, so AI should throw
+            const game = new Game(fen);
+            expect(() => game.ai({ level: 1 })).toThrow('Game is already finished');
+        });
+
+        it('should prefer capturing escape over quiet escape in quiescence', () => {
+            // Black king on g8, White rook on a8 giving check, White pawn on f7
+            // Black can capture Kxf7 or escape quietly with Kg7/Kh7
+            // Capturing should be preferred (wins material)
+            const fen = 'R5k1/5P2/8/8/8/8/8/K7 b - - 0 1';
+            const game = new Game(fen);
+
+            const result = game.ai({ level: 1, depth: { base: 1, quiescence: 2 } });
+
+            expect(result.board.checkMate).toBe(false);
+            expect(result.move).toBeDefined();
+
+            // Should capture the pawn (winning move)
+            const [from, to] = Object.entries(result.move)[0];
+            expect(from).toBe('G8');
+            expect(to).toBe('F7'); // Capture the pawn
+        });
+
+        it('should handle check during quiescence at depth limit', () => {
+            // Position where we're in check at qMaxDepth
+            // Should still find the escape, not return garbage
+            const fen = 'R5k1/8/8/8/8/8/8/K7 b - - 0 1';
+            const game = new Game(fen);
+
+            // Force minimal quiescence depth (base=1, quiescence=0 means we hit qMax immediately)
+            const result = game.ai({ level: 1, depth: { base: 1, quiescence: 0, extended: 0 } });
+
+            expect(result.board.checkMate).toBe(false);
+            expect(result.move).toBeDefined();
+        });
+    });
+
     describe('AI special moves and edge cases', () => {
         it('should evaluate castling opportunities', () => {
             // Position where castling is available and likely good
