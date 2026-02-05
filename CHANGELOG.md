@@ -1,3 +1,13 @@
+## [2.3.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.2...v2.3.3) (2026-02-05)
+
+
+### Bug Fixes
+
+* Rollback cache for high levels ([19718c9](https://github.com/josefjadrny/js-chess-engine/commit/19718c9ad44f2d62cf6e4d120e12f8920609485e))
+* TT imports removed ([4245a53](https://github.com/josefjadrny/js-chess-engine/commit/4245a53b5e3316b7464f063860ade1a001b74baf))
+
+
+
 ## [2.3.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.1...v2.3.2) (2026-02-04)
 
 
