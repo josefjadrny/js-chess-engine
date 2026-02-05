@@ -240,7 +240,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = game.ai({ level: 5 })
-console.log(result4.move) // Level 5: 16 MB Node.js / 8 MB browser (auto)
+console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = game.ai({ level: 3, ttSizeMB: 128 })
@@ -478,7 +478,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = ai(fen, { level: 5 })
-console.log(result4.move) // Level 5: 16 MB Node.js / 8 MB browser (auto)
+console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = ai(fen, { level: 3, ttSizeMB: 128 })
@@ -623,11 +623,13 @@ The engine automatically adjusts cache size based on AI level and environment:
 | :------: | :-----------: | :-----------: | :--------------------------- |
 |    1     |    0.5 MB     |   0.25 MB     | Lightweight, fast responses  |
 |    2     |     1 MB      |    0.5 MB     | Mobile-friendly performance  |
-|    3     |     2 MB      |     1 MB      | Balanced (default)           |
-|    4     |     8 MB      |     4 MB      | Strong tactical play         |
-|    5     |    16 MB      |     8 MB      | Very strong play             |
+|    3     |     4 MB      |     2 MB      | Balanced (default)           |
+|    4     |    16 MB      |     8 MB      | Strong tactical play         |
+|    5     |    32 MB      |    16 MB      | Very strong play             |
 
 Lower levels use less memory for faster responses, higher levels use more for better move quality. Browser cache sizes are appropriate for modern devices (2024+). Override with `ttSizeMB` option if needed.
+
+> **Note:** TT size directly affects AI strength. Larger cache = better move ordering and fewer redundant searches, resulting in stronger play.
 
 📚 **[Complete AI Implementation Guide →](docs/AI_IMPLEMENTATION.md)**
 

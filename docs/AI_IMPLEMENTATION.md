@@ -156,16 +156,16 @@ interface TTEntry {
 **Configuration:**
 
 The transposition table size is **auto-configured** based on the runtime environment:
-- **Node.js**: 2 MB (default for level 3) - ample memory available
-- **Browser**: 1 MB (default for level 3) - mobile-friendly
+- **Node.js**: 4 MB (default for level 3) - ample memory available
+- **Browser**: 2 MB (default for level 3) - mobile-friendly
 
 You can override the default through AI options:
 
 ```typescript
 // Use auto-detected default (recommended)
 game.ai({ level: 3 });
-// → Node.js: 2 MB cache
-// → Browser: 1 MB cache
+// → Node.js: 4 MB cache
+// → Browser: 2 MB cache
 
 // Override for specific requirements
 game.ai({ level: 4, ttSizeMB: 64 });     // High-performance: 64MB
