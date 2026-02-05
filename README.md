@@ -240,7 +240,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = game.ai({ level: 5 })
-console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
+console.log(result4.move) // Level 5: 32 MB Node.js / 20 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = game.ai({ level: 3, ttSizeMB: 128 })
@@ -478,7 +478,7 @@ console.log(result3.move) // AI move with level 3
 
 // TT size auto-scales by level (see Auto-Scaling Transposition Table section)
 const result4 = ai(fen, { level: 5 })
-console.log(result4.move) // Level 5: 32 MB Node.js / 16 MB browser (auto)
+console.log(result4.move) // Level 5: 32 MB Node.js / 20 MB browser (auto)
 
 // Override TT size manually if needed
 const result5 = ai(fen, { level: 3, ttSizeMB: 128 })
@@ -625,7 +625,7 @@ The engine automatically adjusts cache size based on AI level and environment:
 |    2     |     1 MB      |    0.5 MB     | Mobile-friendly performance  |
 |    3     |     4 MB      |     2 MB      | Balanced (default)           |
 |    4     |    16 MB      |     8 MB      | Strong tactical play         |
-|    5     |    32 MB      |    16 MB      | Very strong play             |
+|    5     |    32 MB      |    20 MB      | Maximum strength             |
 
 Lower levels use less memory for faster responses, higher levels use more for better move quality. Browser cache sizes are appropriate for modern devices (2024+). Override with `ttSizeMB` option if needed.
 

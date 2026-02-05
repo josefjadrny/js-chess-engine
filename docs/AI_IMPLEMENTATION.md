@@ -155,9 +155,15 @@ interface TTEntry {
 
 **Configuration:**
 
-The transposition table size is **auto-configured** based on the runtime environment:
-- **Node.js**: 4 MB (default for level 3) - ample memory available
-- **Browser**: 2 MB (default for level 3) - mobile-friendly
+The transposition table size is **auto-configured** based on AI level and runtime environment:
+
+| Level | Node.js | Browser | Entries (approx) |
+|-------|---------|---------|------------------|
+| 1 | 0.5 MB | 0.25 MB | ~6K |
+| 2 | 1 MB | 0.5 MB | ~13K |
+| 3 | 4 MB | 2 MB | ~52K |
+| 4 | 16 MB | 8 MB | ~210K |
+| 5 | 32 MB | 20 MB | ~524K |
 
 You can override the default through AI options:
 

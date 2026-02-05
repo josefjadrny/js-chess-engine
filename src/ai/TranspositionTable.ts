@@ -40,7 +40,7 @@ export function getRecommendedTTSize(level: number): number {
             2: 0.5,  // Level 2: 0.5 MB (mobile-friendly)
             3: 2,    // Level 3: 2 MB (balanced default)
             4: 8,    // Level 4: 8 MB (strong performance)
-            5: 16,   // Level 5: 16 MB (very strong play)
+            5: 20,   // Level 5: 20 MB (maximum strength)
         };
         return browserSizes[level] ?? 2;
     }
