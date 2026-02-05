@@ -25,9 +25,9 @@ describe('Environment Detection', () => {
     });
 
     describe('getDefaultTTSize', () => {
-        it('should return 2 MB for Node.js', () => {
+        it('should return 4 MB for Node.js', () => {
             // Running in Jest/Node.js
-            expect(getDefaultTTSize()).toBe(2);
+            expect(getDefaultTTSize()).toBe(4);
         });
 
         it('should return a positive number', () => {
@@ -40,13 +40,13 @@ describe('Environment Detection', () => {
             // Running in Node.js
             expect(getRecommendedTTSize(1)).toBe(0.5);
             expect(getRecommendedTTSize(2)).toBe(1);
-            expect(getRecommendedTTSize(3)).toBe(2);
-            expect(getRecommendedTTSize(4)).toBe(8);
-            expect(getRecommendedTTSize(5)).toBe(16);
+            expect(getRecommendedTTSize(3)).toBe(4);
+            expect(getRecommendedTTSize(4)).toBe(16);
+            expect(getRecommendedTTSize(5)).toBe(32);
         });
 
         it('should return default for unknown levels', () => {
-            expect(getRecommendedTTSize(99)).toBe(2); // Node.js default (browser would be 1)
+            expect(getRecommendedTTSize(99)).toBe(4); // Node.js default (browser would be 2)
         });
 
         it('should return positive numbers for all levels', () => {

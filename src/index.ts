@@ -18,7 +18,6 @@ import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/
 import { isKingInCheck } from './core/AttackDetector';
 import { parseFEN, toFEN, getStartingFEN, validateFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
-import { getDefaultTTSize } from './utils/environment';
 import { getRecommendedTTSize } from './ai/TranspositionTable';
 import {
     boardToConfig,
