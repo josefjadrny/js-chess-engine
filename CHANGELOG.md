@@ -1,3 +1,12 @@
+## [2.3.4](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.3...v2.3.4) (2026-02-05)
+
+
+### Bug Fixes
+
+* TT cache for lvl5 increased for browser ([fd00407](https://github.com/josefjadrny/js-chess-engine/commit/fd0040713f43113e2ad12fec9ec3b707f0153660))
+
+
+
 ## [2.3.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.2...v2.3.3) (2026-02-05)
 
 
