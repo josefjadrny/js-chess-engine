@@ -30,7 +30,7 @@ export function getRecommendedTTSize(level: number): number {
             2: 1,   // Level 2: 1 MB
             3: 4,   // Level 3: 4 MB (default)
             4: 16,  // Level 4: 16 MB
-            5: 32,  // Level 5: 32 MB
+            5: 40,  // Level 5: 40 MB
         };
         return nodeSizes[level] ?? 4;
     } else {

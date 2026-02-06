@@ -163,7 +163,7 @@ The transposition table size is **auto-configured** based on AI level and runtim
 | 2 | 1 MB | 0.5 MB | ~13K |
 | 3 | 4 MB | 2 MB | ~52K |
 | 4 | 16 MB | 8 MB | ~210K |
-| 5 | 32 MB | 20 MB | ~524K |
+| 5 | 40 MB | 20 MB | ~655K |
 
 You can override the default through AI options:
 

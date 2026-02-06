@@ -42,7 +42,7 @@ describe('Environment Detection', () => {
             expect(getRecommendedTTSize(2)).toBe(1);
             expect(getRecommendedTTSize(3)).toBe(4);
             expect(getRecommendedTTSize(4)).toBe(16);
-            expect(getRecommendedTTSize(5)).toBe(32);
+            expect(getRecommendedTTSize(5)).toBe(40);
         });
 
         it('should return default for unknown levels', () => {
