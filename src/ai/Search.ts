@@ -67,57 +67,92 @@ export class Search {
 
         // Iterative deepening: search depth 1..baseDepth.
         // Populates TT progressively for better move ordering at deeper levels.
+        const ASPIRATION_DELTA = 25;
+
         for (let d = 1; d <= baseDepth; d++) {
-            const pvMove = this.transpositionTable?.getBestMove(board.zobristHash) ?? null;
-            const selector = new MoveSelector(moves, pvMove, this.killerMoves, 0);
-
             const collectScores = analysis && d === baseDepth;
-            const iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = collectScores ? [] : null;
 
+            // Aspiration window: use previous iteration's score for d >= 4
+            let alpha: Score = SCORE_MIN;
+            let beta: Score = SCORE_MAX;
+            let delta = ASPIRATION_DELTA;
+            if (d >= 4 && bestScore > SCORE_MIN && bestScore < SCORE_MAX) {
+                alpha = (bestScore - delta) as Score;
+                beta = (bestScore + delta) as Score;
+            }
+
+            // Aspiration retry loop
             let iterBestMove: InternalMove | null = null;
             let iterBestScore: Score = SCORE_MIN;
-            let alpha: Score = SCORE_MIN;
-            const beta: Score = SCORE_MAX;
-            let move: InternalMove | null;
-            let moveIndex = 0;
-            while ((move = selector.pickNext()) !== null) {
-                if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
-                    const isQueenPromotion =
-                        move.promotionPiece === Piece.WHITE_QUEEN ||
-                        move.promotionPiece === Piece.BLACK_QUEEN;
-                    if (!isQueenPromotion) continue;
+            let iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = null;
+
+            while (true) {
+                const pvMove = this.transpositionTable?.getBestMove(board.zobristHash) ?? null;
+                const selector = new MoveSelector(moves, pvMove, this.killerMoves, 0);
+
+                iterScoredMoves = collectScores ? [] : null;
+                iterBestMove = null;
+                iterBestScore = SCORE_MIN;
+                let iterAlpha = alpha;
+
+                let move: InternalMove | null;
+                let moveIndex = 0;
+                while ((move = selector.pickNext()) !== null) {
+                    if ((move.flags & MoveFlag.PROMOTION) && move.promotionPiece) {
+                        const isQueenPromotion =
+                            move.promotionPiece === Piece.WHITE_QUEEN ||
+                            move.promotionPiece === Piece.BLACK_QUEEN;
+                        if (!isQueenPromotion) continue;
+                    }
+
+                    const child = copyBoard(board);
+                    applyMoveComplete(child, move);
+
+                    const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
+
+                    let score: Score;
+                    // Use PVS at root (but not when collecting analysis scores - need accurate values)
+                    if (moveIndex === 0 || collectScores) {
+                        score = -this.negamax(child, d - 1 + extension, -beta, -iterAlpha, 1);
+                    } else {
+                        // PVS: zero window search first
+                        score = -this.negamax(child, d - 1 + extension, -iterAlpha - 1, -iterAlpha, 1);
+                        // Re-search with full window if it beats alpha
+                        if (score > iterAlpha && score < beta) {
+                            score = -this.negamax(child, d - 1 + extension, -beta, -iterAlpha, 1);
+                        }
+                    }
+                    moveIndex++;
+
+                    if (iterScoredMoves) {
+                        iterScoredMoves.push({ move, score });
+                    }
+
+                    if (score > iterBestScore || iterBestMove === null) {
+                        iterBestScore = score;
+                        iterBestMove = move;
+                    }
+
+                    if (score > iterAlpha) iterAlpha = score;
+                    if (iterAlpha >= beta) break;
                 }
 
-                const child = copyBoard(board);
-                applyMoveComplete(child, move);
-
-                const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
-
-                let score: Score;
-                // Use PVS at root (but not when collecting analysis scores - need accurate values)
-                if (moveIndex === 0 || collectScores) {
-                    score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
-                } else {
-                    // PVS: zero window search first
-                    score = -this.negamax(child, d - 1 + extension, -alpha - 1, -alpha, 1);
-                    // Re-search with full window if it beats alpha
-                    if (score > alpha && score < beta) {
-                        score = -this.negamax(child, d - 1 + extension, -beta, -alpha, 1);
+                // Check aspiration window result
+                if (d >= 4 && (alpha > SCORE_MIN || beta < SCORE_MAX)) {
+                    if (iterBestScore <= alpha) {
+                        // Fail low - widen alpha
+                        delta *= 2;
+                        alpha = (delta > 400) ? SCORE_MIN : Math.max(SCORE_MIN, alpha - delta) as Score;
+                        continue;
+                    }
+                    if (iterBestScore >= beta) {
+                        // Fail high - widen beta
+                        delta *= 2;
+                        beta = (delta > 400) ? SCORE_MAX : Math.min(SCORE_MAX, beta + delta) as Score;
+                        continue;
                     }
                 }
-                moveIndex++;
-
-                if (iterScoredMoves) {
-                    iterScoredMoves.push({ move, score });
-                }
-
-                if (score > iterBestScore || iterBestMove === null) {
-                    iterBestScore = score;
-                    iterBestMove = move;
-                }
-
-                if (score > alpha) alpha = score;
-                if (alpha >= beta) break;
+                break;
             }
 
             if (iterBestMove) {

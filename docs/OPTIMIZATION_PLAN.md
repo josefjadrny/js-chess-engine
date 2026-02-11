@@ -139,10 +139,10 @@ Consolidated the two redundant mate-check fallback blocks into a single cleaner 
 
 **Result:** Code is cleaner but no measurable speedup. The mate-check fallback code runs rarely (only when in check AND no legal forcing moves exist), so optimizing it doesn't affect total runtime. The original plan's suggestion to "search ALL moves when in check" was tested but caused ~36% slowdown due to recursive searching of quiet escape moves — reverted to match original behavior (only legality-check quiet moves, don't recursively search them).
 
-### A4. ~~Aspiration Windows (~5-10% speedup)~~ — SKIPPED (no net gain)
+### A4. ~~Aspiration Windows (~5-10% speedup)~~ — DONE (~15% speedup)
 **File:** `src/ai/Search.ts` — iterative deepening loop
 
-Implemented with ±25cp window (d≥4 only), exponential widening on fail high/low. At this engine's typical search depths (4-7), the re-search overhead when the window fails outweighs the pruning savings from tighter bounds. Same pattern as V1 allocation optimizations — the theoretical benefit doesn't materialize at shallow depths.
+Implemented with ±25cp window (d≥4 only), exponential widening on fail high/low. Re-validated after A1-A3 optimizations improved move ordering (especially PVS in A2), which reduced re-search frequency. Measured ~15% speedup on tactical test suite (98s vs 115s baseline). Previous "no net gain" conclusion was likely tested before PVS was in place — better move ordering means the aspiration window holds more often.
 
 ---
 
