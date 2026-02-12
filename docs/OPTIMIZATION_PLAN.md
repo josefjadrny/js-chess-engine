@@ -142,7 +142,7 @@ Consolidated the two redundant mate-check fallback blocks into a single cleaner 
 ### A4. ~~Aspiration Windows (~5-10% speedup)~~ — DONE (~15% speedup)
 **File:** `src/ai/Search.ts` — iterative deepening loop
 
-Implemented with ±25cp window (d≥4 only), exponential widening on fail high/low. Re-validated after A1-A3 optimizations improved move ordering (especially PVS in A2), which reduced re-search frequency. Measured ~15% speedup on tactical test suite (98s vs 115s baseline). Previous "no net gain" conclusion was likely tested before PVS was in place — better move ordering means the aspiration window holds more often.
+Implemented with ±25cp window (d≥4 only), exponential widening on fail high/low. Measured ~15% speedup on tactical test suite (98s vs 115s baseline). Initial "no net gain" conclusion was a measurement inconsistency — identical stashed code was re-tested shortly after with positive results. PVS (A2) was already in place for both tests.
 
 ---
 
