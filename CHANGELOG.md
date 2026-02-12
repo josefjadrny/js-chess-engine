@@ -1,3 +1,12 @@
+## [2.3.6](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.5...v2.3.6) (2026-02-12)
+
+
+### Features
+
+* Add aspiration windows to iterative deepening (~15% speedup) ([3be8a2f](https://github.com/josefjadrny/js-chess-engine/commit/3be8a2fa9a12ca86c6e7b58b8996a9d0d53e26c0))
+
+
+
 ## [2.3.5](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.4...v2.3.5) (2026-02-06)
 
 
