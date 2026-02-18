@@ -29,7 +29,7 @@ yarn add js-chess-engine
 
 ```typescript
 // Import Game class and stateless functions
-import { Game, moves, status, move, aiMove, getFen } from 'js-chess-engine'
+import { Game, moves, status, move, ai, getFen } from 'js-chess-engine'
 
 // Import types for TypeScript
 import type { BoardConfig, PieceSymbol, MovesMap, AILevel } from 'js-chess-engine'
@@ -40,19 +40,9 @@ const game = new Game()
 ### CommonJS (Node.js)
 
 ```javascript
-const { Game, moves, status, move, aiMove, getFen } = require('js-chess-engine')
+const { Game, moves, status, move, ai, getFen } = require('js-chess-engine')
 
 const game = new Game()
-```
-
-### React / Modern JavaScript
-
-```typescript
-import { Game } from 'js-chess-engine'
-import type { BoardConfig, MovesMap } from 'js-chess-engine'
-
-const game = new Game()
-const allMoves: MovesMap = game.moves()
 ```
 
 ## Examples
@@ -65,12 +55,14 @@ const allMoves: MovesMap = game.moves()
 
 You have two options for using this engine:
 
-- [Option 1 - With in-memory (Game class)](#option-1---with-in-memory)
-- [Option 2 - Without in-memory (Stateless functions)](#option-2---without-in-memory)
+- [Option 1 - Game class (stateful)](#option-1---game-class-stateful)
+- [Option 2 - Stateless functions](#option-2---stateless-functions)
 
-### Option 1 - With in-memory
+Both options use the same transposition table cache for AI performance. The difference is that the **Game class** stores the board state internally and tracks move history, while **stateless functions** require a board configuration on each call.
 
-Use the Game class to create and manage a chess game. In this mode, the game state is cached in memory for better performance.
+### Option 1 - Game class (stateful)
+
+Use the `Game` class to manage chess game state. All methods use the internally stored board — no need to pass configuration each time. The class also tracks full move history.
 
 ```typescript
 import { Game } from 'js-chess-engine'
@@ -196,6 +188,8 @@ console.log(result.move)  // {"E2": "E4"}
 console.log(result.board) // Full board state
 ```
 
+<a id="ai"></a>
+
 **ai**
 
 `game.ai(options?)` - Calculate the best move using AI. **Returns both the move and board state**.
@@ -308,16 +302,16 @@ const fen: string = game.exportFEN()
 // "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
 ```
 
-### Option 2 - Without in-memory
+### Option 2 - Stateless functions
 
-Call stateless functions directly without creating a Game object. This is ideal for serverless environments or when you want to manage state externally.
+Call functions directly without creating a `Game` object. Each function takes a board configuration as its first parameter. Ideal for serverless environments or when you manage state externally (REST APIs, Redux, etc.).
 
 ```typescript
-import { move, moves, status, aiMove, ai, getFen } from 'js-chess-engine'
+import { move, moves, status, ai, aiMove, getFen } from 'js-chess-engine'
 import type { BoardConfig, MovesMap } from 'js-chess-engine'
 ```
 
-These functions require a board configuration for each call (either a BoardConfig object or FEN string).
+The stateless functions are wrappers around the same engine used by the `Game` class — the only signature difference is the `boardConfiguration` first parameter.
 
 #### API Description
 
@@ -328,13 +322,12 @@ These functions require a board configuration for each call (either a BoardConfi
 Params:
 - `boardConfiguration` BoardConfig | string (_mandatory_) - Board [configuration](#board-configuration) (JSON object or FEN string)
 
-Returns: `MovesMap` - Object mapping from-squares to arrays of to-squares
+Returns: `MovesMap`
 
 ```typescript
 import { moves } from 'js-chess-engine'
 import type { MovesMap, BoardConfig } from 'js-chess-engine'
 
-// From BoardConfig object
 const config: BoardConfig = { /* ... */ }
 const allMoves: MovesMap = moves(config)
 // {"E2": ["E3", "E4"], "B1": ["A3", "C3"], ...}
@@ -398,13 +391,13 @@ import type { BoardConfig } from 'js-chess-engine'
 // Move from FEN string
 const config1: BoardConfig = move('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', 'E2', 'E4')
 
-// Move on existing config
+// Chain moves
 const config2: BoardConfig = move(config1, 'E7', 'E5')
 ```
 
 **aiMove**
 
-> ⚠️ **DEPRECATED:** This function will be removed in v3.0.0. Use [`ai()`](#ai-1) instead, which returns both the move and board state.
+> ⚠️ **DEPRECATED:** This function will be removed in v3.0.0. Use [`ai()`](#ai) instead, which returns both the move and board state.
 
 `aiMove(boardConfiguration, level)` - Calculate and return the best move using AI. **Returns only the move** (v1 API compatible).
 
@@ -415,16 +408,14 @@ Params:
 Returns: `HistoryEntry` - The played move (e.g., `{"E2": "E4"}`)
 
 ```typescript
-import { aiMove } from 'js-chess-engine'
-import type { HistoryEntry, AILevel } from 'js-chess-engine'
+import { aiMove, ai } from 'js-chess-engine'
 
 const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-const level: AILevel = 4
-const move: HistoryEntry = aiMove(fen, level)
-console.log(move) // {"E2": "E4"}
+
+// Deprecated
+const played = aiMove(fen, 4) // {"E2": "E4"}
 
 // RECOMMENDED: Use ai() instead
-import { ai } from 'js-chess-engine'
 const result = ai(fen, { level: 4 })
 console.log(result.move)  // {"E2": "E4"}
 console.log(result.board) // Full board state
@@ -432,22 +423,7 @@ console.log(result.board) // Full board state
 
 **ai**
 
-`ai(boardConfiguration, options?)` - Calculate the best move using AI. **Returns both the move and board state**.
-
-Params:
-- `boardConfiguration` BoardConfig | string (_mandatory_) - Board [configuration](#board-configuration)
-- `options` object (_optional_) - Configuration options:
-  - `level` number (_optional_) - AI difficulty level (1-5). Default: `3`
-  - `play` boolean (_optional_) - Whether to apply the move to the board. Default: `true`. If `false`, returns the move without modifying the board state, and `board` will contain the current state (before the move).
-  - `analysis` boolean (_optional_) - If `true`, also returns an `analysis` payload containing all root legal moves scored by the engine's search (sorted best → worst). Default: `false`.
-  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
-  - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
-    - `base` number (_optional_) - Base search depth. Integer > 0.
-    - `extended` number (_optional_) - Max adaptive extension depth. Integer 0-3.
-    - `check` boolean (_optional_) - Enable check extensions.
-    - `quiescence` number (_optional_) - Quiescence search depth. Integer >= 0.
-
-Returns: `{ move: HistoryEntry, board: BoardConfig, analysis?: Array<{ move: HistoryEntry, score: number }>, depth?: number, nodesSearched?: number, bestScore?: number }` - Object containing the move and board state (current state if `play=false`, updated state if `play=true`). Extra fields are returned only when `analysis: true`.
+`ai(boardConfiguration, options?)` - Stateless equivalent of [`game.ai()`](#ai). **Same options and return type** — see the [Game class `ai()` docs](#ai) for full parameter documentation.
 
 ```typescript
 import { ai } from 'js-chess-engine'
@@ -461,35 +437,14 @@ console.log(result1.move)       // {"E2": "E4"}
 console.log(result1.board.turn) // "black" (updated after move)
 
 // Analysis mode: get move without applying it
-const result2 = ai(fen, { level: 4, play: false })
-console.log(result2.move)       // {"E2": "E4"}
-console.log(result2.board.turn) // "white" (current state, before move)
-
-// Root move scoring (debug/inspection)
-const result2b = ai(fen, { level: 4, play: false, analysis: true })
-console.log(result2b.analysis?.slice(0, 5)) // [{ move: {"E2": "E4"}, score: 12 }, ...]
-console.log(result2b.bestScore)
-console.log(result2b.depth)
-console.log(result2b.nodesSearched)
-
-// Use default level 3
-const result3 = ai(fen)
-console.log(result3.move) // AI move with level 3
-
-// TT size auto-scales by level (see Auto-Scaling Transposition Table section)
-const result4 = ai(fen, { level: 5 })
-console.log(result4.move) // Level 5: 40 MB Node.js / 20 MB browser (auto)
-
-// Override TT size manually if needed
-const result5 = ai(fen, { level: 3, ttSizeMB: 128 })
-console.log(result5.move) // Force 128MB cache
-
-// Ultra-lightweight mode for low-end devices
-const result6 = ai(fen, { level: 2, ttSizeMB: 0.5 })
-console.log(result6.move) // Force 512KB cache
+const result2 = ai(fen, { level: 4, play: false, analysis: true })
+console.log(result2.analysis?.slice(0, 5)) // [{ move: {"E2": "E4"}, score: 12 }, ...]
+console.log(result2.bestScore)
+console.log(result2.depth)
+console.log(result2.nodesSearched)
 
 // Custom depth overrides
-const result7 = ai(fen, { level: 3, depth: { base: 5, quiescence: 3 } })
+const result3 = ai(fen, { level: 3, depth: { base: 5, quiescence: 3 } })
 ```
 
 ### Board Configuration
@@ -595,16 +550,15 @@ The engine includes a sophisticated AI based on the Minimax algorithm with alpha
 
 ```typescript
 import { Game } from 'js-chess-engine'
-import type { AILevel } from 'js-chess-engine'
 
 const game = new Game()
 
 // Different difficulty levels
-game.aiMove(1)  // Beginner
-game.aiMove(2)  // Easy
-game.aiMove(3)  // Intermediate (default)
-game.aiMove(4)  // Advanced
-game.aiMove(5)  // Expert
+game.ai({ level: 1 })  // Beginner
+game.ai({ level: 2 })  // Easy
+game.ai({ level: 3 })  // Intermediate (default)
+game.ai({ level: 4 })  // Advanced
+game.ai({ level: 5 })  // Expert
 ```
 
 **Implementation Highlights:**
@@ -733,9 +687,9 @@ game.move('E2', 'E4')  // Returns move object: {"E2": "E4"}
 game.move('E2', 'E4')  // Returns full BoardConfig object
 ```
 
-### 3. `aiMove()` API - Now v1 Compatible ✅
+### 3. `aiMove()` API - Restored for Migration (Deprecated)
 
-The `aiMove()` function has been **restored to v1 API compatibility**.
+The `aiMove()` function has been **restored to v1 API compatibility** to ease migration, but is deprecated and will be removed in v3.0.0.
 
 **v1 Behavior:**
 
@@ -752,7 +706,7 @@ aiMove(config, 3)  // Returns move object: {"E2": "E4"} ✅ v1 compatible
 **New `ai()` function** - For users who need both move and board state:
 
 ```typescript
-ai(config, 3)  // Returns: { move: {"E2": "E4"}, board: {...} }
+ai(config, { level: 3 })  // Returns: { move: {"E2": "E4"}, board: {...} }
 ```
 
 > ⚠️ **DEPRECATION NOTICE:** `aiMove()` is deprecated and will be removed in **v3.0.0**. Migrate to `ai()` for better functionality.
