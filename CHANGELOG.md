@@ -1,3 +1,12 @@
+## [2.3.7](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.6...v2.3.7) (2026-02-18)
+
+
+### Bug Fixes
+
+* Remove dead code, redundant guards, and minor inefficiencies ([ab29cbb](https://github.com/josefjadrny/js-chess-engine/commit/ab29cbbb1318e99eaf1523df7ca9dbb5c9d0c549))
+
+
+
 ## [2.3.6](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.5...v2.3.6) (2026-02-12)
 
 
