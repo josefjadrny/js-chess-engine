@@ -34,10 +34,6 @@ let castlingKeys: bigint[] = [];
  */
 let enPassantKeys: bigint[] = [];
 
-/**
- * Flag to check if Zobrist keys are initialized
- */
-let initialized = false;
 
 // ==================== Initialization ====================
 
@@ -48,10 +44,6 @@ let initialized = false;
  * with a fixed value for deterministic hashing.
  */
 export function initZobrist(): void {
-    if (initialized) {
-        return;
-    }
-
     // Initialize pseudo-random number generator with seed
     let seed = 12345n;
     const rand64 = (): bigint => {
@@ -88,7 +80,6 @@ export function initZobrist(): void {
         enPassantKeys[file] = rand64();
     }
 
-    initialized = true;
 }
 
 // ==================== Hash Computation ====================
@@ -100,10 +91,6 @@ export function initZobrist(): void {
  * @returns 64-bit Zobrist hash
  */
 export function computeZobristHash(board: InternalBoard): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     let hash = 0n;
 
     // XOR piece positions
@@ -159,10 +146,6 @@ export function updateHashMove(
     from: SquareIndex,
     to: SquareIndex
 ): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     // Remove piece from old square
     hash ^= pieceKeys[piece][from];
 
@@ -185,10 +168,6 @@ export function updateHashCapture(
     capturedPiece: Piece,
     square: SquareIndex
 ): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     // Remove captured piece
     hash ^= pieceKeys[capturedPiece][square];
 
@@ -202,10 +181,6 @@ export function updateHashCapture(
  * @returns Updated hash with toggled side
  */
 export function toggleSide(hash: bigint): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     return hash ^ sideKey;
 }
 
@@ -234,10 +209,6 @@ export function updateHashCastling(
     blackLongOld: boolean,
     blackLongNew: boolean
 ): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     // XOR out old castling rights
     if (whiteShortOld) hash ^= castlingKeys[0];
     if (whiteLongOld) hash ^= castlingKeys[1];
@@ -266,10 +237,6 @@ export function updateHashEnPassant(
     oldSquare: SquareIndex | null,
     newSquare: SquareIndex | null
 ): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     // XOR out old en passant
     if (oldSquare !== null) {
         const oldFile = oldSquare % 8;
@@ -294,10 +261,6 @@ export function updateHashEnPassant(
  * @returns Updated hash
  */
 export function addPieceToHash(hash: bigint, piece: Piece, square: SquareIndex): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     return hash ^ pieceKeys[piece][square];
 }
 
@@ -310,10 +273,6 @@ export function addPieceToHash(hash: bigint, piece: Piece, square: SquareIndex):
  * @returns Updated hash
  */
 export function removePieceFromHash(hash: bigint, piece: Piece, square: SquareIndex): bigint {
-    if (!initialized) {
-        initZobrist();
-    }
-
     return hash ^ pieceKeys[piece][square];
 }
 

@@ -283,9 +283,13 @@ export class Search {
         if (standPat > alpha) alpha = standPat;
         if (qDepth >= this.qMaxDepth) return standPat;
 
-        // Generate pseudo-legal moves, filter to forcing (captures + promotions)
+        // Generate pseudo-legal moves, collect forcing (captures + promotions)
         const allMoves = generatePseudoLegalMoves(board);
-        const forcing = allMoves.filter(m => (m.flags & MoveFlag.CAPTURE) || (m.flags & MoveFlag.PROMOTION));
+        const forcingMask = MoveFlag.CAPTURE | MoveFlag.PROMOTION;
+        const forcing: InternalMove[] = [];
+        for (let i = 0; i < allMoves.length; i++) {
+            if (allMoves[i].flags & forcingMask) forcing.push(allMoves[i]);
+        }
 
         const tt = this.transpositionTable;
         const ttMove = tt ? tt.getBestMove(board.zobristHash) : null;

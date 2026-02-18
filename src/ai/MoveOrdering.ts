@@ -42,7 +42,7 @@ export class KillerMoves {
         if (ply < 0 || ply >= this.maxPly) return;
         if (move.flags & MoveFlag.CAPTURE) return; // captures are ordered separately
 
-        const [k1, k2] = this.killers[ply];
+        const k1 = this.killers[ply][0];
         if (k1 && k1.from === move.from && k1.to === move.to) return;
 
         this.killers[ply][1] = k1;
