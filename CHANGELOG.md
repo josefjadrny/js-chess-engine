@@ -1,3 +1,12 @@
+## [2.3.8](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.7...v2.3.8) (2026-02-19)
+
+
+### Bug Fixes
+
+* Remove 256 MB upper limit on transposition table size ([eeec251](https://github.com/josefjadrny/js-chess-engine/commit/eeec2514d83a31c7c1111a53f5696d83b2779252))
+
+
+
 ## [2.3.7](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.6...v2.3.7) (2026-02-18)
 
 
