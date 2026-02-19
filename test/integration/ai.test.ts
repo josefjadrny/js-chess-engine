@@ -709,24 +709,20 @@ describe('AI Engine', () => {
             expect(result.board).toBeDefined();
         });
 
-        it('should work with maximum ttSizeMB (256MB)', () => {
+        it('should work with large ttSizeMB (512MB)', () => {
             const game = new Game();
-            const result = game.ai({ level: 1, ttSizeMB: 256 });
+            const result = game.ai({ level: 1, ttSizeMB: 512 });
 
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
         });
 
-        it('should clamp ttSizeMB values outside valid range', () => {
+        it('should clamp ttSizeMB values below minimum', () => {
             const game = new Game();
 
             // Below minimum (clamped to 0.25)
             const result1 = game.ai({ level: 1, ttSizeMB: 0.1 });
             expect(result1.move).toBeDefined();
-
-            // Above maximum (clamped to 256)
-            const result2 = game.ai({ level: 1, ttSizeMB: 512 });
-            expect(result2.move).toBeDefined();
         });
 
         it('should allow different TT sizes across multiple AI calls', () => {

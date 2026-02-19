@@ -201,7 +201,7 @@ Params:
   - `level` number (_optional_) - AI difficulty level (1-5). See [Computer AI](#computer-ai) section. Default: `3`
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
   - `analysis` boolean (_optional_) - If `true`, also returns an `analysis` payload containing all root legal moves scored by the engine's search (sorted best → worst). Default: `false`.
-  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, 0.25-256). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
+  - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, min 0.25 MB). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
   - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
     - `base` number (_optional_) - Base search depth. Integer > 0.
     - `extended` number (_optional_) - Max adaptive extension depth. Integer 0-3.

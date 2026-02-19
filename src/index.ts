@@ -256,7 +256,7 @@ export class Game {
      * @param options - Optional configuration object
      * @param options.level - AI difficulty level (1-5, default: 3). Values > 5 are clamped to 5.
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
-    * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
+    * @param options.ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
     ai(options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean } = {}): AIResult {
@@ -264,10 +264,10 @@ export class Game {
         const level = Math.max(1, Math.min(5, requestedLevel));
         const play = options.play ?? true;
         const analysis = options.analysis ?? false;
-        // Allow 0 to disable TT, or 0.25-256 MB range
+        // Allow 0 to disable TT, or >= 0.25 MB
         // Default: auto-scaled by AI level (lower levels use less memory, higher levels use more)
         const defaultSize = getRecommendedTTSize(level);
-        const ttSizeMB = options.ttSizeMB === 0 ? 0 : Math.max(0.25, Math.min(256, options.ttSizeMB ?? defaultSize));
+        const ttSizeMB = options.ttSizeMB === 0 ? 0 : Math.max(0.25, options.ttSizeMB ?? defaultSize);
 
         // Validate level (requested value)
         if (requestedLevel < 1 || requestedLevel > 5) {
@@ -449,7 +449,7 @@ export function aiMove(config: BoardConfig | string, level: number = 3): History
  * @param options - Optional configuration object
  * @param options.level - AI difficulty level (1-5, default: 3)
  * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
- * @param options.ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
+ * @param options.ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
  * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
  */
 export function ai(

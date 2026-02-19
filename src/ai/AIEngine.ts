@@ -54,7 +54,7 @@ export class AIEngine {
      *
      * @param board - Current board state
     * @param level - AI difficulty level (1-5, default 3)
-     * @param ttSizeMB - Transposition table size in MB (0 to disable, 0.25-256 MB, auto-scaled by level)
+     * @param ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB, auto-scaled by level)
      * @returns Best move found by the AI
      */
     findBestMove(board: InternalBoard, level: AILevel = 3, ttSizeMB: number = 16, depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }): InternalMove | null {

@@ -21,7 +21,7 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 
 **Key Features:**
 - Minimax algorithm with alpha-beta pruning
-- Transposition table with Zobrist hashing (configurable size: 0-256 MB, disable for minimal memory)
+- Transposition table with Zobrist hashing (configurable size, disable for minimal memory)
 - Advanced move ordering (PV moves, MVV-LVA, killer moves)
 - Iterative deepening
 - Quiescence search for tactical stability
@@ -193,7 +193,7 @@ The engine automatically detects the runtime environment using:
 - See `src/utils/environment.ts` for implementation
 
 **Key Features:**
-- **Size**: Configurable 0-256 MB (0 to disable, 0.25-256 MB range, default: auto-detected - 2 MB in Node.js ~50,000 entries, 1 MB in browser ~25,000 entries)
+- **Size**: Configurable (0 to disable, min 0.25 MB, default: auto-detected - 2 MB in Node.js ~50,000 entries, 1 MB in browser ~25,000 entries)
 - **Hash Function**: Zobrist hashing (see below)
 - **Replacement Strategy**: Always replace if:
   - Slot is empty
