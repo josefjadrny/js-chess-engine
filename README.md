@@ -47,9 +47,11 @@ const game = new Game()
 
 ## Examples
 
-**js-chess-engine-app** - React application example with js-chess-engine REST API backend (without persistent storage) - [GitHub](https://github.com/josefjadrny/js-chess-engine-app) or [LIVE DEMO](http://chess.josefjadrny.info/)
+Two full example applications are available:
 
-**Note:** Additional examples for v2 (server, console, AI match) will be added in a future release.
+**--> Server** — [js-chess-engine-app](https://github.com/josefjadrny/js-chess-engine-app) — React + Node.js REST API, engine runs on the server — [LIVE DEMO](http://chess.josefjadrny.info/)
+
+**->> Browser** — [js-chess-engine-fe-app](https://github.com/josefjadrny/js-chess-engine-fe-app) — Pure frontend React app, engine runs entirely in the browser, no server needed — [LIVE DEMO](http://chess-fe.josefjadrny.info/)
 
 ## Documentation
 
