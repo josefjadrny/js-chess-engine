@@ -70,11 +70,10 @@ export class Search {
         // Populates TT progressively for better move ordering at deeper levels.
         const ASPIRATION_DELTA = 25;
 
-        // Always collect root move scores at the final depth for randomness support
-        const collectFinalScores = randomness > 0 || analysis;
-
         for (let d = 1; d <= baseDepth; d++) {
-            const collectScores = (d === baseDepth) && collectFinalScores;
+            // Collect root scores at final depth: for analysis (accurate) or randomness (PVS ok)
+            const collectScores = (d === baseDepth) && (randomness > 0 || analysis);
+            const disablePVS = (d === baseDepth) && analysis;
 
             // Aspiration window: use previous iteration's score for d >= 4
             let alpha: Score = SCORE_MIN;
@@ -116,7 +115,7 @@ export class Search {
 
                     let score: Score;
                     // Use PVS at root (but not when collecting analysis scores - need accurate values)
-                    if (moveIndex === 0 || collectScores) {
+                    if (moveIndex === 0 || disablePVS) {
                         score = -this.negamax(child, d - 1 + extension, -beta, -iterAlpha, 1);
                     } else {
                         // PVS: zero window search first
