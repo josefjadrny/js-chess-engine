@@ -57,8 +57,8 @@ export class AIEngine {
      * @param ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB, auto-scaled by level)
      * @returns Best move found by the AI
      */
-    findBestMove(board: InternalBoard, level: AILevel = 3, ttSizeMB: number = 16, depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }): InternalMove | null {
-        const result = this.findBestMoveDetailed(board, { level, ttSizeMB, depth, analysis: false });
+    findBestMove(board: InternalBoard, level: AILevel = 3, ttSizeMB: number = 16, depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }, randomness?: number): InternalMove | null {
+        const result = this.findBestMoveDetailed(board, { level, ttSizeMB, depth, analysis: false, randomness });
         return result ? result.move : null;
     }
 
@@ -74,6 +74,7 @@ export class AIEngine {
             ttSizeMB?: number;
             depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number };
             analysis?: boolean;
+            randomness?: number;
         } = {}
     ): SearchResult | null {
         const level = options.level ?? 3;
@@ -99,6 +100,7 @@ export class AIEngine {
         // Perform search
         return this.search.findBestMove(board, effectiveDepth, qMaxDepth, checkExtension, {
             analysis: options.analysis ?? false,
+            randomness: options.randomness ?? 30,
         });
     }
 

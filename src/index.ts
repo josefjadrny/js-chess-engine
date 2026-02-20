@@ -256,10 +256,21 @@ export class Game {
      * @param options - Optional configuration object
      * @param options.level - AI difficulty level (1-5, default: 3). Values > 5 are clamped to 5.
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
-    * @param options.ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
+     * @param options.ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
+     * @param options.randomness - Centipawns of random noise added to each move's score at the
+     *   root level, causing the engine to occasionally prefer moves with nearly equal scores.
+     *   Makes the engine less predictable without significantly degrading play quality.
+     *   Default: 30 (subtle variation). Set to 0 to disable.
+     *
+     *   Reference values:
+     *     0   – fully deterministic (same position always plays the same move)
+     *     10  – very subtle (only nearly-identical moves ever swap)
+     *     30  – default (slight variety; moves within ~½ pawn of best may vary)
+     *     80  – noticeable (moves within ~1½ pawns of best may vary; fun casual play)
+     *     200 – chaotic (may play obviously weaker moves; not recommended)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
      */
-    ai(options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean } = {}): AIResult {
+    ai(options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean; randomness?: number } = {}): AIResult {
         const requestedLevel = options.level ?? 3;
         const level = Math.max(1, Math.min(5, requestedLevel));
         const play = options.play ?? true;
@@ -291,11 +302,18 @@ export class Game {
             }
         }
 
+        // Validate randomness
+        if (options.randomness !== undefined) {
+            if (typeof options.randomness !== 'number' || !isFinite(options.randomness) || options.randomness < 0) {
+                throw new Error('randomness must be a non-negative number');
+            }
+        }
+
         // Find best move (optionally with analysis)
         const searchResult = analysis
-            ? this.aiEngine.findBestMoveDetailed(this.board, { level: level as AILevel, ttSizeMB, depth: options.depth, analysis: true })
+            ? this.aiEngine.findBestMoveDetailed(this.board, { level: level as AILevel, ttSizeMB, depth: options.depth, analysis: true, randomness: options.randomness })
             : null;
-        const bestMove = searchResult ? searchResult.move : this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB, options.depth);
+        const bestMove = searchResult ? searchResult.move : this.aiEngine.findBestMove(this.board, level as AILevel, ttSizeMB, options.depth, options.randomness);
 
         if (!bestMove) {
             // No legal moves available - game must be finished (checkmate or stalemate)
@@ -454,7 +472,7 @@ export function aiMove(config: BoardConfig | string, level: number = 3): History
  */
 export function ai(
     config: BoardConfig | string,
-    options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean } = {}
+    options: { level?: number; play?: boolean; ttSizeMB?: number; depth?: { base?: number; extended?: number; check?: boolean; quiescence?: number }; analysis?: boolean; randomness?: number } = {}
 ): AIResult {
     const game = new Game(config);
     return game.ai(options);

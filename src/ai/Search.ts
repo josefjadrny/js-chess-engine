@@ -44,7 +44,7 @@ export class Search {
         baseDepth: number,
         qMaxDepth: number = 4,
         checkExtension: boolean = true,
-        options: { analysis?: boolean } = {}
+        options: { analysis?: boolean; randomness?: number } = {}
     ): SearchResult | null {
         this.qMaxDepth = qMaxDepth;
         this.checkExtension = checkExtension;
@@ -53,6 +53,7 @@ export class Search {
         this.killerMoves.clear();
 
         const analysis = options.analysis ?? false;
+        const randomness = options.randomness ?? 0;
 
         const moves = generateLegalMoves(board);
         if (moves.length === 0) {
@@ -84,6 +85,7 @@ export class Search {
             // Aspiration retry loop
             let iterBestMove: InternalMove | null = null;
             let iterBestScore: Score = SCORE_MIN;
+            let iterRawBestScore: Score = SCORE_MIN;
             let iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = null;
 
             while (true) {
@@ -124,12 +126,17 @@ export class Search {
                     }
                     moveIndex++;
 
+                    const noisyScore = randomness > 0
+                        ? (score + Math.round(Math.random() * 2 * randomness - randomness)) as Score
+                        : score;
+
                     if (iterScoredMoves) {
-                        iterScoredMoves.push({ move, score });
+                        iterScoredMoves.push({ move, score: noisyScore });
                     }
 
-                    if (score > iterBestScore || iterBestMove === null) {
-                        iterBestScore = score;
+                    if (noisyScore > iterBestScore || iterBestMove === null) {
+                        iterBestScore = noisyScore;
+                        iterRawBestScore = score;
                         iterBestMove = move;
                     }
 
@@ -137,15 +144,15 @@ export class Search {
                     if (iterAlpha >= beta) break;
                 }
 
-                // Check aspiration window result
+                // Check aspiration window result (use raw score to avoid noise-induced misfires)
                 if (d >= 4 && (alpha > SCORE_MIN || beta < SCORE_MAX)) {
-                    if (iterBestScore <= alpha) {
+                    if (iterRawBestScore <= alpha) {
                         // Fail low - widen alpha
                         delta *= 2;
                         alpha = (delta > 400) ? SCORE_MIN : Math.max(SCORE_MIN, alpha - delta) as Score;
                         continue;
                     }
-                    if (iterBestScore >= beta) {
+                    if (iterRawBestScore >= beta) {
                         // Fail high - widen beta
                         delta *= 2;
                         beta = (delta > 400) ? SCORE_MAX : Math.min(SCORE_MAX, beta + delta) as Score;
@@ -157,7 +164,7 @@ export class Search {
 
             if (iterBestMove) {
                 bestMove = iterBestMove;
-                bestScore = iterBestScore;
+                bestScore = iterRawBestScore;
             }
 
             if (iterScoredMoves) {

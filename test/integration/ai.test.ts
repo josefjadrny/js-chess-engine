@@ -353,7 +353,7 @@ describe('AI Engine', () => {
             const fen = 'k7/2Q5/2K5/8/8/8/8/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 2 }); // Mate-in-1 doesn't need deep search
+            const result = game.ai({ level: 2, randomness: 0 }); // Mate-in-1 doesn't need deep search
 
             expect(result.move).toBeDefined();
 
@@ -482,7 +482,7 @@ describe('AI Engine', () => {
             const fen = '8/4P3/8/8/3k4/8/8/4K3 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             expect(result.move).toBeDefined();
 
@@ -607,6 +607,7 @@ describe('AI Engine', () => {
                 // Make depth deterministic and avoid adaptive extension.
                 depth: { base: 1, extended: 0, check: false, quiescence: 1 },
                 level: 1,
+                randomness: 0,
             } as const;
 
             const r1 = ai(fen, options);
@@ -758,6 +759,52 @@ describe('AI Engine', () => {
             const result = ai(fen, { level: 2, ttSizeMB: 8 });
             expect(result.move).toBeDefined();
             expect(result.board).toBeDefined();
+        });
+
+        it('should accept randomness: 0 and behave deterministically', () => {
+            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+            const r1 = ai(fen, { level: 2, randomness: 0 });
+            const r2 = ai(fen, { level: 2, randomness: 0 });
+
+            expect(Object.entries(r1.move)[0]).toEqual(Object.entries(r2.move)[0]);
+        });
+
+        it('should accept positive randomness and return a valid move', () => {
+            const game = new Game();
+            const result = game.ai({ level: 2, randomness: 80 });
+
+            expect(result.move).toBeDefined();
+            const [from, to] = Object.entries(result.move)[0];
+            expect(from).toMatch(/^[A-H][1-8]$/);
+            expect(to).toMatch(/^[A-H][1-8]$/);
+        });
+
+        it('should throw for negative randomness', () => {
+            const game = new Game();
+            expect(() => game.ai({ randomness: -1 })).toThrow('randomness must be a non-negative number');
+        });
+
+        it('should throw for non-finite randomness', () => {
+            const game = new Game();
+            expect(() => game.ai({ randomness: Infinity })).toThrow('randomness must be a non-negative number');
+        });
+
+        it('should produce move variety with high randomness (statistical)', () => {
+            // With randomness=10000 (100 pawns of noise), score differences are completely
+            // dominated and the engine picks essentially uniformly across all legal moves.
+            // With 20 legal moves in the starting position and 10 trials, the probability
+            // of always picking the same move is ~10^-11 — effectively impossible.
+            const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+            const playedMoves = new Set<string>();
+            for (let i = 0; i < 10; i++) {
+                const result = ai(fen, { level: 2, randomness: 10000 });
+                const [[from, to]] = Object.entries(result.move);
+                playedMoves.add(`${from}-${to}`);
+            }
+
+            expect(playedMoves.size).toBeGreaterThan(1);
         });
     });
 
@@ -1096,7 +1143,7 @@ describe('AI Engine', () => {
 
         it('should promote a pawn in a trivial promotion position', () => {
             const fen = '8/4P3/8/8/3k4/8/8/4K3 w - - 0 1';
-            const result = ai(fen, { level: 3 });
+            const result = ai(fen, { level: 3, randomness: 0 });
 
             // Must promote on the 8th rank.
             const hasPromotionOnEighthRank = Object.entries(result.board.pieces).some(
@@ -1108,7 +1155,7 @@ describe('AI Engine', () => {
         it('should deliver mate in 1 when available (queen mate)', () => {
             // Mate in 1 for white: Qf8#
             const fen = '7k/5Qpp/8/8/8/8/6PP/6K1 w - - 0 1';
-            const result = ai(fen, { level: 3 });
+            const result = ai(fen, { level: 3, randomness: 0 });
 
             expect(result.board.checkMate).toBe(true);
             expect(result.board.isFinished).toBe(true);
@@ -1167,11 +1214,11 @@ describe('AI Engine', () => {
                 fullMove: 9,
             } as any;
 
-            const move = aiMove(board, 3);
+            const result = ai(board, { level: 3, randomness: 0 });
 
             // Lock the behavior for now so we can improve evaluation/search later without losing
             // reproduction coverage.
-            expect(move).toEqual({ A7: 'B7' });
+            expect(result.move).toEqual({ A7: 'B7' });
         });
     });
 });

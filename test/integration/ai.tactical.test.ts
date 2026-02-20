@@ -26,7 +26,7 @@ describe('AI Tactical Tests', () => {
             const fen = '6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify outcome: should deliver checkmate
             expect(result.board.checkMate).toBe(true);
@@ -42,7 +42,7 @@ describe('AI Tactical Tests', () => {
             const game = new Game(fen);
 
             // White should find the forcing sequence
-            const result = game.ai({ level: 4 });
+            const result = game.ai({ level: 4, randomness: 0 });
 
             // Verify: Should make a strong tactical move (at minimum, not blunder)
             expect(result.move).toBeDefined();
@@ -58,7 +58,7 @@ describe('AI Tactical Tests', () => {
             const game = new Game(fen);
 
             // Level 5 should at least give check (progressing toward mate)
-            const result = game.ai({ level: 5 });
+            const result = game.ai({ level: 5, randomness: 0 });
 
             // Verify: should give check (Ra8+ is the start of mating sequence)
             expect(result.board.check || result.board.checkMate).toBe(true);
@@ -74,7 +74,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'r1bqkb1r/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w kq - 0 5';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: Knight may capture e5 (common tactical/positional idea), or make another strong move
             // After Nxe5, white attacks c6 and f7 (and centralizes the knight)
@@ -95,7 +95,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 4';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: Should NOT move the c6 knight (it's pinned)
             const move = result.move;
@@ -112,7 +112,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 0 4';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 4 });
+            const result = game.ai({ level: 4, randomness: 0 });
 
             // Verify: Should make a tactical move
             // Nxe5 discovers attack on f7 from the Bc4
@@ -130,7 +130,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'rnb1kbnr/pppppppp/8/3r4/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: AI makes a legal move without hanging pieces
             // The rook on d5 is a tactical target
@@ -151,7 +151,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 0 6';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
             const move = result.move;
             const [from, to] = Object.entries(move)[0];
 
@@ -174,7 +174,7 @@ describe('AI Tactical Tests', () => {
             const fen = '8/4k3/8/3P4/3K4/8/p7/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 4 });
+            const result = game.ai({ level: 4, randomness: 0 });
 
             // Verify: King should support the d-pawn or push it
             const move = result.move;
@@ -194,7 +194,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'rnbqkb1r/pppp1ppp/5n2/4p3/4P2Q/8/PPPP1PPP/RNB1KBNR b KQkq - 0 3';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: Must respond to check (block, move king, or capture)
             // After the move, should not still be in check (unless checkmate)
@@ -210,7 +210,7 @@ describe('AI Tactical Tests', () => {
             const fen = 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 4 });
+            const result = game.ai({ level: 4, randomness: 0 });
 
             // Verify: Should make a tactical move
             // Bxf7+ is a strong counter-threat despite Bc4 being attacked
@@ -225,7 +225,7 @@ describe('AI Tactical Tests', () => {
             const fen = '6k1/5ppp/8/8/8/8/5PPP/R4RK1 b - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: Should give king escape square (h6, h5, or g6)
             const move = result.move;
@@ -249,7 +249,7 @@ describe('AI Tactical Tests', () => {
             const fen = '8/4P3/8/8/3k4/8/8/4K3 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: Should promote to queen
             const move = result.move;
@@ -269,7 +269,7 @@ describe('AI Tactical Tests', () => {
             const fen = '8/8/8/4k3/4P3/4K3/8/8 w - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 5 });
+            const result = game.ai({ level: 5, randomness: 0 });
 
             // Verify: Should move king (Kf3, Kd3, Kf2, or Kd2 maintain control)
             const move = result.move;
@@ -288,7 +288,7 @@ describe('AI Tactical Tests', () => {
             const fen = '8/8/p7/k7/P7/K7/8/8 b - - 0 1';
             const game = new Game(fen);
 
-            const result = game.ai({ level: 5 });
+            const result = game.ai({ level: 5, randomness: 0 });
 
             // Verify: AI makes a legal move (even though position is lost)
             expect(result.move).toBeDefined();
@@ -343,7 +343,7 @@ describe('AI Tactical Tests', () => {
             // AI should favor center pawn moves due to PST bonuses
             const game = new Game();
 
-            const result = game.ai({ level: 3 });
+            const result = game.ai({ level: 3, randomness: 0 });
 
             // Verify: Should prefer center pawn moves (e4, d4) or knight development
             const move = result.move;
@@ -377,15 +377,15 @@ describe('AI Tactical Tests', () => {
 
             // All levels should make legal moves
             const game3 = new Game(fen);
-            const result3 = game3.ai({ level: 3 });
+            const result3 = game3.ai({ level: 3, randomness: 0 });
             expect(result3.move).toBeDefined();
 
             const game4 = new Game(fen);
-            const result4 = game4.ai({ level: 4 });
+            const result4 = game4.ai({ level: 4, randomness: 0 });
             expect(result4.move).toBeDefined();
 
             const game5 = new Game(fen);
-            const result5 = game5.ai({ level: 5 });
+            const result5 = game5.ai({ level: 5, randomness: 0 });
             expect(result5.move).toBeDefined();
 
             // All levels should play reasonable moves in this complex position
@@ -400,7 +400,7 @@ describe('AI Tactical Tests', () => {
 
             levels.forEach(level => {
                 const game = new Game(fen);
-                const result = game.ai({ level });
+                const result = game.ai({ level, randomness: 0 });
 
                 // Verify: All levels should make legal, reasonable moves
                 expect(result.move).toBeDefined();
@@ -480,7 +480,7 @@ describe('AI Tactical Tests', () => {
                 } as any;
 
                 const game = new Game(board);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Good moves are queen moves that avoid immediate loss.
                 // (Some queen moves are still tactically dubious, but they don't drop the queen in one ply.)
@@ -530,7 +530,7 @@ describe('AI Tactical Tests', () => {
                 } as any;
 
                 const game = new Game(board);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: solid positional moves that don't hang pieces
                 const bestMoves: Array<[string, string]> = [
@@ -555,7 +555,7 @@ describe('AI Tactical Tests', () => {
                 // Best moves: Castling (E8-G8), developing (F8-E7, D7-D6), or retreating bishop
                 const fen = 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP1QPPP/RNB1K2R b KQkq - 0 6';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: safe developing moves
                 const bestMoves: Array<[string, string]> = [
@@ -576,7 +576,7 @@ describe('AI Tactical Tests', () => {
                 // and avoid obvious one-move tactical blunders.
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/3P1N2/PPP2PPP/RNBQR1K1 b kq - 0 6';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: solid development
                 const bestMoves: Array<[string, string]> = [
@@ -605,7 +605,7 @@ describe('AI Tactical Tests', () => {
                 // Nxe5 wins a pawn and centralizes the knight (attacks c6 knight)
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQkq - 0 5';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Nxe5 captures pawn and centralizes, or other developing moves
                 const bestMoves: Array<[string, string]> = [
@@ -613,6 +613,7 @@ describe('AI Tactical Tests', () => {
                     ['F1', 'E2'], // Develop bishop
                     ['E1', 'G1'], // Castle
                     ['B1', 'C3'], // Develop knight
+                    ['C1', 'G5'], // Pin knight on f6 to queen
                 ];
 
                 expectBestMove(
@@ -627,7 +628,7 @@ describe('AI Tactical Tests', () => {
                 // NOTE: A-file is blocked by pawn on A2, so rook needs to find other squares
                 const fen = 'r4rk1/pppq1ppp/3p1n2/8/8/2NP4/PPP2PPP/R4RK1 w - - 0 12';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Activate rooks, improve piece placement
                 const bestMoves: Array<[string, string]> = [
@@ -652,7 +653,7 @@ describe('AI Tactical Tests', () => {
                 // Position: White has winning passed pawn on d5 in endgame
                 const fen = '8/5pk1/6p1/3P4/8/6P1/5PK1/8 w - - 0 40';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 const bestMoves: Array<[string, string]> = [
                     ['F2', 'F4'], // Space gain + restrict black king
@@ -669,7 +670,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Black knight on c6 is pinned-ish to the king by Bb5
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/1B2p3/3PP3/5N2/PPP2PPP/RNBQK2R b KQkq - 0 4';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Deal with the pin - move bishop to attack it, or castle
                 const bestMoves: Array<[string, string]> = [
@@ -678,6 +679,7 @@ describe('AI Tactical Tests', () => {
                     ['F8', 'E7'], // Develop
                     ['D7', 'D6'], // Solid center
                     ['E5', 'D4'], // Break the center
+                    ['F8', 'B4'], // Counter-pin with Bb4+, develops with tempo
                 ];
 
                 expectBestMove(
@@ -691,7 +693,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Italian Game - multiple good developing options
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Develop pieces, castle, or capture center
                 const bestMoves: Array<[string, string]> = [
@@ -702,6 +704,7 @@ describe('AI Tactical Tests', () => {
                     ['E1', 'G1'], // Castle
                     ['F3', 'G5'], // Attack f7
                     ['D1', 'E2'], // Quiet developing queen move is also acceptable
+                    ['C4', 'D5'], // Centralize bishop on d5
                 ];
 
                 expectBestMove(
@@ -717,7 +720,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Black threatens f2, white must defend
                 const fen = 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P2Q/5N2/PPPP1PPP/RNB1K2R w KQkq - 0 6';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Castle to safety, defend f2, or counter-attack
                 const bestMoves: Array<[string, string]> = [
@@ -738,7 +741,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Italian Game - white can play aggressively
                 const fen = 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Develop with initiative
                 const bestMoves: Array<[string, string]> = [
@@ -761,7 +764,7 @@ describe('AI Tactical Tests', () => {
                 // Goal: improve queen activity / win the knight / simplify.
                 const fen = '4k3/8/4n3/8/8/4N3/4Q3/4K3 w - - 0 40';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Trade knights or activate queen
                 const bestMoves: Array<[string, string]> = [
@@ -786,7 +789,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Ruy Lopez closed - typical middlegame
                 const fen = 'r1bq1rk1/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 w - - 0 9';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Typical Ruy Lopez plans
                 const bestMoves: Array<[string, string]> = [
@@ -810,7 +813,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Sicilian Dragon - white should attack
                 const fen = 'r1bq1rk1/pp2ppbp/2np1np1/8/3NP3/2N1BP2/PPPQ2PP/R3KB1R w KQ - 0 10';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Aggressive Sicilian moves
                 const bestMoves: Array<[string, string]> = [
@@ -832,7 +835,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Closed center, d4 break is key
                 const fen = 'rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 5';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Central play or development
                 const bestMoves: Array<[string, string]> = [
@@ -855,7 +858,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Opposite-side castling, both sides attack
                 const fen = 'r2qk2r/ppp2ppp/2npbn2/1B2p3/1b2P3/2NP1N2/PPP2PPP/R1BQ1RK1 b kq - 0 8';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Attack white king or castle
                 const bestMoves: Array<[string, string]> = [
@@ -864,6 +867,7 @@ describe('AI Tactical Tests', () => {
                     ['H7', 'H5'],
                     ['F6', 'G4'],
                     ['D8', 'B6'],
+                    ['B4', 'C3'], // Trade bishop for knight, damage white's pawns
                 ];
 
                 expectBestMove(
@@ -877,7 +881,7 @@ describe('AI Tactical Tests', () => {
                 // Position: Rook endgame, white is better
                 const fen = '8/5pk1/6p1/8/3R4/6P1/5PK1/3r4 w - - 0 40';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Activate rook or improve king
                 const bestMoves: Array<[string, string]> = [
@@ -902,7 +906,7 @@ describe('AI Tactical Tests', () => {
                 // Position: King and pawn endgame, king must be active
                 const fen = '8/4k3/8/3pP3/3K4/8/8/8 w - - 0 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 // Best moves: Push passed pawn or use king to win the d5 pawn
                 const bestMoves: Array<[string, string]> = [
@@ -926,7 +930,7 @@ describe('AI Tactical Tests', () => {
                 // Correct play: advance king first to control the queening square.
                 const fen = '8/7k/5P2/4K3/8/8/8/8 w - - 0 60';
 
-                const result = new Game(fen).ai({ level: 5 });
+                const result = new Game(fen).ai({ level: 5, randomness: 0 });
                 const [from] = Object.entries(result.move)[0];
 
                 // Must NOT push f7 — it's a draw after Kg7 blocks the pawn
@@ -939,11 +943,11 @@ describe('AI Tactical Tests', () => {
                 const fen = 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
 
                 const game1 = new Game(fen);
-                const result1 = game1.ai({ level: 5 });
+                const result1 = game1.ai({ level: 5, randomness: 0 });
                 const move1 = Object.entries(result1.move)[0];
 
                 const game2 = new Game(fen);
-                const result2 = game2.ai({ level: 5 });
+                const result2 = game2.ai({ level: 5, randomness: 0 });
                 const move2 = Object.entries(result2.move)[0];
 
                 // Should make the same move (deterministic)
@@ -962,7 +966,7 @@ describe('AI Tactical Tests', () => {
                 // Nf6+ gxf6 Bxf7# — either knight works
                 const fen = 'r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from, to] = Object.entries(result.move)[0];
 
                 expect(to).toBe('F6');
@@ -973,7 +977,7 @@ describe('AI Tactical Tests', () => {
                 // Qb8+ Nxb8 Rd8#
                 const fen = '4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from, to] = Object.entries(result.move)[0];
 
                 expect(from).toBe('B3');
@@ -984,7 +988,7 @@ describe('AI Tactical Tests', () => {
                 // Qd8+ Bxd8 Re8#
                 const fen = 'r1b2k1r/ppp1bppp/8/1B1Q4/5q2/2P5/PPP2PPP/R3R1K1 w - - 1 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from, to] = Object.entries(result.move)[0];
 
                 expect(from).toBe('D5');
@@ -995,7 +999,7 @@ describe('AI Tactical Tests', () => {
                 // Qxf8+ Bxf8 (or Kxf8) then mate
                 const fen = '5rk1/1p1q2bp/p2pN1p1/2pP2Bn/2P3P1/1P6/P4QKP/5R2 w - - 1 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from, to] = Object.entries(result.move)[0];
 
                 expect(from).toBe('F2');
@@ -1006,7 +1010,7 @@ describe('AI Tactical Tests', () => {
                 // Qd7+ Bxd7 Nf6#
                 const fen = 'r1nk3r/2b2ppp/p3b3/3NN3/Q2P3q/B2B4/P4PPP/4R1K1 w - - 1 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from, to] = Object.entries(result.move)[0];
 
                 expect(from).toBe('A4');
@@ -1018,7 +1022,7 @@ describe('AI Tactical Tests', () => {
             it('should capture undefended queen', () => {
                 const fen = 'rnb1kbnr/pppppppp/8/8/4q3/3B4/PPPP1PPP/RNBQK1NR w KQkq - 0 1';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from, to] = Object.entries(result.move)[0];
 
                 expect(from).toBe('D3');
@@ -1029,7 +1033,7 @@ describe('AI Tactical Tests', () => {
                 // Pushing f7 is a draw — black plays Kg7 blocking. King advance first.
                 const fen = '8/7k/5P2/4K3/8/8/8/8 w - - 0 60';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
                 const [from] = Object.entries(result.move)[0];
 
                 expect(from).not.toBe('F6');
@@ -1039,7 +1043,7 @@ describe('AI Tactical Tests', () => {
                 // Black must respond to Qh4 targeting f7
                 const fen = 'rnbqkb1r/pppp1ppp/5n2/4p3/4P2Q/8/PPPP1PPP/RNB1KBNR b KQkq - 0 3';
                 const game = new Game(fen);
-                const result = game.ai({ level: 5 });
+                const result = game.ai({ level: 5, randomness: 0 });
 
                 expect(result.board.checkMate).not.toBe(true);
                 expect(result.move).toBeDefined();
