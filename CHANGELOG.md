@@ -1,3 +1,13 @@
+## [2.4.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.0...v2.4.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* Apply randomness noise after search completes, reduce default to 10cp ([70d29cf](https://github.com/josefjadrny/js-chess-engine/commit/70d29cf541ce8922494a2527a54761a0f89ff519))
+* Preserve PVS when collecting scores for randomness ([d8e4f39](https://github.com/josefjadrny/js-chess-engine/commit/d8e4f39c1bfc3552cce6cc449676475c727715eb))
+
+
+
 # [2.4.0](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.8...v2.4.0) (2026-02-20)
 
 
