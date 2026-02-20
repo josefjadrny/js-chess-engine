@@ -28,7 +28,7 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 - Configurable difficulty levels (1-5)
 - Adaptive depth (position-dependent, capped per level)
 - Memory-efficient with tunable cache size (browser and mobile-friendly)
-- Configurable randomness for varied, less predictable play (default: 30cp noise)
+- Configurable randomness for varied, less predictable play (default: 10cp noise)
 
 **Performance:** 65% faster than baseline implementation (16.3s → 5.6s on test suite)
 
@@ -450,15 +450,15 @@ function evaluate(board, playerColor, depth = 0):
 
 **Benefit:** The engine occasionally prefers moves with nearly equal scores, making it less predictable across repeated games without degrading tactical accuracy.
 
-**Default:** 30 centipawns (subtle — less than ⅓ of a pawn). Set to `0` to disable.
+**Default:** 10 centipawns (very subtle — only nearly-identical moves ever swap). Set to `0` to disable.
 
 **Reference values:**
 
 | Value | Effect |
 |------:|--------|
 | 0 | Fully deterministic — always plays the same move |
-| 10 | Very subtle — only nearly-identical moves ever swap |
-| 30 | Default — slight variety, moves within ~½ pawn of best may vary |
+| 10 | Default — very subtle, only nearly-identical moves ever swap |
+| 30 | Slight variety — moves within ~½ pawn of best may vary |
 | 80 | Noticeable — fun for casual play |
 | 200 | Chaotic — may play obviously weaker moves (not recommended) |
 

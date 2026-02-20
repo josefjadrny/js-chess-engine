@@ -16,7 +16,7 @@
 
 ### Features
 
-* Add `randomness` option to AI for varied, less predictable move selection. Uniform random noise (default: 30 centipawns) is applied to root-level scores after the search completes — zero search overhead. Set to `0` for fully deterministic play.
+* Add `randomness` option to AI for varied, less predictable move selection. Uniform random noise (default: 10 centipawns) is applied to root-level scores after the search completes — zero search overhead. Set to `0` for fully deterministic play.
 
 
 

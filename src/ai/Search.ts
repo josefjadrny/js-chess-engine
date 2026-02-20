@@ -70,8 +70,11 @@ export class Search {
         // Populates TT progressively for better move ordering at deeper levels.
         const ASPIRATION_DELTA = 25;
 
+        // Always collect root move scores at the final depth for randomness support
+        const collectFinalScores = randomness > 0 || analysis;
+
         for (let d = 1; d <= baseDepth; d++) {
-            const collectScores = analysis && d === baseDepth;
+            const collectScores = (d === baseDepth) && collectFinalScores;
 
             // Aspiration window: use previous iteration's score for d >= 4
             let alpha: Score = SCORE_MIN;
@@ -85,7 +88,6 @@ export class Search {
             // Aspiration retry loop
             let iterBestMove: InternalMove | null = null;
             let iterBestScore: Score = SCORE_MIN;
-            let iterRawBestScore: Score = SCORE_MIN;
             let iterScoredMoves: Array<{ move: InternalMove; score: Score }> | null = null;
 
             while (true) {
@@ -126,17 +128,12 @@ export class Search {
                     }
                     moveIndex++;
 
-                    const noisyScore = randomness > 0
-                        ? (score + Math.round(Math.random() * 2 * randomness - randomness)) as Score
-                        : score;
-
                     if (iterScoredMoves) {
-                        iterScoredMoves.push({ move, score: noisyScore });
+                        iterScoredMoves.push({ move, score });
                     }
 
-                    if (noisyScore > iterBestScore || iterBestMove === null) {
-                        iterBestScore = noisyScore;
-                        iterRawBestScore = score;
+                    if (score > iterBestScore || iterBestMove === null) {
+                        iterBestScore = score;
                         iterBestMove = move;
                     }
 
@@ -144,15 +141,15 @@ export class Search {
                     if (iterAlpha >= beta) break;
                 }
 
-                // Check aspiration window result (use raw score to avoid noise-induced misfires)
+                // Check aspiration window result
                 if (d >= 4 && (alpha > SCORE_MIN || beta < SCORE_MAX)) {
-                    if (iterRawBestScore <= alpha) {
+                    if (iterBestScore <= alpha) {
                         // Fail low - widen alpha
                         delta *= 2;
                         alpha = (delta > 400) ? SCORE_MIN : Math.max(SCORE_MIN, alpha - delta) as Score;
                         continue;
                     }
-                    if (iterRawBestScore >= beta) {
+                    if (iterBestScore >= beta) {
                         // Fail high - widen beta
                         delta *= 2;
                         beta = (delta > 400) ? SCORE_MAX : Math.min(SCORE_MAX, beta + delta) as Score;
@@ -164,12 +161,29 @@ export class Search {
 
             if (iterBestMove) {
                 bestMove = iterBestMove;
-                bestScore = iterRawBestScore;
+                bestScore = iterBestScore;
             }
 
             if (iterScoredMoves) {
                 iterScoredMoves.sort((a, b) => b.score - a.score);
                 scoredMoves = iterScoredMoves;
+            }
+        }
+
+        // Apply randomness after search is complete (noise never enters the search tree)
+        if (randomness > 0 && scoredMoves && scoredMoves.length > 0) {
+            let noisyBestScore = SCORE_MIN;
+            let noisyBestMove: InternalMove | null = null;
+            for (const entry of scoredMoves) {
+                const noisy = (entry.score + Math.round(Math.random() * 2 * randomness - randomness)) as Score;
+                if (noisy > noisyBestScore || noisyBestMove === null) {
+                    noisyBestScore = noisy;
+                    noisyBestMove = entry.move;
+                }
+            }
+            if (noisyBestMove) {
+                bestMove = noisyBestMove;
+                // bestScore remains the raw score of the deterministic best move
             }
         }
 

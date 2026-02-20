@@ -202,7 +202,7 @@ Params:
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
   - `analysis` boolean (_optional_) - If `true`, also returns an `analysis` payload containing all root legal moves scored by the engine's search (sorted best → worst). Default: `false`.
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, min 0.25 MB). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
-  - `randomness` number (_optional_) - Centipawns of random noise added to each move's score, causing the engine to occasionally prefer moves with nearly equal scores. Makes games less predictable without significantly degrading play quality. Default: `30`. Set to `0` for fully deterministic play. Reference values: `10` very subtle · `30` default · `80` noticeable · `200` chaotic.
+  - `randomness` number (_optional_) - Centipawns of random noise added to each move's score, causing the engine to occasionally prefer moves with nearly equal scores. Makes games less predictable without significantly degrading play quality. Default: `10`. Set to `0` for fully deterministic play. Reference values: `10` default (very subtle) · `30` slight variety · `80` noticeable · `200` chaotic.
   - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
     - `base` number (_optional_) - Base search depth. Integer > 0.
     - `extended` number (_optional_) - Max adaptive extension depth. Integer 0-3.
@@ -253,8 +253,8 @@ const result7 = game.ai({ level: 3, depth: { base: 5 } })
 // Full depth control: deep search, no extensions, no quiescence
 const result8 = game.ai({ level: 1, depth: { base: 4, extended: 0, check: false, quiescence: 0 } })
 
-// Randomness: vary move selection among nearly-equal scoring moves (default: 30)
-const result9 = game.ai({ level: 3 })                     // default 30cp noise — slight variety
+// Randomness: vary move selection among nearly-equal scoring moves (default: 10)
+const result9 = game.ai({ level: 3 })                     // default 10cp noise — very subtle variety
 const result10 = game.ai({ level: 3, randomness: 0 })     // fully deterministic
 const result11 = game.ai({ level: 3, randomness: 80 })    // noticeable variety, casual play
 ```
@@ -454,8 +454,8 @@ console.log(result2.nodesSearched)
 // Custom depth overrides
 const result3 = ai(fen, { level: 3, depth: { base: 5, quiescence: 3 } })
 
-// Randomness: slight variety by default, or disable for deterministic play
-const result4 = ai(fen, { level: 3 })                    // default 30cp noise
+// Randomness: subtle variety by default, or disable for deterministic play
+const result4 = ai(fen, { level: 3 })                    // default 10cp noise
 const result5 = ai(fen, { level: 3, randomness: 0 })     // fully deterministic
 ```
 

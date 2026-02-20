@@ -260,12 +260,12 @@ export class Game {
      * @param options.randomness - Centipawns of random noise added to each move's score at the
      *   root level, causing the engine to occasionally prefer moves with nearly equal scores.
      *   Makes the engine less predictable without significantly degrading play quality.
-     *   Default: 30 (subtle variation). Set to 0 to disable.
+     *   Default: 10 (very subtle variety). Set to 0 for fully deterministic play.
      *
      *   Reference values:
      *     0   – fully deterministic (same position always plays the same move)
-     *     10  – very subtle (only nearly-identical moves ever swap)
-     *     30  – default (slight variety; moves within ~½ pawn of best may vary)
+     *     10  – very subtle (default; only nearly-identical moves ever swap)
+     *     30  – slight variety (moves within ~½ pawn of best may vary)
      *     80  – noticeable (moves within ~1½ pawns of best may vary; fun casual play)
      *     200 – chaotic (may play obviously weaker moves; not recommended)
      * @returns Object containing the move and board configuration (current state if play=false, updated state if play=true)
