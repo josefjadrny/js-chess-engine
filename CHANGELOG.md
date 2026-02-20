@@ -1,3 +1,17 @@
+# [2.4.0](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.8...v2.4.0) (2026-02-20)
+
+
+### Bug Fixes
+
+* Reduce bishop value to equal knight (330 → 320) ([bfe5e98](https://github.com/josefjadrny/js-chess-engine/commit/bfe5e98068982548e76e22a307617fa43a8d08ab))
+
+
+### Features
+
+* Add randomness option to AI for varied move selection ([6a507ed](https://github.com/josefjadrny/js-chess-engine/commit/6a507ed63caac5da0b810cd36fc2978a6c691cf8))
+
+
+
 ## [Unreleased]
 
 ### Features
