@@ -28,6 +28,7 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 - Configurable difficulty levels (1-5)
 - Adaptive depth (position-dependent, capped per level)
 - Memory-efficient with tunable cache size (browser and mobile-friendly)
+- Configurable randomness for varied, less predictable play (default: 30cp noise)
 
 **Performance:** 65% faster than baseline implementation (16.3s → 5.6s on test suite)
 
@@ -67,7 +68,8 @@ Search (Alpha-Beta + Optimizations)
 4. **Ordering**: Moves ordered by PV → Captures → Killers → Quiet
 5. **Evaluation**: Positions scored by material + piece-square tables
 6. **Caching**: Results stored in transposition table
-7. **Return**: Best move returned to API layer
+7. **Randomness**: Optional noise applied to root-level scores after search completes (zero search overhead)
+8. **Return**: Best move returned to API layer
 
 ## Core Algorithm
 
@@ -441,6 +443,37 @@ function evaluate(board, playerColor, depth = 0):
 **Concept:** Search first move with full window, rest with null window (zero-window)
 **Benefit:** Faster search if the first move is best (good move ordering)
 **Implementation:** Implemented in `src/ai/Search.ts` in the `negamax()` inner loop (and at root when not collecting per-move analysis scores)
+
+### Move Selection Randomness (Implemented)
+
+**Concept:** After the search completes, add uniform random noise in `[-randomness, +randomness]` centipawns to each root-level move score before selecting the best move.
+
+**Benefit:** The engine occasionally prefers moves with nearly equal scores, making it less predictable across repeated games without degrading tactical accuracy.
+
+**Default:** 30 centipawns (subtle — less than ⅓ of a pawn). Set to `0` to disable.
+
+**Reference values:**
+
+| Value | Effect |
+|------:|--------|
+| 0 | Fully deterministic — always plays the same move |
+| 10 | Very subtle — only nearly-identical moves ever swap |
+| 30 | Default — slight variety, moves within ~½ pawn of best may vary |
+| 80 | Noticeable — fun for casual play |
+| 200 | Chaotic — may play obviously weaker moves (not recommended) |
+
+**Implementation detail:**
+```typescript
+// Applied in Search.ts at the root level only — never inside the search tree
+const noisyScore = randomness > 0
+    ? (score + Math.round(Math.random() * 2 * randomness - randomness)) as Score
+    : score;
+```
+
+- **Zero search overhead** — noise is applied post-search on the already-computed root scores
+- **Aspiration windows** still use raw scores to avoid spurious re-searches
+- **Analysis output** (`analysis: true`) reports noisy scores so the sort order matches the actual move chosen
+- **Tactical moves are unaffected** — mating moves score thousands of centipawns above alternatives, far exceeding any noise value
 
 ### Null Move Pruning (Not Implemented)
 

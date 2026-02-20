@@ -1,3 +1,11 @@
+## [Unreleased]
+
+### Features
+
+* Add `randomness` option to AI for varied, less predictable move selection. Uniform random noise (default: 30 centipawns) is applied to root-level scores after the search completes — zero search overhead. Set to `0` for fully deterministic play.
+
+
+
 ## [2.3.8](https://github.com/josefjadrny/js-chess-engine/compare/v2.3.7...v2.3.8) (2026-02-19)
 
 
