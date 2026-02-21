@@ -71,9 +71,9 @@ export class Search {
         const ASPIRATION_DELTA = 25;
 
         for (let d = 1; d <= baseDepth; d++) {
-            // Collect root scores at final depth: for analysis (accurate) or randomness (PVS ok)
+            // Collect root scores at final depth: for analysis or randomness (both need accurate scores)
             const collectScores = (d === baseDepth) && (randomness > 0 || analysis);
-            const disablePVS = (d === baseDepth) && analysis;
+            const disablePVS = (d === baseDepth) && collectScores;
 
             // Aspiration window: use previous iteration's score for d >= 4
             let alpha: Score = SCORE_MIN;
