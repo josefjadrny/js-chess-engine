@@ -1,3 +1,13 @@
+## [2.4.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.1...v2.4.2) (2026-02-21)
+
+
+### Bug Fixes
+
+* Disable PVS at root when collecting scores for randomness ([ca28202](https://github.com/josefjadrny/js-chess-engine/commit/ca2820222c60b75a24f11f91e8bf66a757fe650b))
+* Use threshold-based randomness to prevent selecting blunders ([bb31c90](https://github.com/josefjadrny/js-chess-engine/commit/bb31c90f3d83f454711bccb8638b0a7856b3dc0b))
+
+
+
 ## [2.4.1](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.0...v2.4.1) (2026-02-20)
 
 
