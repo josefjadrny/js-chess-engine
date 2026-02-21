@@ -1048,6 +1048,21 @@ describe('AI Tactical Tests', () => {
                 expect(result.board.checkMate).not.toBe(true);
                 expect(result.move).toBeDefined();
             });
+
+            it('should recapture free bishop on F8, not delay with quiet move (regression: randomness tier-locking)', () => {
+                // White just played Bxf8 — a free bishop sits on F8.
+                // Black must recapture: Rxf8 (G8->F8) or Kxf8 (E8->F8) are both correct.
+                // Before the tier-locking fix, randomness could pick Qd7 instead,
+                // delaying the recapture and potentially losing the piece.
+                const fen = 'r1bqkBr1/1pp2p1p/p1np1pp1/8/4P1P1/1P1P1N1P/P1PQ1P2/2KR1B1R b q - 0 14';
+                const game = new Game(fen);
+                const result = game.ai({ level: 5, randomness: 0 });
+                const [from, to] = Object.entries(result.move)[0];
+
+                // Either recapture is correct — the bug was playing a quiet move like Qd7 instead
+                expect(to).toBe('F8');
+                expect(['G8', 'E8']).toContain(from);
+            });
         });
     });
 });

@@ -99,11 +99,11 @@ export class AIEngine {
 
         // On move 1 (both white and black), inject opening randomness so two AIs
         // never play the same game. All reasonable first moves score within this range.
+        // Only applies when randomness was not explicitly set by the caller.
         const OPENING_RANDOMNESS = 10;
-        const baseRandomness = options.randomness ?? 0;
-        const effectiveRandomness = board.fullMoveNumber === 1
-            ? Math.max(baseRandomness, OPENING_RANDOMNESS)
-            : baseRandomness;
+        const effectiveRandomness = options.randomness === undefined && board.fullMoveNumber === 1
+            ? OPENING_RANDOMNESS
+            : (options.randomness ?? 0);
 
         // Perform search
         return this.search.findBestMove(board, effectiveDepth, qMaxDepth, checkExtension, {
