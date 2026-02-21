@@ -97,10 +97,18 @@ export class AIEngine {
         // This keeps early/midgame conservative, but lets endgames search deeper.
         const effectiveDepth = this.getAdaptiveDepth(board, baseDepth, extendedDepth);
 
+        // On move 1 (both white and black), inject opening randomness so two AIs
+        // never play the same game. All reasonable first moves score within this range.
+        const OPENING_RANDOMNESS = 10;
+        const baseRandomness = options.randomness ?? 0;
+        const effectiveRandomness = board.fullMoveNumber === 1
+            ? Math.max(baseRandomness, OPENING_RANDOMNESS)
+            : baseRandomness;
+
         // Perform search
         return this.search.findBestMove(board, effectiveDepth, qMaxDepth, checkExtension, {
             analysis: options.analysis ?? false,
-            randomness: options.randomness ?? 0,
+            randomness: effectiveRandomness,
         });
     }
 
