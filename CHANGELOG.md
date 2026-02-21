@@ -9,6 +9,7 @@
 ### Bug Fixes
 
 * Lock randomness to same move quality tier as best move ([64d1861](https://github.com/josefjadrny/js-chess-engine/commit/64d18613ef9f6911dd1500b4698d9836d6b666d5))
+* Only apply opening randomness when randomness not explicitly set ([b7a0f3d](https://github.com/josefjadrny/js-chess-engine/commit/b7a0f3d))
 
 
 
