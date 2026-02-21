@@ -170,12 +170,17 @@ export class Search {
         }
 
         // Apply randomness: pick randomly among moves within `randomness` cp of the best score.
-        // This never selects blunders because even inaccurate PVS scores won't be
-        // within a small threshold of the best move.
+        // Locked to the same quality tier as the best move: if the best move is a capture,
+        // only randomize among captures — never pick a quiet move over a winning capture.
         if (randomness > 0 && scoredMoves && scoredMoves.length > 1) {
             const threshold = bestScore - randomness;
-            const candidates = scoredMoves.filter(e => e.score >= threshold);
+            let candidates = scoredMoves.filter(e => e.score >= threshold);
             if (candidates.length > 1) {
+                const bestIsCapture = !!(scoredMoves[0].move.flags & MoveFlag.CAPTURE);
+                if (bestIsCapture) {
+                    const captureCandidates = candidates.filter(e => e.move.flags & MoveFlag.CAPTURE);
+                    if (captureCandidates.length > 0) candidates = captureCandidates;
+                }
                 bestMove = candidates[Math.floor(Math.random() * candidates.length)].move;
             }
         }
