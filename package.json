@@ -1,6 +1,6 @@
 {
   "name": "js-chess-engine",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "Simple and fast Node.js chess engine with configurable AI and no dependencies",
   "keywords": [
     "chess",

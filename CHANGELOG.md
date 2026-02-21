@@ -1,3 +1,12 @@
+## [2.4.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.2...v2.4.3) (2026-02-21)
+
+
+### Bug Fixes
+
+* Disable randomness by default, even 10cp causes bad moves at level 5 ([d116c7a](https://github.com/josefjadrny/js-chess-engine/commit/d116c7a19ef79bf51870535b2d6b897e12c1f1da))
+
+
+
 ## [2.4.2](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.1...v2.4.2) (2026-02-21)
 
 
