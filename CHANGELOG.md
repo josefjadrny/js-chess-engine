@@ -1,3 +1,12 @@
+## [2.4.4](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.3...v2.4.4) (2026-02-21)
+
+
+### Bug Fixes
+
+* Lock randomness to same move quality tier as best move ([64d1861](https://github.com/josefjadrny/js-chess-engine/commit/64d18613ef9f6911dd1500b4698d9836d6b666d5))
+
+
+
 ## [2.4.3](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.2...v2.4.3) (2026-02-21)
 
 
