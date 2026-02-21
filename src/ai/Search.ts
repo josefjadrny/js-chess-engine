@@ -169,20 +169,14 @@ export class Search {
             }
         }
 
-        // Apply randomness after search is complete (noise never enters the search tree)
-        if (randomness > 0 && scoredMoves && scoredMoves.length > 0) {
-            let noisyBestScore = SCORE_MIN;
-            let noisyBestMove: InternalMove | null = null;
-            for (const entry of scoredMoves) {
-                const noisy = (entry.score + Math.round(Math.random() * 2 * randomness - randomness)) as Score;
-                if (noisy > noisyBestScore || noisyBestMove === null) {
-                    noisyBestScore = noisy;
-                    noisyBestMove = entry.move;
-                }
-            }
-            if (noisyBestMove) {
-                bestMove = noisyBestMove;
-                // bestScore remains the raw score of the deterministic best move
+        // Apply randomness: pick randomly among moves within `randomness` cp of the best score.
+        // This never selects blunders because even inaccurate PVS scores won't be
+        // within a small threshold of the best move.
+        if (randomness > 0 && scoredMoves && scoredMoves.length > 1) {
+            const threshold = bestScore - randomness;
+            const candidates = scoredMoves.filter(e => e.score >= threshold);
+            if (candidates.length > 1) {
+                bestMove = candidates[Math.floor(Math.random() * candidates.length)].move;
             }
         }
 
