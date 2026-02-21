@@ -100,7 +100,7 @@ export class AIEngine {
         // Perform search
         return this.search.findBestMove(board, effectiveDepth, qMaxDepth, checkExtension, {
             analysis: options.analysis ?? false,
-            randomness: options.randomness ?? 10,
+            randomness: options.randomness ?? 0,
         });
     }
 

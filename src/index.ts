@@ -260,11 +260,11 @@ export class Game {
      * @param options.randomness - Centipawn threshold for move variety. The engine picks randomly
      *   among all moves scoring within this many centipawns of the best move.
      *   Makes the engine less predictable without playing blunders.
-     *   Default: 10 (very subtle variety). Set to 0 for fully deterministic play.
+     *   Default: 0 (fully deterministic). Set to a positive value for variety.
      *
      *   Reference values:
-     *     0   – fully deterministic (same position always plays the same move)
-     *     10  – very subtle (default; only nearly-identical moves ever swap)
+     *     0   – fully deterministic (default; same position always plays the same move)
+     *     10  – very subtle (only nearly-identical moves ever swap)
      *     30  – slight variety (moves within ~½ pawn of best may vary)
      *     80  – noticeable (moves within ~1½ pawns of best may vary; fun casual play)
      *     200 – chaotic (may play obviously weaker moves; not recommended)
