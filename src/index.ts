@@ -257,9 +257,9 @@ export class Game {
      * @param options.level - AI difficulty level (1-5, default: 3). Values > 5 are clamped to 5.
      * @param options.play - Whether to apply the move to the game (default: true). If false, only returns the move without modifying game state.
      * @param options.ttSizeMB - Transposition table size in MB (0 to disable, min 0.25 MB). Default: auto-scaled by level (e.g., level 3: 2 MB Node.js, 1 MB browser)
-     * @param options.randomness - Centipawns of random noise added to each move's score at the
-     *   root level, causing the engine to occasionally prefer moves with nearly equal scores.
-     *   Makes the engine less predictable without significantly degrading play quality.
+     * @param options.randomness - Centipawn threshold for move variety. The engine picks randomly
+     *   among all moves scoring within this many centipawns of the best move.
+     *   Makes the engine less predictable without playing blunders.
      *   Default: 10 (very subtle variety). Set to 0 for fully deterministic play.
      *
      *   Reference values:

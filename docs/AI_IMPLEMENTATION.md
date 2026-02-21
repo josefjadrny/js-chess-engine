@@ -28,7 +28,7 @@ The js-chess-engine v2 AI is a competitive chess engine built on classical chess
 - Configurable difficulty levels (1-5)
 - Adaptive depth (position-dependent, capped per level)
 - Memory-efficient with tunable cache size (browser and mobile-friendly)
-- Configurable randomness for varied, less predictable play (default: 10cp noise)
+- Configurable randomness for varied, less predictable play (default: 10cp threshold)
 
 **Performance:** 65% faster than baseline implementation (16.3s → 5.6s on test suite)
 
@@ -446,9 +446,9 @@ function evaluate(board, playerColor, depth = 0):
 
 ### Move Selection Randomness (Implemented)
 
-**Concept:** After the search completes, add uniform random noise in `[-randomness, +randomness]` centipawns to each root-level move score before selecting the best move.
+**Concept:** After the search completes, collect all root moves scoring within `randomness` centipawns of the best move and randomly pick one from that set.
 
-**Benefit:** The engine occasionally prefers moves with nearly equal scores, making it less predictable across repeated games without degrading tactical accuracy.
+**Benefit:** The engine occasionally prefers moves with nearly equal scores, making it less predictable across repeated games without degrading tactical accuracy. The maximum loss per move is bounded by the `randomness` value.
 
 **Default:** 10 centipawns (very subtle — only nearly-identical moves ever swap). Set to `0` to disable.
 
@@ -465,15 +465,15 @@ function evaluate(board, playerColor, depth = 0):
 **Implementation detail:**
 ```typescript
 // Applied in Search.ts at the root level only — never inside the search tree
-const noisyScore = randomness > 0
-    ? (score + Math.round(Math.random() * 2 * randomness - randomness)) as Score
-    : score;
+const threshold = bestScore - randomness;
+const candidates = scoredMoves.filter(e => e.score >= threshold);
+bestMove = candidates[Math.floor(Math.random() * candidates.length)].move;
 ```
 
-- **Zero search overhead** — noise is applied post-search on the already-computed root scores
-- **Aspiration windows** still use raw scores to avoid spurious re-searches
-- **Analysis output** (`analysis: true`) reports noisy scores so the sort order matches the actual move chosen
-- **Tactical moves are unaffected** — mating moves score thousands of centipawns above alternatives, far exceeding any noise value
+- **Zero search overhead** — filtering is applied post-search on already-computed root scores
+- **PVS disabled at root** for the final iteration when randomness > 0 to ensure accurate scores
+- **Blunders impossible** — moves far below the best score are never candidates
+- **Tactical moves are unaffected** — mating moves score thousands of centipawns above alternatives
 
 ### Null Move Pruning (Not Implemented)
 

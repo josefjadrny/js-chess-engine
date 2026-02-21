@@ -5,6 +5,8 @@
 
 * Apply randomness noise after search completes, reduce default to 10cp ([70d29cf](https://github.com/josefjadrny/js-chess-engine/commit/70d29cf541ce8922494a2527a54761a0f89ff519))
 * Preserve PVS when collecting scores for randomness ([d8e4f39](https://github.com/josefjadrny/js-chess-engine/commit/d8e4f39c1bfc3552cce6cc449676475c727715eb))
+* Use threshold-based randomness to prevent selecting blunders ([bb31c90](https://github.com/josefjadrny/js-chess-engine/commit/bb31c90))
+* Disable PVS at root when collecting scores for randomness ([ca28202](https://github.com/josefjadrny/js-chess-engine/commit/ca28202))
 
 
 
@@ -26,7 +28,7 @@
 
 ### Features
 
-* Add `randomness` option to AI for varied, less predictable move selection. Uniform random noise (default: 10 centipawns) is applied to root-level scores after the search completes — zero search overhead. Set to `0` for fully deterministic play.
+* Add `randomness` option to AI for varied, less predictable move selection. The engine picks randomly among moves within `randomness` centipawns of the best move (default: 10cp). Set to `0` for fully deterministic play.
 
 
 

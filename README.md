@@ -202,7 +202,7 @@ Params:
   - `play` boolean (_optional_) - Whether to apply the move to the game. Default: `true`. If `false`, returns the move without modifying the game state, and `board` will contain the current state (before the move).
   - `analysis` boolean (_optional_) - If `true`, also returns an `analysis` payload containing all root legal moves scored by the engine's search (sorted best → worst). Default: `false`.
   - `ttSizeMB` number (_optional_) - Transposition table size in MB (0 to disable, min 0.25 MB). Default: **auto-scaled by AI level**. See [Auto-Scaling Transposition Table](#transposition-table) for details.
-  - `randomness` number (_optional_) - Centipawns of random noise added to each move's score, causing the engine to occasionally prefer moves with nearly equal scores. Makes games less predictable without significantly degrading play quality. Default: `10`. Set to `0` for fully deterministic play. Reference values: `10` default (very subtle) · `30` slight variety · `80` noticeable · `200` chaotic.
+  - `randomness` number (_optional_) - Centipawn threshold for move variety. The engine picks randomly among all moves scoring within this many centipawns of the best move. Makes games less predictable without playing blunders. Default: `10`. Set to `0` for fully deterministic play. Reference values: `10` default (very subtle) · `30` slight variety · `80` noticeable · `200` chaotic.
   - `depth` object (_optional_) - Override AI search depth parameters. Omitted fields fall back to the level's defaults (see [Computer AI](#computer-ai) table).
     - `base` number (_optional_) - Base search depth. Integer > 0.
     - `extended` number (_optional_) - Max adaptive extension depth. Integer 0-3.
