@@ -1,6 +1,11 @@
 ## [2.4.4](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.3...v2.4.4) (2026-02-21)
 
 
+### Features
+
+* Add opening randomness to vary AI vs AI games ([b050242](https://github.com/josefjadrny/js-chess-engine/commit/b050242))
+
+
 ### Bug Fixes
 
 * Lock randomness to same move quality tier as best move ([64d1861](https://github.com/josefjadrny/js-chess-engine/commit/64d18613ef9f6911dd1500b4698d9836d6b666d5))
