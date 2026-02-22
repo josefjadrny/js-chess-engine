@@ -73,7 +73,6 @@ export class Search {
         for (let d = 1; d <= baseDepth; d++) {
             // Collect root scores at final depth: for analysis or randomness (both need accurate scores)
             const collectScores = (d === baseDepth) && (randomness > 0 || analysis);
-            const disablePVS = (d === baseDepth) && collectScores;
 
             // Aspiration window: use previous iteration's score for d >= 4
             let alpha: Score = SCORE_MIN;
@@ -114,8 +113,7 @@ export class Search {
                     const extension = (this.checkExtension && child.isCheck) ? 1 : 0;
 
                     let score: Score;
-                    // Use PVS at root (but not when collecting analysis scores - need accurate values)
-                    if (moveIndex === 0 || disablePVS) {
+                    if (moveIndex === 0) {
                         score = -this.negamax(child, d - 1 + extension, -beta, -iterAlpha, 1);
                     } else {
                         // PVS: zero window search first
@@ -158,14 +156,18 @@ export class Search {
                 break;
             }
 
-            if (iterBestMove) {
-                bestMove = iterBestMove;
-                bestScore = iterBestScore;
-            }
-
             if (iterScoredMoves) {
                 iterScoredMoves.sort((a, b) => b.score - a.score);
                 scoredMoves = iterScoredMoves;
+                // Derive best move from the sorted array — more reliable than iterBestMove
+                // because iterAlpha shifts during the loop when disablePVS is true.
+                if (iterScoredMoves.length > 0) {
+                    bestMove = iterScoredMoves[0].move;
+                    bestScore = iterScoredMoves[0].score;
+                }
+            } else if (iterBestMove) {
+                bestMove = iterBestMove;
+                bestScore = iterBestScore;
             }
         }
 
