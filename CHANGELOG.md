@@ -1,3 +1,12 @@
+## [2.4.6](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.5...v2.4.6) (2026-02-22)
+
+
+### Bug Fixes
+
+* bestMove mismatch in analysis mode and re-enable root PVS ([e71968c](https://github.com/josefjadrny/js-chess-engine/commit/e71968cd971fe9758a934dca22ef1f425d35b232))
+
+
+
 ## [2.4.5](https://github.com/josefjadrny/js-chess-engine/compare/v2.4.4...v2.4.5) (2026-02-21)
 
 
