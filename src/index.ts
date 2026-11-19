@@ -16,6 +16,7 @@ import {
 import { createStartingBoard, setPiece as setBoardPiece, removePiece as removeBoardPiece, copyBoard } from './core/Board';
 import { generateLegalMoves, applyMoveComplete, getMovesForPiece } from './core/MoveGenerator';
 import { isKingInCheck } from './core/AttackDetector';
+import { computeZobristHash } from './core/zobrist';
 import { parseFEN, toFEN, getStartingFEN, validateFEN } from './utils/fen';
 import { squareToIndex, indexToSquare } from './utils/conversion';
 import { getRecommendedTTSize } from './ai/TranspositionTable';
@@ -124,6 +125,7 @@ export class Game {
         const squareIndex = squareToIndex(squareNorm);
         const pieceEnum = symbolToPiece(piece);
         setBoardPiece(this.board, squareIndex, pieceEnum);
+        this.board.zobristHash = computeZobristHash(this.board);
     }
 
     /**
@@ -135,6 +137,7 @@ export class Game {
         const squareNorm = normalizeSquare(square);
         const squareIndex = squareToIndex(squareNorm);
         removeBoardPiece(this.board, squareIndex);
+        this.board.zobristHash = computeZobristHash(this.board);
     }
 
     /**
