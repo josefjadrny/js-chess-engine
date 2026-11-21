@@ -279,7 +279,11 @@ function generatePawnMoves(
         }
 
         // En passant
-        if (board.enPassantSquare !== null) {
+        if (
+            board.enPassantSquare !== null &&
+            getRankIndex(board.enPassantSquare) === 5 &&
+            getPiece(board, (board.enPassantSquare - 8) as SquareIndex) === Piece.BLACK_PAWN
+        ) {
             const epSquare = board.enPassantSquare;
             const epTarget = 1n << BigInt(epSquare);
 
@@ -372,7 +376,11 @@ function generatePawnMoves(
         }
 
         // En passant
-        if (board.enPassantSquare !== null) {
+        if (
+            board.enPassantSquare !== null &&
+            getRankIndex(board.enPassantSquare) === 2 &&
+            getPiece(board, (board.enPassantSquare + 8) as SquareIndex) === Piece.WHITE_PAWN
+        ) {
             const epSquare = board.enPassantSquare;
             const epTarget = 1n << BigInt(epSquare);
 
