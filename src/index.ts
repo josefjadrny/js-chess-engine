@@ -91,7 +91,7 @@ export class Game {
         // Apply the move
         applyMoveComplete(this.board, move);
 
-        return boardToConfig(this.board);
+        return this.exportJson();
     }
 
     /**
